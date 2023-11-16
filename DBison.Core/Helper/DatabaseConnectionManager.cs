@@ -11,22 +11,22 @@ public class DatabaseConnectionManager
 	#region - ctor -
 	internal DatabaseConnectionManager()
 	{
-		m_Connections = new();
+		Connections = new();
 	}
 	#endregion
 
 	#region - properties -
 
 	#region [Instance]
-	public static DatabaseConnectionManager Instance = m_Manager ?? new();
+	public static DatabaseConnectionManager Instance = Manager ?? new();
 	#endregion
 
 	#region [m_Manager]
-	private static DatabaseConnectionManager? m_Manager { get; set; }
+	private static DatabaseConnectionManager? Manager { get; set; }
 	#endregion
 
 	#region [m_Connections]
-	private ConcurrentDictionary<DatabaseInfo, SqlConnection> m_Connections { get; set; }
+	private ConcurrentDictionary<DatabaseInfo, SqlConnection> Connections { get; set; }
 	#endregion
 
 	#endregion
@@ -36,17 +36,17 @@ public class DatabaseConnectionManager
 	#region [AddOrGetConnection]
 	public SqlConnection AddOrGetConnection(DatabaseInfo databaseInfo)
 	{
-		if(m_Connections.ContainsKey(databaseInfo))
+		if(Connections.ContainsKey(databaseInfo))
 		{
-			if (m_Connections.TryGetValue(databaseInfo, out var connection))
+			if (Connections.TryGetValue(databaseInfo, out var connection))
 				return connection;
 			connection = __CreateConnection(databaseInfo);
-			m_Connections[databaseInfo] = connection;
+			Connections[databaseInfo] = connection;
 			return connection;
 		}
 
 		var conn = __CreateConnection(databaseInfo);
-		m_Connections.TryAdd(databaseInfo, conn);
+        _ = Connections.TryAdd(databaseInfo, conn);
 		return conn;
 	}
 	#endregion
@@ -57,9 +57,9 @@ public class DatabaseConnectionManager
 		if (connection is null) throw new ArgumentNullException(nameof(connection));
 		if (connection.State != ConnectionState.Closed)
 			connection.Close();
-		var connectionsToRemove = m_Connections.Where(x => x.Value.Equals(connection));
+		var connectionsToRemove = Connections.Where(x => x.Value.Equals(connection));
 		foreach (var conn in connectionsToRemove)
-			m_Connections.TryRemove(conn);
+            _ = Connections.TryRemove(conn);
 	}
 	#endregion
 
@@ -67,8 +67,8 @@ public class DatabaseConnectionManager
 	public void CloseConnection(DatabaseInfo databaseInfo)
 	{
         ArgumentNullException.ThrowIfNull(databaseInfo);
-        if (m_Connections.ContainsKey(databaseInfo))
-			CloseConnection(m_Connections[databaseInfo]);
+        if (Connections.ContainsKey(databaseInfo))
+			CloseConnection(Connections[databaseInfo]);
 	}
 	#endregion
 
