@@ -30,26 +30,15 @@ public class DatabaseInfo
     #region - override -
 
     #region [ToString]
-    public override string ToString()
-    {
-        return $"{nameof(Name)}: {Name}, {nameof(Server)}: {Server}, {nameof(Username)}: {Username}, {nameof(UseIntegratedSecurity)}: {UseIntegratedSecurity}";
-    }
+    public override string ToString() => $"{nameof(Name)}: {Name}, {nameof(Server)}: {Server}, {nameof(Username)}: {Username}, {nameof(UseIntegratedSecurity)}: {UseIntegratedSecurity}";
     #endregion
 
     #region [GetHashCode]
-    public override int GetHashCode()
-    {
-        return HashCode.Combine(Name, Server, Username, UseIntegratedSecurity);
-    }
+    public override int GetHashCode() => HashCode.Combine(Name, Server, Username, UseIntegratedSecurity);
     #endregion
 
     #region [Equals]
-    public override bool Equals(object? obj)
-    {
-        if (obj == null || !(obj is DatabaseInfo))
-            return false;
-        return GetHashCode() == (obj as DatabaseInfo)!.GetHashCode();
-    }
+    public override bool Equals(object? obj) => obj is not null || obj is not DatabaseInfo ? false : GetHashCode() == (obj as DatabaseInfo)!.GetHashCode();
     #endregion
 
     #endregion
