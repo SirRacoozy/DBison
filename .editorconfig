@@ -196,13 +196,25 @@ dotnet_naming_rule.interface_should_be_begins_with_i.severity = error
 dotnet_naming_rule.interface_should_be_begins_with_i.symbols = interface
 dotnet_naming_rule.interface_should_be_begins_with_i.style = begins_with_i
 
-dotnet_naming_rule.types_should_be_pascal_case.severity = error
-dotnet_naming_rule.types_should_be_pascal_case.symbols = types
-dotnet_naming_rule.types_should_be_pascal_case.style = pascal_case
+dotnet_naming_rule.enum_should_be_eenum.severity = error
+dotnet_naming_rule.enum_should_be_eenum.symbols = enum
+dotnet_naming_rule.enum_should_be_eenum.style = eenum
 
-dotnet_naming_rule.non_field_members_should_be_pascal_case.severity = error
-dotnet_naming_rule.non_field_members_should_be_pascal_case.symbols = non_field_members
-dotnet_naming_rule.non_field_members_should_be_pascal_case.style = pascal_case
+dotnet_naming_rule.private_method_should_be___privatemethod.severity = error
+dotnet_naming_rule.private_method_should_be___privatemethod.symbols = private_method
+dotnet_naming_rule.private_method_should_be___privatemethod.style = __privatemethod
+
+dotnet_naming_rule.private_or_internal_field_should_be_m_privateproperty.severity = error
+dotnet_naming_rule.private_or_internal_field_should_be_m_privateproperty.symbols = private_or_internal_field
+dotnet_naming_rule.private_or_internal_field_should_be_m_privateproperty.style = m_privateproperty
+
+dotnet_naming_rule.property_should_be_pascal_case.severity = error
+dotnet_naming_rule.property_should_be_pascal_case.symbols = property
+dotnet_naming_rule.property_should_be_pascal_case.style = pascal_case
+
+dotnet_naming_rule.parameter_should_be_vars.severity = error
+dotnet_naming_rule.parameter_should_be_vars.symbols = parameter
+dotnet_naming_rule.parameter_should_be_vars.style = vars
 
 # Symbol specifications
 
@@ -210,13 +222,25 @@ dotnet_naming_symbols.interface.applicable_kinds = interface
 dotnet_naming_symbols.interface.applicable_accessibilities = public, internal, private, protected, protected_internal, private_protected
 dotnet_naming_symbols.interface.required_modifiers = 
 
-dotnet_naming_symbols.types.applicable_kinds = class, struct, interface, enum
-dotnet_naming_symbols.types.applicable_accessibilities = public, internal, private, protected, protected_internal, private_protected
-dotnet_naming_symbols.types.required_modifiers = 
+dotnet_naming_symbols.enum.applicable_kinds = enum
+dotnet_naming_symbols.enum.applicable_accessibilities = public, internal, private, protected, protected_internal, private_protected
+dotnet_naming_symbols.enum.required_modifiers = 
 
-dotnet_naming_symbols.non_field_members.applicable_kinds = property, event, method
-dotnet_naming_symbols.non_field_members.applicable_accessibilities = public, internal, private, protected, protected_internal, private_protected
-dotnet_naming_symbols.non_field_members.required_modifiers = 
+dotnet_naming_symbols.private_method.applicable_kinds = method
+dotnet_naming_symbols.private_method.applicable_accessibilities = private
+dotnet_naming_symbols.private_method.required_modifiers = 
+
+dotnet_naming_symbols.property.applicable_kinds = property
+dotnet_naming_symbols.property.applicable_accessibilities = public, internal, private, protected, protected_internal, private_protected
+dotnet_naming_symbols.property.required_modifiers = 
+
+dotnet_naming_symbols.private_or_internal_field.applicable_kinds = field
+dotnet_naming_symbols.private_or_internal_field.applicable_accessibilities = internal, private, private_protected
+dotnet_naming_symbols.private_or_internal_field.required_modifiers = 
+
+dotnet_naming_symbols.parameter.applicable_kinds = parameter
+dotnet_naming_symbols.parameter.applicable_accessibilities = *
+dotnet_naming_symbols.parameter.required_modifiers = 
 
 # Naming styles
 
@@ -229,3 +253,23 @@ dotnet_naming_style.begins_with_i.required_prefix = I
 dotnet_naming_style.begins_with_i.required_suffix = 
 dotnet_naming_style.begins_with_i.word_separator = 
 dotnet_naming_style.begins_with_i.capitalization = pascal_case
+
+dotnet_naming_style.m_privateproperty.required_prefix = m_
+dotnet_naming_style.m_privateproperty.required_suffix = 
+dotnet_naming_style.m_privateproperty.word_separator = 
+dotnet_naming_style.m_privateproperty.capitalization = pascal_case
+
+dotnet_naming_style.__privatemethod.required_prefix = __
+dotnet_naming_style.__privatemethod.required_suffix = 
+dotnet_naming_style.__privatemethod.word_separator = 
+dotnet_naming_style.__privatemethod.capitalization = pascal_case
+
+dotnet_naming_style.vars.required_prefix = 
+dotnet_naming_style.vars.required_suffix = 
+dotnet_naming_style.vars.word_separator = 
+dotnet_naming_style.vars.capitalization = camel_case
+
+dotnet_naming_style.eenum.required_prefix = e
+dotnet_naming_style.eenum.required_suffix = 
+dotnet_naming_style.eenum.word_separator = 
+dotnet_naming_style.eenum.capitalization = pascal_case
