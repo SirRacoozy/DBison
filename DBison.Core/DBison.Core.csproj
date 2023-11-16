@@ -10,4 +10,8 @@
     <PackageReference Include="Microsoft.Data.SqlClient" Version="5.1.2" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\DBison.Plugin\DBison.Plugin.csproj" />
+  </ItemGroup>
+
 </Project>
