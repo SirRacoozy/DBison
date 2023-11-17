@@ -61,6 +61,9 @@ public class OperationResult<T> : OperationResult
     #region - properties -
 
     #region [Result]
+    /// <summary>
+    /// Gets or sets the result.
+    /// </summary>
     public T? Result { get; set; }
     #endregion
 

@@ -9,24 +9,36 @@ public class DatabaseConnectionManager
 {
 
 	#region - ctor -
+    /// <summary>
+    /// Creates an instance of the database connection manager.
+    /// </summary>
 	internal DatabaseConnectionManager()
 	{
-		Connections = new();
+		m_Connections = new();
 	}
 	#endregion
 
 	#region - properties -
 
 	#region [Instance]
-	public static DatabaseConnectionManager Instance = Manager ?? new();
-	#endregion
+    /// <summary>
+    /// Gets the instance of the manager.
+    /// </summary>
+	public static DatabaseConnectionManager Instance = m_Manager ?? new();
+    #endregion
 
-	#region [m_Manager]
-	private static DatabaseConnectionManager? Manager { get; set; }
+    #region [m_Manager]
+    /// <summary>
+    /// Gets or sets the current manager.
+    /// </summary>
+    private static DatabaseConnectionManager? m_Manager { get; set; }
 	#endregion
 
 	#region [m_Connections]
-	private ConcurrentDictionary<DatabaseInfo, SqlConnection> Connections { get; set; }
+    /// <summary>
+    /// Gets or sets the connection dictionary.
+    /// </summary>
+	private ConcurrentDictionary<DatabaseInfo, SqlConnection> m_Connections { get; set; }
 	#endregion
 
 	#endregion
@@ -34,45 +46,65 @@ public class DatabaseConnectionManager
 	#region - methods -
 
 	#region [AddOrGetConnection]
+    /// <summary>
+    /// Add or get the connection for a provided DatabaseInfo object.
+    /// </summary>
+    /// <param name="databaseInfo">The database info object.</param>
+    /// <returns>The sql connection.</returns>
 	public SqlConnection AddOrGetConnection(DatabaseInfo databaseInfo)
 	{
-		if(Connections.ContainsKey(databaseInfo))
+		if(m_Connections.ContainsKey(databaseInfo))
 		{
-			if (Connections.TryGetValue(databaseInfo, out var connection))
+			if (m_Connections.TryGetValue(databaseInfo, out var connection))
 				return connection;
 			connection = __CreateConnection(databaseInfo);
-			Connections[databaseInfo] = connection;
+			m_Connections[databaseInfo] = connection;
 			return connection;
 		}
 
 		var conn = __CreateConnection(databaseInfo);
-        _ = Connections.TryAdd(databaseInfo, conn);
+        _ = m_Connections.TryAdd(databaseInfo, conn);
 		return conn;
 	}
 	#endregion
 
 	#region [CloseConnection]
+    /// <summary>
+    /// Closes the provided sql connection.
+    /// </summary>
+    /// <param name="connection">The sql connection to close.</param>
+    /// <exception cref="ArgumentNullException">Throws if the connection is null.</exception>
 	public void CloseConnection(SqlConnection connection)
 	{
-		if (connection is null) throw new ArgumentNullException(nameof(connection));
-		if (connection.State != ConnectionState.Closed)
+        ArgumentNullException.ThrowIfNull(connection);
+        if (connection.State != ConnectionState.Closed)
 			connection.Close();
-		var connectionsToRemove = Connections.Where(x => x.Value.Equals(connection));
+		var connectionsToRemove = m_Connections.Where(x => x.Value.Equals(connection));
 		foreach (var conn in connectionsToRemove)
-            _ = Connections.TryRemove(conn);
+            _ = m_Connections.TryRemove(conn);
 	}
-	#endregion
+    #endregion
 
-	#region [CloseConnection]
-	public void CloseConnection(DatabaseInfo databaseInfo)
+    #region [CloseConnection]
+    /// <summary>
+    /// Closes the sql connection for the given database info object.
+    /// </summary>
+    /// <param name="databaseInfo">The database info object.</param>
+    /// <exception cref="ArgumentNullException">Throws if the database info object is null.</exception>
+    public void CloseConnection(DatabaseInfo databaseInfo)
 	{
         ArgumentNullException.ThrowIfNull(databaseInfo);
-        if (Connections.ContainsKey(databaseInfo))
-			CloseConnection(Connections[databaseInfo]);
+        if (m_Connections.ContainsKey(databaseInfo))
+			CloseConnection(m_Connections[databaseInfo]);
 	}
 	#endregion
 
 	#region [__CreateConnection]
+    /// <summary>
+    /// Creates a connection for a given database info object.
+    /// </summary>
+    /// <param name="databaseInfo">The database info object.</param>
+    /// <returns>The sql connection.</returns>
 	private SqlConnection __CreateConnection(DatabaseInfo databaseInfo)
 	{
 		var builder = new SqlConnectionStringBuilder()

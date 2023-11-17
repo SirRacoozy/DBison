@@ -14,10 +14,21 @@ public partial class MainWindow : MetroWindow
 
     private void __Click_Click(object sender, System.Windows.RoutedEventArgs e)
     {
-        var path = @"D:\Dbison\DBison.ExamplePlugin\bin\Debug\net8.0\DBison.ExamplePlugin.dll";
-        var loader = new PluginLoader(path);
-        var result = loader.SearchParsingPlugins.First().ParseSearchInput("Hallo Welt");
-        _ = MessageBox.Show($"{result.Name}");
-        
+#if DEBUG
+        __TestPluginSystem();
+#endif
+
     }
+
+#if DEBUG
+    private static void __TestPluginSystem()
+    {
+        var path = @"D:\Dbison\DBison.ExamplePlugin\bin\Debug\net8.0\";
+        var loader = new PluginLoader(path);
+        var r1 = loader.SearchParsingPlugins.First().ParseSearchInput(string.Empty);
+        var r2 = loader.ContextMenuPlugins.First().Execute(null);
+
+        _ = MessageBox.Show($"{r1.Name}\n{r2.Message}");
+    }
+#endif
 }

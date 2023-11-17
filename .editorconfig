@@ -216,6 +216,10 @@ dotnet_naming_rule.parameter_should_be_vars.severity = error
 dotnet_naming_rule.parameter_should_be_vars.symbols = parameter
 dotnet_naming_rule.parameter_should_be_vars.style = vars
 
+dotnet_naming_rule.private_properties_should_be_m_privateproperty.severity = error
+dotnet_naming_rule.private_properties_should_be_m_privateproperty.symbols = private_properties
+dotnet_naming_rule.private_properties_should_be_m_privateproperty.style = m_privateproperty
+
 # Symbol specifications
 
 dotnet_naming_symbols.interface.applicable_kinds = interface
@@ -241,6 +245,10 @@ dotnet_naming_symbols.private_or_internal_field.required_modifiers =
 dotnet_naming_symbols.parameter.applicable_kinds = parameter
 dotnet_naming_symbols.parameter.applicable_accessibilities = *
 dotnet_naming_symbols.parameter.required_modifiers = 
+
+dotnet_naming_symbols.private_properties.applicable_kinds = property
+dotnet_naming_symbols.private_properties.applicable_accessibilities = private
+dotnet_naming_symbols.private_properties.required_modifiers = 
 
 # Naming styles
 
