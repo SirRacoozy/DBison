@@ -1,4 +1,6 @@
 ﻿
+using DBison.Core.Entities;
+
 namespace DBison.Plugin;
 
 public interface ISearchParsingPlugin : IPlugin
