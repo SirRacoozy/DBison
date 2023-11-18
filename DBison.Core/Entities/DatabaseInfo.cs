@@ -57,7 +57,7 @@ public class DatabaseInfo
     /// Gets the hash code of the object.
     /// </summary>
     /// <returns>The hash code.</returns>
-    public override int GetHashCode() => HashCode.Combine(Name, Server, Username, UseIntegratedSecurity);
+    public override int GetHashCode() => HashCode.Combine(Name, Server, Username, Password, UseIntegratedSecurity);
     #endregion
 
     #region [Equals]
