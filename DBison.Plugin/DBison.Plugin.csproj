@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="..\DBison.Core\Entities\DatabaseInfo.cs" Link="Entities\DatabaseInfo.cs" />
+    <Compile Include="..\DBison.Core\Entities\ExtendedDatabaseInfo.cs" Link="Entities\ExtendedDatabaseInfo.cs" />
+    <Compile Include="..\DBison.Core\Helper\OperationResult.cs" Link="Helper\OperationResult.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Entities\" />
+    <Folder Include="Helper\" />
+  </ItemGroup>
+
+</Project>
