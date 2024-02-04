@@ -18,6 +18,7 @@ public class ServerObjectTreeItemViewModel : ViewModelBase
         m_ServerQueryHelper = serverQueryHelper;
         m_ExtendedDatabaseRef = extendedDatabaseRef;
         m_ServerVm = serverVm;
+        __SetContextMenu();
     }
 
     public DatabaseObjectBase DatabaseObject
@@ -102,6 +103,22 @@ public class ServerObjectTreeItemViewModel : ViewModelBase
     private ObservableCollection<ServerObjectTreeItemViewModel> __GetSubVms(List<DatabaseObjectBase> databaseObjects)
     {
         return new(databaseObjects.Select(o => new ServerObjectTreeItemViewModel(o, m_ServerQueryHelper, m_ExtendedDatabaseRef, null)));
+    }
+
+    private void __SetContextMenu()
+    {
+        System.Windows.Application.Current.Dispatcher.Invoke(new Action(() =>
+        {
+            MenuItems = new ObservableCollection<MenuItem>();
+            if (DatabaseObject is DatabaseInfo)
+            {
+                MenuItems.Add(new MenuItem { Header = "New Query" });
+            }
+            else if (DatabaseObject is Table tbl)
+            {
+                MenuItems.Add(new MenuItem { Header = $"Show {tbl.Name} data" });
+            }
+        }));
     }
 
 }

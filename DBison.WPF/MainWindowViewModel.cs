@@ -1,5 +1,6 @@
 ﻿using DBison.Core.Baseclasses;
 using DBison.Core.Entities;
+using DBison.WPF.Dialogs;
 using DBison.WPF.ViewModels;
 using System.Collections.ObjectModel;
 
@@ -38,24 +39,25 @@ public class MainWindowViewModel : ViewModelBase
     }
     #endregion
 
+    public void Execute_AddServer()
+    {
+        var dialog = new AddServerDialog();
+        dialog.ServerConnectRequested += (sender, e) => __AddServer(e);
+        dialog.ShowDialog();
+    }
+
     private void __InitServers()
     {
         Server = new ObservableCollection<ServerViewModel>();
-       //TODO: Server via dialog
         SelectedServer = Server.FirstOrDefault();
     }
 
-    private void __AddServer(string serverName)
+    private void __AddServer(ServerInfo server)
     {
         if (Server == null)
-        {
             Server = new ObservableCollection<ServerViewModel>();
-        }
-        var server = new ServerInfo(serverName)
-        {
-            Username = "", //TODO: Userid here, dialog
-            Password = "", //TODO: PW here, dialog 
-        };
-        Server.Add(new ServerViewModel(server));
+        var newServerViewModel = new ServerViewModel(server);
+        Server.Add(newServerViewModel);
+        SelectedServer = newServerViewModel;
     }
 }

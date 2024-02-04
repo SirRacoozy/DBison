@@ -9,7 +9,6 @@
                  mc:Ignorable="d"
                  Title="DBison"
                  Height="450"
-                 Width="800"
-                 Background="Gray">
+                 Width="800">
   <views:ServerTabbedPage />
 </mah:MetroWindow>

@@ -13,18 +13,14 @@ public class ServerViewModel : ViewModelBase
         m_ServerQueryHelper = new ServerQueryHelper(server);
         m_ServerQueryHelper.LoadServerObjects();
         Server = server;
+        __InitTreeView(server);
         __AddNewQueryPage("Query 1"); //TODO: Add via Button and command
     }
 
     public ServerInfo Server
     {
         get => Get<ServerInfo>() ?? new ServerInfo("LOCALHOST");
-        set
-        {
-            Set(value);
-            if (value != null)
-                __InitTreeView(value);
-        }
+        set => Set(value);
     }
 
     public ObservableCollection<ServerObjectTreeItemViewModel> ServerObjects
@@ -36,6 +32,12 @@ public class ServerViewModel : ViewModelBase
     public ObservableCollection<ServerQueryPageViewModel> ServerQueryPages
     {
         get => Get<ObservableCollection<ServerQueryPageViewModel>>();
+        set => Set(value);
+    }
+
+    public ServerQueryPageViewModel SelectedQueryPage
+    {
+        get => Get<ServerQueryPageViewModel>();
         set => Set(value);
     }
 
@@ -76,19 +78,19 @@ public class ServerViewModel : ViewModelBase
             if (dataBase is ExtendedDatabaseInfo extendedInfo)
             {
                 var tablesNode = __GetTreeItemViewModel(new Table("Tables") { IsMainNode = true }, extendedInfo);
-                tablesNode.ServerObjects.Add(__GetTreeItemViewModel(new Table("Dummy"), extendedInfo)); //Needs to be set, to expand and load real objects then
+                tablesNode.ServerObjects.Add(__GetTreeItemViewModel(new Table("Loading...."), extendedInfo)); //Needs to be set, to expand and load real objects then
                 databaseTreeItemVM.ServerObjects.Add(tablesNode);
 
                 var viewNode = __GetTreeItemViewModel(new Table("Views") { IsMainNode = true }, extendedInfo);
-                viewNode.ServerObjects.Add(__GetTreeItemViewModel(new View("Dummy"), extendedInfo)); //Needs to be set, to expand and load real objects then
+                viewNode.ServerObjects.Add(__GetTreeItemViewModel(new View("Loading...."), extendedInfo)); //Needs to be set, to expand and load real objects then
                 databaseTreeItemVM.ServerObjects.Add(viewNode);
 
                 var triggerNode = __GetTreeItemViewModel(new Table("Trigger") { IsMainNode = true }, extendedInfo);
-                triggerNode.ServerObjects.Add(__GetTreeItemViewModel(new Trigger("Dummy"), extendedInfo)); //Needs to be set, to expand and load real objects then
+                triggerNode.ServerObjects.Add(__GetTreeItemViewModel(new Trigger("Loading...."), extendedInfo)); //Needs to be set, to expand and load real objects then
                 databaseTreeItemVM.ServerObjects.Add(triggerNode);
 
                 var prodceduresNode = __GetTreeItemViewModel(new Table("Procedures") { IsMainNode = true }, extendedInfo);
-                prodceduresNode.ServerObjects.Add(__GetTreeItemViewModel(new StoredProcedure("Dummy"), extendedInfo)); //Needs to be set, to expand and load real objects then
+                prodceduresNode.ServerObjects.Add(__GetTreeItemViewModel(new StoredProcedure("Loading...."), extendedInfo)); //Needs to be set, to expand and load real objects then
                 databaseTreeItemVM.ServerObjects.Add(prodceduresNode);
             }
 

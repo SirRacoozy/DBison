@@ -6,6 +6,7 @@ public class ServerInfo
     public ServerInfo(string serverName)
     {
         ServerName = serverName;
+        //DatabaseInfos = new List<DatabaseInfo>();
     }
 
     #region [ServerName]

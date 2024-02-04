@@ -47,7 +47,8 @@ public class ServerQueryHelper
             if (databaseInfo is ExtendedDatabaseInfo extendedDatabase)
             {
                 var sql = "SELECT name, type  FROM sys.all_objects " +
-              "WHERE type IN ('U')";
+              "WHERE type IN ('U') " +
+              "ORDER BY name ASC";
                 using (var access = new DataConnection(databaseInfo))
                 {
                     var reader = access.GetReader(sql);
@@ -76,7 +77,8 @@ public class ServerQueryHelper
             if (databaseInfo is ExtendedDatabaseInfo extendedDatabase)
             {
                 var sql = "SELECT name, type  FROM sys.all_objects " +
-              "WHERE type IN ('V')";
+              "WHERE type IN ('V') " +
+              "ORDER BY name ASC";
                 using (var access = new DataConnection(databaseInfo))
                 {
                     var reader = access.GetReader(sql);
@@ -105,7 +107,8 @@ public class ServerQueryHelper
             if (databaseInfo is ExtendedDatabaseInfo extendedDatabase)
             {
                 var sql = "SELECT name, type  FROM sys.all_objects " +
-              "WHERE type IN ('TR')";
+              "WHERE type IN ('TR') " +
+              "ORDER BY name ASC";
                 using (var access = new DataConnection(databaseInfo))
                 {
                     var reader = access.GetReader(sql);
@@ -134,7 +137,8 @@ public class ServerQueryHelper
             if (databaseInfo is ExtendedDatabaseInfo extendedDatabase)
             {
                 var sql = "SELECT name, type  FROM sys.all_objects " +
-              "WHERE type IN ('P')";
+              "WHERE type IN ('P') " +
+              "ORDER BY name ASC";
                 using (var access = new DataConnection(databaseInfo))
                 {
                     var reader = access.GetReader(sql);

@@ -1,0 +1,104 @@
+﻿<UserControl x:Class="DBison.WPF.Views.AddServerDialogContent"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:DBison.WPF.Views"
+             xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
+             mc:Ignorable="d"
+             xmlns:sys="clr-namespace:System;assembly=mscorlib"
+             d:DesignHeight="450"
+             d:DesignWidth="800">
+
+  <UserControl.Resources>
+    <sys:Double x:Key="MyFontSize">20</sys:Double>
+  </UserControl.Resources>
+  
+  <Grid Margin="10">
+
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="Auto" />
+    </Grid.RowDefinitions>
+
+    <Grid.ColumnDefinitions>
+      <ColumnDefinition Width="130" />
+      <ColumnDefinition Width="*" />
+    </Grid.ColumnDefinitions>
+
+    <Label Content="Servername"
+           Grid.Row="0"
+           Grid.Column="0"
+           FontSize="{StaticResource MyFontSize}"
+           Margin="0 10 10 0" />
+    <TextBox Grid.Row="0"
+             Grid.Column="1"
+             Text="{Binding ServerName, Mode=TwoWay}"
+             CharacterCasing="Upper"
+             Margin="0 10 0 0"
+             FontSize="{StaticResource MyFontSize}"
+             mah:TextBoxHelper.ClearTextButton="True"
+             mah:TextBoxHelper.AutoWatermark="True"
+             mah:TextBoxHelper.Watermark="Servername" />
+
+    <Label Content="IntegratedSecurity"
+           Grid.Row="1"
+           Grid.Column="0"
+           FontSize="{StaticResource MyFontSize}"
+           Margin="0 10 10 0" />
+    <CheckBox Grid.Row="1"
+              Grid.Column="1"
+              IsChecked="{Binding IntegratedSecurity, Mode=TwoWay}"
+              Margin="0 10 0 0" />
+    <Label Content="Username"
+           Grid.Row="2"
+           Grid.Column="0"
+           FontSize="{StaticResource MyFontSize}"
+           Visibility="{Binding CredentialsVisibility}"
+           Margin="0 10 10 0" />
+    <TextBox Height="Auto"
+             mah:TextBoxHelper.ClearTextButton="True"
+             mah:TextBoxHelper.AutoWatermark="True"
+             mah:TextBoxHelper.Watermark="Username"
+             Text="{Binding UserName, Mode=TwoWay}"
+             MinWidth="50"
+             Margin="0 10 0 0"
+             Grid.Row="2"
+             FontSize="{StaticResource MyFontSize}"
+             Grid.Column="1"
+             Visibility="{Binding CredentialsVisibility}" />
+
+    <Label Content="Password"
+           Grid.Row="3"
+           Grid.Column="0"
+           Margin="0 10 10 0"
+           FontSize="{StaticResource MyFontSize}"
+           Visibility="{Binding CredentialsVisibility}" />
+    <PasswordBox Height="Auto"
+                 PasswordChanged="__PasswordChanged"
+                 MinWidth="50"
+                 Margin="0 10 0 0"
+                 Grid.Row="3"
+                 Grid.Column="1"
+                 FontSize="{StaticResource MyFontSize}"
+                 Visibility="{Binding CredentialsVisibility}" />
+
+    <StackPanel Grid.Row="4"
+                Grid.ColumnSpan="2"
+                Orientation="Horizontal"
+                HorizontalAlignment="Right"
+                Margin="0 10 0 0">
+      <Button Content="Abbrechen"
+              Width="100"
+              Command="{Binding [Cancel]}" />
+      <Button Content="Ok"
+              Margin="5 0 0 0"
+              Width="100"
+              Command="{Binding [Ok]}" />
+    </StackPanel>
+
+  </Grid>
+</UserControl>
