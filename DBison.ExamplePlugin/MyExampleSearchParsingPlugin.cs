@@ -9,5 +9,5 @@ public class MyExampleSearchParsingPlugin : ISearchParsingPlugin
 
     public string Description => throw new NotImplementedException();
 
-    public DatabaseInfo? ParseSearchInput(string searchInput) => new() { Name = nameof(MyExampleSearchParsingPlugin) };
+    public DatabaseInfo? ParseSearchInput(string searchInput) => new(nameof(MyExampleSearchParsingPlugin));
 }

@@ -1,7 +1,5 @@
-﻿using ControlzEx.Standard;
-using DBison.Core.PluginSystem;
+﻿using DBison.Core.PluginSystem;
 using MahApps.Metro.Controls;
-using System.Diagnostics;
 using System.Windows;
 
 namespace DBison.WPF;
@@ -10,7 +8,11 @@ namespace DBison.WPF;
 /// </summary>
 public partial class MainWindow : MetroWindow
 {
-    public MainWindow() => InitializeComponent();
+    public MainWindow()
+    {
+        InitializeComponent();
+        DataContext = new MainWindowViewModel();
+    }
 
     private void __Click_Click(object sender, System.Windows.RoutedEventArgs e)
     {
@@ -28,7 +30,7 @@ public partial class MainWindow : MetroWindow
         var r1 = loader.SearchParsingPlugins.First().ParseSearchInput(string.Empty);
         var r2 = loader.ContextMenuPlugins.First().Execute(null);
 
-        _ = MessageBox.Show($"{r1.Name}\n{r2.Message}");
+        //_ = MessageBox.Show($"{r1.Name}\n{r2.Message}");
     }
 #endif
 }

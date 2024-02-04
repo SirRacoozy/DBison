@@ -4,11 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DBison.Core.Helper;
+namespace DBison.Core.Entities;
 public class OperationResult
 {
     #region - properties -
-    
+
     #region [Succeeded]
     /// <summary>
     /// Gets or sets the succeeded flag.

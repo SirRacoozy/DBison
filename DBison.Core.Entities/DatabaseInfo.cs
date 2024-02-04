@@ -1,20 +1,18 @@
-﻿namespace DBison.Core.Entities;
-public class DatabaseInfo
+﻿
+namespace DBison.Core.Entities;
+public class DatabaseInfo : DatabaseObjectBase
 {
-    #region - properties -
+    public DatabaseInfo(string name) : base(name)
+    {
+    }
 
-    #region [Name]
-    /// <summary>
-    /// Gets or sets the name.
-    /// </summary>
-    public string Name { get; set; } = string.Empty;
-    #endregion
+    #region - properties -
 
     #region [Server]
     /// <summary>
     /// Gets or sets the server.
     /// </summary>
-    public string Server {  get; set; } = string.Empty;
+    public string Server { get; set; } = string.Empty;
     #endregion
 
     #region [Username]
@@ -28,7 +26,7 @@ public class DatabaseInfo
     /// <summary>
     /// Gets or sets the password.
     /// </summary>
-    public string Password { internal get; set; } = string.Empty;
+    public string Password { get; set; } = string.Empty;
     #endregion
 
     #region [UseIntegratedSecurity]

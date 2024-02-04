@@ -1,11 +1,6 @@
 ﻿using DBison.Core.Entities;
-using DBison.Core.Helper;
 using DBison.Plugin;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using ExtendedDatabaseInfo = DBison.Core.Entities.ExtendedDatabaseInfo;
 
 namespace DBison.ExamplePlugin;
 public class MyExampleContextMenuPlugin : IContextMenuPlugin
