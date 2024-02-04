@@ -14,7 +14,6 @@ public class ServerViewModel : ViewModelBase
         m_ServerQueryHelper.LoadServerObjects();
         Server = server;
         __InitTreeView(server);
-        __AddNewQueryPage("Query 1"); //TODO: Add via Button and command
     }
 
     public ServerInfo Server
@@ -65,6 +64,18 @@ public class ServerViewModel : ViewModelBase
         });
     }
 
+    public void AddNewQueryPage(ServerObjectTreeItemViewModel serverObjectTreeItemViewModel)
+    {
+        if (ServerQueryPages == null)
+            ServerQueryPages = new ObservableCollection<ServerQueryPageViewModel>();
+
+        var viewModel = new ServerQueryPageViewModel($"Query ({serverObjectTreeItemViewModel.DatabaseObject.Name}) {ServerQueryPages.Count + 1}");
+
+        ServerQueryPages.Add(viewModel);
+        OnPropertyChanged(nameof(ServerQueryPages));
+        SelectedQueryPage = viewModel;
+    }
+
     private void __InitTreeView(ServerInfo server)
     {
         var treeItems = new ObservableCollection<ServerObjectTreeItemViewModel>(); //Should be the main nodes
@@ -108,15 +119,4 @@ public class ServerViewModel : ViewModelBase
         treeItemViewModel.ServerObjects = new ObservableCollection<ServerObjectTreeItemViewModel>();
         return treeItemViewModel;
     }
-
-    private void __AddNewQueryPage(string name)
-    {
-        if (ServerQueryPages == null)
-            ServerQueryPages = new ObservableCollection<ServerQueryPageViewModel>();
-        var viewModel = new ServerQueryPageViewModel(name);
-
-        ServerQueryPages.Add(viewModel);
-        OnPropertyChanged(nameof(ServerQueryPages));
-    }
-
 }

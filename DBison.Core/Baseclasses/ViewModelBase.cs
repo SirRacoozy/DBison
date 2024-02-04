@@ -144,7 +144,12 @@ public class ViewModelBase : INotifyPropertyChanged
         }
     }
 
-    public void OnCanExecuteChanged(string commandName)
+    public List<string> GetCommandNames()
+    {
+        return m_CommandNames;
+    }
+
+    public virtual void OnCanExecuteChanged(string commandName)
     {
         try
         {

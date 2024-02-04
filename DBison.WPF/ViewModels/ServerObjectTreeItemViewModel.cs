@@ -1,9 +1,11 @@
 ﻿using DBison.Core.Baseclasses;
 using DBison.Core.Entities;
 using DBison.Core.Helper;
+using DBison.Core.Utils.Commands;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Windows.Controls;
+using System.Windows.Input;
 
 namespace DBison.WPF.ViewModels;
 
@@ -33,7 +35,7 @@ public class ServerObjectTreeItemViewModel : ViewModelBase
         set
         {
             Set(value);
-            if (value)
+            if (value && ServerObjects.Count == 1)
                 __LoadSubObjects();
         }
     }
@@ -58,6 +60,32 @@ public class ServerObjectTreeItemViewModel : ViewModelBase
     {
         get => Get<ObservableCollection<MenuItem>>();
         set => Set(value);
+    }
+
+    public void Execute_NewQuery()
+    {
+        m_ServerVm.AddNewQueryPage(this);
+    }
+
+    public void Execute_ShowTableData()
+    {
+
+    }
+
+    public override void OnCanExecuteChanged(string commandName)
+    {
+        GetCommandNames().ForEach(c =>
+        {
+            try
+            {
+                var command = Get<RelayCommand>(commandName);
+                if (command != null)
+                    System.Windows.Application.Current.Dispatcher.Invoke(() => command.OnCanExecuteChanged());
+            }
+            catch (Exception)
+            {
+            }
+        });
     }
 
 
@@ -112,11 +140,11 @@ public class ServerObjectTreeItemViewModel : ViewModelBase
             MenuItems = new ObservableCollection<MenuItem>();
             if (DatabaseObject is DatabaseInfo)
             {
-                MenuItems.Add(new MenuItem { Header = "New Query" });
+                MenuItems.Add(new MenuItem { Header = "New Query", Command = this["NewQuery"] as ICommand });
             }
             else if (DatabaseObject is Table tbl)
             {
-                MenuItems.Add(new MenuItem { Header = $"Show {tbl.Name} data" });
+                MenuItems.Add(new MenuItem { Header = $"Show {tbl.Name} data", Command = this["ShowTableData"] as ICommand });
             }
         }));
     }

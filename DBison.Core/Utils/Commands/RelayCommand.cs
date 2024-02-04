@@ -38,7 +38,7 @@ public class RelayCommand : ICommand
             m_Execute(parameter);
     }
 
-    public void OnCanExecuteChanged()
+    public virtual void OnCanExecuteChanged()
     {
         if (CanExecuteChanged != null)
             CanExecuteChanged(this, EventArgs.Empty);
