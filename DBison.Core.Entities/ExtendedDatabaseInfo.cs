@@ -1,7 +1,7 @@
 ﻿namespace DBison.Core.Entities;
 public class ExtendedDatabaseInfo : DatabaseInfo
 {
-    public ExtendedDatabaseInfo(string name) : base(name)
+    public ExtendedDatabaseInfo(string name, ServerInfo serverInfo) : base(name, serverInfo)
     {
     }
 

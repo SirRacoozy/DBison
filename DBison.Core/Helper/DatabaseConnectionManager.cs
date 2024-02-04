@@ -48,20 +48,21 @@ public class DatabaseConnectionManager
     /// <summary>
     /// Add or get the connection for a provided DatabaseInfo object.
     /// </summary>
+    /// <param name="serverInfo">The server info object.</param>
     /// <param name="databaseInfo">The database info object.</param>
     /// <returns>The sql connection.</returns>
-    public SqlConnection AddOrGetConnection(DatabaseInfo databaseInfo)
+    public SqlConnection AddOrGetConnection(ServerInfo serverInfo, DatabaseInfo databaseInfo)
     {
         if (m_Connections.ContainsKey(databaseInfo))
         {
             if (m_Connections.TryGetValue(databaseInfo, out var connection))
                 return connection;
-            connection = __CreateConnection(databaseInfo);
+            connection = __CreateConnection(serverInfo, databaseInfo);
             m_Connections[databaseInfo] = connection;
             return connection;
         }
 
-        var conn = __CreateConnection(databaseInfo);
+        var conn = __CreateConnection(serverInfo, databaseInfo);
         _ = m_Connections.TryAdd(databaseInfo, conn);
         return conn;
     }
@@ -102,19 +103,21 @@ public class DatabaseConnectionManager
     /// <summary>
     /// Creates a connection for a given database info object.
     /// </summary>
+    /// <param name="serverInfo">The server info object.</param>
     /// <param name="databaseInfo">The database info object.</param>
     /// <returns>The sql connection.</returns>
-    private SqlConnection __CreateConnection(DatabaseInfo databaseInfo)
+    private SqlConnection __CreateConnection(ServerInfo serverInfo, DatabaseInfo databaseInfo)
     {
         var builder = new SqlConnectionStringBuilder()
         {
-            DataSource = databaseInfo.Server,
+            DataSource = serverInfo.ServerName,
             InitialCatalog = databaseInfo.Name,
+            TrustServerCertificate = true, //TODO: do not always trust, check what we need to do, to avoid exception
         };
-        if (!databaseInfo.UseIntegratedSecurity)
+        if (!serverInfo.UseIntegratedSecurity)
         {
-            builder.UserID = databaseInfo.Username;
-            builder.Password = databaseInfo.Password;
+            builder.UserID = serverInfo.Username;
+            builder.Password = serverInfo.Password;
         }
         return new SqlConnection(builder.ToString());
     }

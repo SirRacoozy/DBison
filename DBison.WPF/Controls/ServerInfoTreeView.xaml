@@ -4,27 +4,31 @@
                        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                        xmlns:local="clr-namespace:DBison.WPF.Controls"
+                       xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
                        Background="Transparent"
                        Margin="5">
-    <Grid>
-        <TreeView Background="Transparent"
-                  ItemsSource="{Binding SelectedServer.ServerObjects, Mode=TwoWay}">
-            <TreeView.Resources>
-                <Style TargetType="TreeViewItem">
-                    <Setter Property="IsExpanded"
-                            Value="{Binding IsExpanded}" />
-                </Style>
-            </TreeView.Resources>
-            <TreeView.ItemTemplate>
-                <HierarchicalDataTemplate ItemsSource="{Binding ServerObjects, Mode=TwoWay}">
-                    <TextBlock Text="{Binding DatabaseObject.Name}"
-                               FontSize="20">
-                        <TextBlock.ContextMenu>
-                            <ContextMenu ItemsSource="{Binding MenuItems, Mode=TwoWay}" />
-                        </TextBlock.ContextMenu>
-                    </TextBlock>
-                </HierarchicalDataTemplate>
-            </TreeView.ItemTemplate>
-        </TreeView>
-    </Grid>
+  <Grid DataContext="{Binding SelectedServer}">
+    <mah:ProgressRing IsActive="{Binding IsBusy, Mode=TwoWay}"
+                      Foreground="Blue"
+                      Visibility="Visible" />
+    <TreeView Background="Transparent"
+              ItemsSource="{Binding ServerObjects, Mode=TwoWay}">
+      <TreeView.Resources>
+        <Style TargetType="TreeViewItem">
+          <Setter Property="IsExpanded"
+                  Value="{Binding IsExpanded, Mode=TwoWay}" />
+        </Style>
+      </TreeView.Resources>
+      <TreeView.ItemTemplate>
+        <HierarchicalDataTemplate ItemsSource="{Binding ServerObjects, Mode=TwoWay}">
+          <TextBlock Text="{Binding DatabaseObject.Name}"
+                     FontSize="20">
+            <TextBlock.ContextMenu>
+              <ContextMenu ItemsSource="{Binding MenuItems, Mode=TwoWay}" />
+            </TextBlock.ContextMenu>
+          </TextBlock>
+        </HierarchicalDataTemplate>
+      </TreeView.ItemTemplate>
+    </TreeView>
+  </Grid>
 </local:UserControlBase>

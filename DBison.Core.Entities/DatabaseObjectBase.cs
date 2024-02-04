@@ -12,4 +12,6 @@ public abstract class DatabaseObjectBase
     /// </summary>
     public string Name { get; set; } = string.Empty;
     #endregion
+
+    public bool IsMainNode { get; set; }
 }
