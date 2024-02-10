@@ -2,11 +2,15 @@
 using DBison.Core.Entities;
 using DBison.WPF.Dialogs;
 using DBison.WPF.ViewModels;
+using MahApps.Metro.Controls;
+using MahApps.Metro.Controls.Dialogs;
 using System.Collections.ObjectModel;
+using System.Windows;
 
 namespace DBison.WPF;
 public class MainWindowViewModel : ViewModelBase
 {
+    bool m_Error = false;
     public MainWindowViewModel()
     {
         __InitServers();
@@ -46,6 +50,17 @@ public class MainWindowViewModel : ViewModelBase
         dialog.ShowDialog();
     }
 
+    public void RemoveServer(ServerViewModel server)
+    {
+        if(server != null && Server.Contains(server))
+        {
+            Server.Remove(server);
+            server.Dispose();
+            OnPropertyChanged(nameof(Server));
+            SelectedServer = Server.FirstOrDefault();
+        }
+    }
+
     private void __InitServers()
     {
         Server = new ObservableCollection<ServerViewModel>();
@@ -56,8 +71,23 @@ public class MainWindowViewModel : ViewModelBase
     {
         if (Server == null)
             Server = new ObservableCollection<ServerViewModel>();
-        var newServerViewModel = new ServerViewModel(server);
+        var newServerViewModel = new ServerViewModel(server, __NewServerViewModel_ErrorOccured, this);
+        if (m_Error)
+        {
+            newServerViewModel.Dispose();
+            m_Error = false;
+            return;
+        }
         Server.Add(newServerViewModel);
         SelectedServer = newServerViewModel;
+    }
+
+    private void __NewServerViewModel_ErrorOccured(object? sender, Exception e)
+    {
+        m_Error = true;
+        if (Application.Current.MainWindow is MetroWindow metroWnd)
+        {
+            metroWnd.ShowMessageAsync("Exception occured", e.Message);
+        }
     }
 }

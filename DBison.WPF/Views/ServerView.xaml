@@ -12,7 +12,8 @@
       <RowDefinition Height="*" />
     </Grid.RowDefinitions>
 
-    <Grid Grid.Row="0">
+    <Grid Grid.Row="0"
+          Visibility="{Binding QueryVisibility}">
       <Grid.RowDefinitions>
         <RowDefinition Height="*" />
         <RowDefinition Height="Auto" />
@@ -20,22 +21,40 @@
 
       <TextBox Grid.Row="0"
                FontSize="15"
-               Text="{Binding QueryText, Mode=TwoWay}" />
+               Text="{Binding QueryText, Mode=TwoWay}"
+               AcceptsReturn="True" />
 
       <Button HorizontalAlignment="Right"
               Content="Execute"
               Width="100"
               Grid.Row="1"
-              Margin="0 5 0 5" />
+              Margin="0 5 0 5"
+              Command="{Binding [ExecuteSQL]}" />
 
     </Grid>
 
     <GridSplitter ResizeDirection="Rows"
                   Grid.Row="1"
                   Height="5"
-                  Background="White" />
+                  Background="White"
+                  Visibility="{Binding QueryVisibility}" />
 
-    <DataGrid Grid.Row="2" />
+    <DataGrid AutoGenerateColumns="True"
+              ItemsSource="{Binding ResultSets[0].ResultLines, Mode=TwoWay}"
+              Grid.Row="2" />
 
+    <!--<ItemsControl ItemsSource="{Binding ResultSets, Mode=TwoWay}"
+                  Grid.Row="2"
+                  Width="Auto">
+      <ItemsControl.ItemTemplate>
+        <DataTemplate>
+          <ScrollViewer HorizontalScrollBarVisibility="Auto"
+                        VerticalScrollBarVisibility="Auto">
+            <DataGrid AutoGenerateColumns="True"
+                      ItemsSource="{Binding ResultLines, Mode=TwoWay}" />
+          </ScrollViewer>
+        </DataTemplate>
+      </ItemsControl.ItemTemplate>
+    </ItemsControl>-->
   </Grid>
 </controls:UserControlBase>

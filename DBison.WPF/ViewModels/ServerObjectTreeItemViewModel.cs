@@ -6,27 +6,40 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
 
 namespace DBison.WPF.ViewModels;
 
 public class ServerObjectTreeItemViewModel : ViewModelBase
 {
     ServerQueryHelper m_ServerQueryHelper;
-    ExtendedDatabaseInfo m_ExtendedDatabaseRef;
     ServerViewModel m_ServerVm;
     public ServerObjectTreeItemViewModel(DatabaseObjectBase databaseObject, ServerQueryHelper serverQueryHelper, ExtendedDatabaseInfo extendedDatabaseRef, ServerViewModel serverVm)
     {
+        SelectedBackGround = Brushes.Gray;
         DatabaseObject = databaseObject;
         m_ServerQueryHelper = serverQueryHelper;
-        m_ExtendedDatabaseRef = extendedDatabaseRef;
+        ExtendedDatabaseRef = extendedDatabaseRef;
         m_ServerVm = serverVm;
         __SetContextMenu();
+    }
+
+    public Brush SelectedBackGround
+    {
+        get => Get<Brush>();
+        set => Set(value);
     }
 
     public DatabaseObjectBase DatabaseObject
     {
         get => Get<DatabaseObjectBase>();
         set => Set(value);
+    }
+
+    public ExtendedDatabaseInfo ExtendedDatabaseRef
+    {
+        get => Get<ExtendedDatabaseInfo>();
+        private set => Set(value);
     }
 
     public bool IsExpanded
@@ -69,7 +82,7 @@ public class ServerObjectTreeItemViewModel : ViewModelBase
 
     public void Execute_ShowTableData()
     {
-
+        m_ServerVm.AddTableDataPage(this);
     }
 
     public override void OnCanExecuteChanged(string commandName)
@@ -82,8 +95,9 @@ public class ServerObjectTreeItemViewModel : ViewModelBase
                 if (command != null)
                     System.Windows.Application.Current.Dispatcher.Invoke(() => command.OnCanExecuteChanged());
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                m_ServerVm.ExecuteError(ex);
             }
         });
     }
@@ -93,36 +107,43 @@ public class ServerObjectTreeItemViewModel : ViewModelBase
     {
         var task = new Task(() =>
         {
-            if (m_ExtendedDatabaseRef == null || !DatabaseObject.IsMainNode || m_ServerVm == null)
+            if (ExtendedDatabaseRef == null || !DatabaseObject.IsMainNode || m_ServerVm == null)
                 return;
 
-            if (DatabaseObject is Table)
+            try
             {
-                m_ServerVm.SetBusyState(true);
-                m_ServerQueryHelper.LoadTables(m_ExtendedDatabaseRef);
-                ServerObjects = __GetSubVms(new(m_ExtendedDatabaseRef.Tables));
-                m_ServerVm.SetBusyState(false);
+                if (DatabaseObject is Table)
+                {
+                    m_ServerVm.SetBusyState(true);
+                    m_ServerQueryHelper.LoadTables(ExtendedDatabaseRef);
+                    ServerObjects = __GetSubVms(new(ExtendedDatabaseRef.Tables));
+                    m_ServerVm.SetBusyState(false);
+                }
+                else if (DatabaseObject is View)
+                {
+                    m_ServerVm.SetBusyState(true);
+                    m_ServerQueryHelper.LoadViews(ExtendedDatabaseRef);
+                    ServerObjects = __GetSubVms(new(ExtendedDatabaseRef.Views));
+                    m_ServerVm.SetBusyState(false);
+                }
+                else if (DatabaseObject is Trigger)
+                {
+                    m_ServerVm.SetBusyState(true);
+                    m_ServerQueryHelper.LoadTrigger(ExtendedDatabaseRef);
+                    ServerObjects = __GetSubVms(new(ExtendedDatabaseRef.Triggers));
+                    m_ServerVm.SetBusyState(false);
+                }
+                else if (DatabaseObject is StoredProcedure)
+                {
+                    m_ServerVm.SetBusyState(true);
+                    m_ServerQueryHelper.LoadProcedures(ExtendedDatabaseRef);
+                    ServerObjects = __GetSubVms(new(ExtendedDatabaseRef.Procedures));
+                    m_ServerVm.SetBusyState(false);
+                }
             }
-            else if (DatabaseObject is View)
+            catch (Exception ex)
             {
-                m_ServerVm.SetBusyState(true);
-                m_ServerQueryHelper.LoadViews(m_ExtendedDatabaseRef);
-                ServerObjects = __GetSubVms(new(m_ExtendedDatabaseRef.Views));
-                m_ServerVm.SetBusyState(false);
-            }
-            else if (DatabaseObject is Trigger)
-            {
-                m_ServerVm.SetBusyState(true);
-                m_ServerQueryHelper.LoadTrigger(m_ExtendedDatabaseRef);
-                ServerObjects = __GetSubVms(new(m_ExtendedDatabaseRef.Triggers));
-                m_ServerVm.SetBusyState(false);
-            }
-            else if (DatabaseObject is StoredProcedure)
-            {
-                m_ServerVm.SetBusyState(true);
-                m_ServerQueryHelper.LoadProcedures(m_ExtendedDatabaseRef);
-                ServerObjects = __GetSubVms(new(m_ExtendedDatabaseRef.Procedures));
-                m_ServerVm.SetBusyState(false);
+                m_ServerVm.ExecuteError(ex);
             }
         });
         task.Start();
@@ -130,7 +151,7 @@ public class ServerObjectTreeItemViewModel : ViewModelBase
 
     private ObservableCollection<ServerObjectTreeItemViewModel> __GetSubVms(List<DatabaseObjectBase> databaseObjects)
     {
-        return new(databaseObjects.Select(o => new ServerObjectTreeItemViewModel(o, m_ServerQueryHelper, m_ExtendedDatabaseRef, null)));
+        return new(databaseObjects.Select(o => new ServerObjectTreeItemViewModel(o, m_ServerQueryHelper, ExtendedDatabaseRef, m_ServerVm)));
     }
 
     private void __SetContextMenu()

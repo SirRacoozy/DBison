@@ -10,7 +10,10 @@ public class AddServerDialogViewModel : ViewModelBase
     private Window m_Window;
     public event EventHandler<ServerInfo> OkClicked;
 
-    public AddServerDialogViewModel(Window window) => m_Window = window;
+    public AddServerDialogViewModel(Window window)
+    {
+        m_Window = window;
+    }
 
     [DependsUpon(nameof(IntegratedSecurity))]
     public Visibility CredentialsVisibility => IntegratedSecurity ? Visibility.Collapsed : Visibility.Visible;

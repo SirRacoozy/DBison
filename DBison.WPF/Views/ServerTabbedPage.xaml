@@ -5,57 +5,6 @@
                           xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
                           xmlns:local="clr-namespace:DBison.WPF.Views"
                           Margin="5">
-
-  <controls:UserControlBase.Resources>
-    <!--<Style x:Name="QueryTabStyle"
-           TargetType="{x:Type TabItem}">
-      <Setter Property="Template">
-        <Setter.Value>
-          <ControlTemplate TargetType="{x:Type TabItem}">
-            <Grid>
-              <Border Name="Border"
-                      Margin="0 0 5 0"
-                      BorderThickness="1 1 1 0"
-                      CornerRadius="4 4 0 0"
-                      Focusable="False">
-                <ContentPresenter x:Name="ContentSite"
-                                  ContentSource="Header"
-                                  VerticalAlignment="Center"
-                                  HorizontalAlignment="Center"
-                                  RecognizesAccessKey="True" />
-              </Border>
-
-            </Grid>
-            <ControlTemplate.Triggers>
-              <Trigger Property="IsSelected"
-                       Value="True">
-                <Setter Property="FontWeight"
-                        Value="Bold" />
-                <Setter TargetName="Border"
-                        Property="Background"
-                        Value="Gray" />
-              </Trigger>
-            </ControlTemplate.Triggers>
-          </ControlTemplate>
-        </Setter.Value>
-      </Setter>
-      <Setter Property="HeaderTemplate">
-        <Setter.Value>
-          <DataTemplate>
-            <ContentPresenter Content="{Binding Header}"
-                              Margin="5" />
-          </DataTemplate>
-        </Setter.Value>
-      </Setter>
-      <Setter Property="FontFamily"
-              Value="Arial" />
-      <Setter Property="FontSize"
-              Value="16" />
-      <Setter Property="Foreground"
-              Value="White" />
-    </Style>-->
-  </controls:UserControlBase.Resources>
-
   <Grid>
 
     <Grid.ColumnDefinitions>
@@ -104,6 +53,7 @@
                   Background="White" />
 
     <controls:TabControlBase ItemsSource="{Binding Server, Mode=TwoWay}"
+                             SelectedIndex="0"
                              SelectedItem="{Binding SelectedServer, Mode=TwoWay}"
                              Grid.Row="0"
                              Grid.RowSpan="2"
@@ -114,6 +64,7 @@
       <controls:TabControlBase.ContentTemplate>
         <DataTemplate>
           <controls:TabControlBase ItemsSource="{Binding ServerQueryPages, Mode=TwoWay}"
+                                   SelectedIndex="0"
                                    SelectedItem="{Binding SelectedQueryPage, Mode=TwoWay}">
             <controls:TabControlBase.ContentTemplate>
               <DataTemplate>

@@ -1,5 +1,7 @@
 ﻿using DBison.Core.Entities;
 using DBison.Core.Extender;
+using Microsoft.Data.SqlClient;
+using System.Data;
 
 namespace DBison.Core.Helper;
 public class ServerQueryHelper
@@ -13,29 +15,6 @@ public class ServerQueryHelper
     public void LoadServerObjects()
     {
         __LoadDataBases();
-    }
-
-    private void __LoadDataBases()
-    {
-        if (m_Server == null)
-            return;
-        var sql = "SELECT name as dataBaseName, state_desc isOnline FROM sys.databases " +
-            "WHERE name NOT IN ('master','tempdb','model','msdb')" +
-            "ORDER BY name ASC";
-        using (var access = new DataConnection(new DatabaseInfo("master", m_Server)))
-        {
-            var reader = access.GetReader(sql);
-            if (reader != null && reader.HasRows)
-            {
-                while (reader.Read())
-                {
-                    m_Server.DatabaseInfos.Add(new ExtendedDatabaseInfo(reader[0].ToStringValue(), m_Server)
-                    {
-
-                    });
-                }
-            }
-        }
     }
 
     public void LoadTables(DatabaseInfo databaseInfo)
@@ -155,6 +134,57 @@ public class ServerQueryHelper
         }
         catch (Exception)
         {
+        }
+    }
+
+    public DataTable FillDataTable(DatabaseInfo databaseInfo, string tableName, int top)
+    {
+        if (tableName.IsNullOrEmpty())
+            return null;
+        var sql = $"SELECT TOP {top} * FROM {tableName}";
+
+        using (var access = new DataConnection(databaseInfo))
+        {
+            using (SqlDataAdapter dataAdapter = new SqlDataAdapter(sql, access.GetConnectionRef()))
+            {
+                using (SqlCommandBuilder commandBuilder = new SqlCommandBuilder(dataAdapter))
+                {
+                    try
+                    {
+                        var table = new DataTable();
+                        dataAdapter.Fill(table);
+                        table.TableName = tableName;
+                        return table;
+                    }
+                    catch (Exception)
+                    {
+                        return null;
+                    }
+                }
+            }
+        }
+    }
+
+    private void __LoadDataBases()
+    {
+        if (m_Server == null)
+            return;
+        var sql = "SELECT name as dataBaseName, state_desc isOnline FROM sys.databases " +
+            "WHERE name NOT IN ('master','tempdb','model','msdb')" +
+            "ORDER BY name ASC";
+        using (var access = new DataConnection(new DatabaseInfo("master", m_Server)))
+        {
+            var reader = access.GetReader(sql);
+            if (reader != null && reader.HasRows)
+            {
+                while (reader.Read())
+                {
+                    m_Server.DatabaseInfos.Add(new ExtendedDatabaseInfo(reader[0].ToStringValue(), m_Server)
+                    {
+
+                    });
+                }
+            }
         }
     }
 }

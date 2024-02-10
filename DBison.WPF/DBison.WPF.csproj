@@ -17,4 +17,15 @@
     <ProjectReference Include="..\DBison.Core\DBison.Core.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Themes\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Page Update="Themes\Generic.xaml">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      <Generator></Generator>
+    </Page>
+  </ItemGroup>
+
 </Project>

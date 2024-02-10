@@ -17,21 +17,11 @@ public class DataConnection : IDisposable
 
     public SqlDataReader GetReader(string sql)
     {
-        try
-        {
-            __Prepare();
-            return __GetCommand(sql).ExecuteReader();
-        }
-        catch (Exception ex)
-        {
-            __CleanUp();
-            return null;
-        }
-        finally
-        {
-
-        }
+        __Prepare();
+        return __GetCommand(sql).ExecuteReader();
     }
+
+    public SqlConnection GetConnectionRef() => m_Connection;
 
     public void CloseConnection()
     {

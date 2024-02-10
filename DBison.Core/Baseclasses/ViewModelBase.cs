@@ -8,7 +8,7 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 
 namespace DBison.Core.Baseclasses;
-public class ViewModelBase : INotifyPropertyChanged
+public class ViewModelBase : INotifyPropertyChanged, IDisposable
 {
     private const string m_EXECUTE_PREFIX = "Execute_";
     private const string m_CANEXECUTE_PREFIX = "CanExecute_";
@@ -21,6 +21,7 @@ public class ViewModelBase : INotifyPropertyChanged
     private readonly List<string> m_CommandNames;
     private IDictionary<string, MethodInfo> m_Methods;
     private IDictionary<string, DependsUponObject> m_DependsUponDict;
+    private bool m_DisposedValue;
 
     public ViewModelBase()
     {
@@ -162,6 +163,28 @@ public class ViewModelBase : INotifyPropertyChanged
         }
     }
 
+    protected virtual void Dispose(bool disposing)
+    {
+        if (!m_DisposedValue)
+        {
+            if (disposing)
+            {
+                // TODO: dispose managed state (managed objects)
+            }
+
+            // TODO: free unmanaged resources (unmanaged objects) and override finalizer
+            // TODO: set large fields to null
+            m_DisposedValue = true;
+        }
+    }
+
+    public void Dispose()
+    {
+        // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+        Dispose(disposing: true);
+        GC.SuppressFinalize(this);
+    }
+
     private string __GetPropertyName<T>(Expression<Func<T>> expression)
     {
         if (expression.Body is MemberExpression memberExpr)
@@ -261,5 +284,3 @@ public class ViewModelBase : INotifyPropertyChanged
         }
     }
 }
-
-
