@@ -122,7 +122,7 @@ public class ServerViewModel : ViewModelBase
     #region [AddNewQueryPage]
     public void AddNewQueryPage(ServerObjectTreeItemViewModel serverObjectTreeItemViewModel)
     {
-        var viewModel = new ServerQueryPageViewModel($"Query {ServerQueryPages.Count + 1} ({serverObjectTreeItemViewModel.DatabaseObject.Name})", this);
+        var viewModel = new ServerQueryPageViewModel($"Query {ServerQueryPages.Count + 1} [{serverObjectTreeItemViewModel.DatabaseObject.Name}]", this, serverObjectTreeItemViewModel.DatabaseObject, m_ServerQueryHelper);
         ServerQueryPages.Add(viewModel);
         SelectedQueryPage = viewModel;
     }
@@ -136,19 +136,12 @@ public class ServerViewModel : ViewModelBase
         if (serverObjectTreeItemViewModel.DatabaseObject is not Table)
             return;
 
-        var viewModel = new ServerQueryPageViewModel($"Table Data TOP {top} ({serverObjectTreeItemViewModel.DatabaseObject.Name})", this);
+        var viewModel = new ServerQueryPageViewModel($"Table Data TOP {top} ({serverObjectTreeItemViewModel.DatabaseObject.Name})", this, serverObjectTreeItemViewModel.DatabaseObject, m_ServerQueryHelper);
         viewModel.ResultOnly = true;
 
-        var dataTable = m_ServerQueryHelper.FillDataTable(serverObjectTreeItemViewModel.ExtendedDatabaseRef, serverObjectTreeItemViewModel.DatabaseObject.Name, top);
+        var sql = $"SELECT TOP {top} * FROM {serverObjectTreeItemViewModel.DatabaseObject.Name}";
 
-        if (dataTable == null)
-            return;
-
-        viewModel.ResultSets.Add(new ResultSetViewModel()
-        {
-            ResultLines = dataTable.DefaultView
-        });
-
+        viewModel.FillDataTable(sql, serverObjectTreeItemViewModel.ExtendedDatabaseRef);
         ServerQueryPages.Add(viewModel);
         SelectedQueryPage = viewModel;
     }
@@ -205,7 +198,7 @@ public class ServerViewModel : ViewModelBase
     {
         var treeItems = new ObservableCollection<ServerObjectTreeItemViewModel>(); //Should be the main nodes
 
-        var databaseNode = __GetTreeItemViewModel(new DatabaseInfo("Databases", new ServerInfo("")), null); //First Main Node
+        var databaseNode = __GetTreeItemViewModel(new DatabaseInfo("Databases", new ServerInfo("")) { IsMainNode = true }, null); //First Main Node
         databaseNode.IsExpanded = true;
         foreach (var dataBase in server.DatabaseInfos)
         {

@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:controls="clr-namespace:DBison.WPF.Controls"
              xmlns:local="clr-namespace:DBison.WPF"
+             xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
              StartupUri="MainWindow.xaml">
   <Application.Resources>
     <ResourceDictionary>
@@ -76,15 +77,21 @@
                 <Grid.ColumnDefinitions>
                   <ColumnDefinition Width="*" />
                   <ColumnDefinition Width="Auto" />
+                  <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
 
                 <TextBlock Text="{Binding Header}"
                            Grid.Column="0"
                            VerticalAlignment="Center" />
-                <controls:CrossButton Grid.Column="1"
+                <mah:ProgressRing Grid.Column="1"
+                                  IsActive="{Binding IsLoading, Mode=TwoWay, FallbackValue=False}"
+                                  Width="16"
+                                  Margin="5 0 0 0"
+                                  Height="16" />
+                <controls:CrossButton Grid.Column="2"
                                       Margin="5 0 0 0"
                                       Width="20"
-                                      Command="{Binding [Close]}"/>
+                                      Command="{Binding [Close]}" />
               </Grid>
             </DataTemplate>
           </Setter.Value>

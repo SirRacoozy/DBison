@@ -156,12 +156,14 @@ public class ServerObjectTreeItemViewModel : ViewModelBase
 
     private void __SetContextMenu()
     {
+        if (DatabaseObject.IsMainNode)
+            return;
         System.Windows.Application.Current.Dispatcher.Invoke(new Action(() =>
         {
             MenuItems = new ObservableCollection<MenuItem>();
             if (DatabaseObject is DatabaseInfo)
             {
-                MenuItems.Add(new MenuItem { Header = "New Query", Command = this["NewQuery"] as ICommand });
+                MenuItems.Add(new MenuItem { Header = $"New Query - [{DatabaseObject.Name}]", Command = this["NewQuery"] as ICommand });
             }
             else if (DatabaseObject is Table tbl)
             {

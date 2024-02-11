@@ -137,11 +137,10 @@ public class ServerQueryHelper
         }
     }
 
-    public DataTable FillDataTable(DatabaseInfo databaseInfo, string tableName, int top)
+    public DataTable FillDataTable(DatabaseInfo databaseInfo, string sql)
     {
-        if (tableName.IsNullOrEmpty())
+        if (sql.IsNullOrEmpty())
             return null;
-        var sql = $"SELECT TOP {top} * FROM {tableName}";
 
         using (var access = new DataConnection(databaseInfo))
         {
@@ -149,17 +148,9 @@ public class ServerQueryHelper
             {
                 using (SqlCommandBuilder commandBuilder = new SqlCommandBuilder(dataAdapter))
                 {
-                    try
-                    {
-                        var table = new DataTable();
-                        dataAdapter.Fill(table);
-                        table.TableName = tableName;
-                        return table;
-                    }
-                    catch (Exception)
-                    {
-                        return null;
-                    }
+                    var table = new DataTable();
+                    dataAdapter.Fill(table);
+                    return table;
                 }
             }
         }

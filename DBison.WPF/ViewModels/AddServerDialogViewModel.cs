@@ -13,6 +13,9 @@ public class AddServerDialogViewModel : ViewModelBase
     public AddServerDialogViewModel(Window window)
     {
         m_Window = window;
+        ServerName = "LOCALHOST";
+        Password = "comeback";
+        UserName = "gobabygo";
     }
 
     [DependsUpon(nameof(IntegratedSecurity))]

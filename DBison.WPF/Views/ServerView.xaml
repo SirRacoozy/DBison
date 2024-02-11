@@ -3,6 +3,7 @@
                           xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                           xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                           xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                          xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
                           xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                           Margin="5">
   <Grid>
@@ -22,14 +23,25 @@
       <TextBox Grid.Row="0"
                FontSize="15"
                Text="{Binding QueryText, Mode=TwoWay}"
-               AcceptsReturn="True" />
+               AcceptsReturn="True"
+               SelectionChanged="__SelectionChanged"
+               LostFocus="__LostTextBoxFocus" />
 
-      <Button HorizontalAlignment="Right"
-              Content="Execute"
-              Width="100"
-              Grid.Row="1"
-              Margin="0 5 0 5"
-              Command="{Binding [ExecuteSQL]}" />
+      <StackPanel Orientation="Horizontal"
+                  Grid.Row="1"
+                  HorizontalAlignment="Right"
+                  Margin="0 10 0 10">
+
+        <Button Content="Clear results"
+                Width="100"
+                Command="{Binding [ClearResult]}" />
+
+        <Button Content="Execute"
+                Width="100"
+                Margin="10 0 0 0"
+                Command="{Binding [ExecuteSQL]}" />
+
+      </StackPanel>
 
     </Grid>
 
@@ -39,22 +51,18 @@
                   Background="White"
                   Visibility="{Binding QueryVisibility}" />
 
-    <DataGrid AutoGenerateColumns="True"
-              ItemsSource="{Binding ResultSets[0].ResultLines, Mode=TwoWay}"
-              Grid.Row="2" />
-
-    <!--<ItemsControl ItemsSource="{Binding ResultSets, Mode=TwoWay}"
-                  Grid.Row="2"
-                  Width="Auto">
-      <ItemsControl.ItemTemplate>
-        <DataTemplate>
-          <ScrollViewer HorizontalScrollBarVisibility="Auto"
-                        VerticalScrollBarVisibility="Auto">
-            <DataGrid AutoGenerateColumns="True"
-                      ItemsSource="{Binding ResultLines, Mode=TwoWay}" />
-          </ScrollViewer>
-        </DataTemplate>
-      </ItemsControl.ItemTemplate>
-    </ItemsControl>-->
+    <ScrollViewer Grid.Row="{Binding ResultGridsRow, Mode=OneWay}"
+                  VerticalAlignment="Top"
+                  Grid.RowSpan="{Binding ResultGridsRowSpan, Mode=OneWay}"
+                  VerticalScrollBarVisibility="Auto">
+      <ItemsControl ItemsSource="{Binding ResultSets, Mode=TwoWay}">
+        <ItemsControl.ItemTemplate>
+          <DataTemplate>
+            <DataGrid ItemsSource="{Binding ResultLines, Mode=TwoWay}"
+                      MaxHeight="{Binding ResultGridsMaxHeight, Mode=OneWay}" />
+          </DataTemplate>
+        </ItemsControl.ItemTemplate>
+      </ItemsControl>
+    </ScrollViewer>
   </Grid>
 </controls:UserControlBase>
