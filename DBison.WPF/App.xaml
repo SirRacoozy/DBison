@@ -64,7 +64,13 @@
                           Value="Italic" />
                   <Setter TargetName="Border"
                           Property="Background"
-                          Value="{Binding SelectedBackGround, Mode=TwoWay, FallbackValue=Gray}" />
+                          Value="#00BBC9" />
+                </Trigger>
+                <Trigger Property="IsSelected"
+                         Value="False">
+                  <Setter TargetName="Border"
+                          Property="Background"
+                          Value="#00747C" />
                 </Trigger>
               </ControlTemplate.Triggers>
             </ControlTemplate>

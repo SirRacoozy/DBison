@@ -31,6 +31,8 @@
         <Style TargetType="Border">
           <Setter Property="CornerRadius"
                   Value="10" />
+          <Setter Property="Padding"
+                  Value="5 0 0 0" />
         </Style>
       </Style.Resources>
     </Style>
