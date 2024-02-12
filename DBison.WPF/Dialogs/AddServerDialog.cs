@@ -10,6 +10,7 @@ public class AddServerDialog
     public void ShowDialog()
     {
         var window = new Window();
+        window.WindowStyle = WindowStyle.None;
         var viewModel = new AddServerDialogViewModel(window);
         viewModel.OkClicked += (sender, e) => { ServerConnectRequested?.Invoke(null, e); };
         window.Content = new AddServerDialogContent()
