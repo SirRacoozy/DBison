@@ -66,13 +66,13 @@ public partial class MainWindow : MetroWindow
     {
         if (WindowState == WindowState.Maximized)
         {
-            MainWindowBorder.BorderThickness = new Thickness(8);
+            MainWindowBorder.BorderThickness = new Thickness(2);
             RestoreButton.Visibility = Visibility.Visible;
             MaximizeButton.Visibility = Visibility.Collapsed;
         }
         else
         {
-            MainWindowBorder.BorderThickness = new Thickness(0);
+            MainWindowBorder.BorderThickness = new Thickness(2);
             RestoreButton.Visibility = Visibility.Collapsed;
             MaximizeButton.Visibility = Visibility.Visible;
         }

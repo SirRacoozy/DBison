@@ -5,77 +5,87 @@
                           xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
                           xmlns:local="clr-namespace:DBison.WPF.Views"
                           Margin="5">
-  <Grid>
+    <Grid>
 
-    <Grid.ColumnDefinitions>
-      <ColumnDefinition Width="1*" />
-      <ColumnDefinition Width="Auto" />
-      <ColumnDefinition Width="5*" />
-    </Grid.ColumnDefinitions>
-
-    <Grid Grid.Column="0">
-      <Grid.RowDefinitions>
-        <RowDefinition Height="Auto" />
-        <RowDefinition Height="*" />
-      </Grid.RowDefinitions>
-
-      <Grid Grid.Row="0">
         <Grid.ColumnDefinitions>
-          <ColumnDefinition Width="*" />
-          <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="1*" />
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="5*" />
         </Grid.ColumnDefinitions>
 
-        <TextBox Text="{Binding FilterText, Mode=TwoWay}"
-                 Grid.Column="0"
-                 Height="Auto"
-                 Margin="0 3 0 0"
-                 VerticalAlignment="Top"
-                 mah:TextBoxHelper.Watermark="Search Here"
-                 TextChanged="__TextChanged" />
+        <Border Grid.Row="0"
+                CornerRadius="10"
+                BorderBrush="#878787"
+                BorderThickness="2"
+                Padding="5"
+                Margin="0 0 5 0">
 
-        <Button Grid.Column="1"
-                Margin="5 0 5 0"
-                Background="Transparent"
-                Command="{Binding [AddServer]}">
-          <Path Fill="White"
-                Data="M3.875,0 L5.125,0 5.125,3.875 9,3.875 9,5.125 5.125,5.125 5.125,9 3.875,9 3.875,5.125 0,5.125 0,3.875 3.875,3.875 3.875,0 z" />
-        </Button>
+            <Grid Grid.Column="0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
 
-      </Grid>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
 
-      <controls:ServerInfoTreeView Grid.Row="1" />
+                    <controls:DBisonTextBox Text="{Binding FilterText, Mode=TwoWay}"
+                                            Grid.Column="0"
+                                            Margin="0 3 0 0"
+                                            VerticalAlignment="Center"
+                                            mah:TextBoxHelper.Watermark="Search"
+                                            TextChanged="__TextChanged" />
+
+                    <Button Grid.Column="1"
+                            Margin="5 0 5 0"
+                            Background="Transparent"
+                            Height="20"
+                            Width="20"
+                            Command="{Binding [AddServer]}">
+                        <Path Fill="White"
+                              Data="M3.875,0 L5.125,0 5.125,3.875 9,3.875 9,5.125 5.125,5.125 5.125,9 3.875,9 3.875,5.125 0,5.125 0,3.875 3.875,3.875 3.875,0 z" />
+                    </Button>
+
+                </Grid>
+
+                <controls:ServerInfoTreeView Grid.Row="1" />
+
+            </Grid>
+
+        </Border>
+
+        <GridSplitter ResizeDirection="Columns"
+                      Grid.Column="1"
+                      Width="5"
+                      Background="White" />
+
+        <controls:TabControlBase ItemsSource="{Binding Server, Mode=TwoWay}"
+                                 SelectedIndex="0"
+                                 SelectedItem="{Binding SelectedServer, Mode=TwoWay}"
+                                 Grid.Row="0"
+                                 Grid.RowSpan="2"
+                                 Grid.Column="2"
+                                 BorderBrush="Transparent"
+                                 BorderThickness="0">
+
+            <controls:TabControlBase.ContentTemplate>
+                <DataTemplate>
+                    <controls:TabControlBase ItemsSource="{Binding ServerQueryPages, Mode=TwoWay}"
+                                             SelectedIndex="0"
+                                             SelectedItem="{Binding SelectedQueryPage, Mode=TwoWay}">
+                        <controls:TabControlBase.ContentTemplate>
+                            <DataTemplate>
+                                <local:ServerView Grid.Row="1" />
+                            </DataTemplate>
+                        </controls:TabControlBase.ContentTemplate>
+                    </controls:TabControlBase>
+                </DataTemplate>
+            </controls:TabControlBase.ContentTemplate>
+
+        </controls:TabControlBase>
 
     </Grid>
-
-    <GridSplitter ResizeDirection="Columns"
-                  Grid.Column="1"
-                  Width="5"
-                  Background="White" />
-
-    <controls:TabControlBase ItemsSource="{Binding Server, Mode=TwoWay}"
-                             SelectedIndex="0"
-                             SelectedItem="{Binding SelectedServer, Mode=TwoWay}"
-                             Grid.Row="0"
-                             Grid.RowSpan="2"
-                             Grid.Column="2"
-                             BorderBrush="Transparent"
-                             BorderThickness="0">
-
-      <controls:TabControlBase.ContentTemplate>
-        <DataTemplate>
-          <controls:TabControlBase ItemsSource="{Binding ServerQueryPages, Mode=TwoWay}"
-                                   SelectedIndex="0"
-                                   SelectedItem="{Binding SelectedQueryPage, Mode=TwoWay}">
-            <controls:TabControlBase.ContentTemplate>
-              <DataTemplate>
-                <local:ServerView Grid.Row="1" />
-              </DataTemplate>
-            </controls:TabControlBase.ContentTemplate>
-          </controls:TabControlBase>
-        </DataTemplate>
-      </controls:TabControlBase.ContentTemplate>
-
-    </controls:TabControlBase>
-
-  </Grid>
 </controls:UserControlBase>

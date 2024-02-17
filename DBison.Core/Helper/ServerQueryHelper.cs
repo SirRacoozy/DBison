@@ -26,7 +26,7 @@ public class ServerQueryHelper
             if (databaseInfo is ExtendedDatabaseInfo extendedDatabase)
             {
                 var sql = "SELECT name, type  FROM sys.all_objects " +
-              "WHERE type IN ('U') " +
+              "WHERE type IN ('U') AND is_ms_shipped != 1 " +
               "ORDER BY name ASC";
                 using (var access = new DataConnection(databaseInfo))
                 {
@@ -56,7 +56,7 @@ public class ServerQueryHelper
             if (databaseInfo is ExtendedDatabaseInfo extendedDatabase)
             {
                 var sql = "SELECT name, type  FROM sys.all_objects " +
-              "WHERE type IN ('V') " +
+              "WHERE type IN ('V') AND is_ms_shipped != 1 " +
               "ORDER BY name ASC";
                 using (var access = new DataConnection(databaseInfo))
                 {
@@ -86,7 +86,7 @@ public class ServerQueryHelper
             if (databaseInfo is ExtendedDatabaseInfo extendedDatabase)
             {
                 var sql = "SELECT name, type  FROM sys.all_objects " +
-              "WHERE type IN ('TR') " +
+              "WHERE type IN ('TR') AND is_ms_shipped != 1 " +
               "ORDER BY name ASC";
                 using (var access = new DataConnection(databaseInfo))
                 {
@@ -116,7 +116,7 @@ public class ServerQueryHelper
             if (databaseInfo is ExtendedDatabaseInfo extendedDatabase)
             {
                 var sql = "SELECT name, type  FROM sys.all_objects " +
-              "WHERE type IN ('P') " +
+              "WHERE type IN ('P') AND is_ms_shipped != 1 " +
               "ORDER BY name ASC";
                 using (var access = new DataConnection(databaseInfo))
                 {

@@ -114,7 +114,11 @@ public class DatabaseConnectionManager
             InitialCatalog = databaseInfo.Name,
             TrustServerCertificate = true, //TODO: do not always trust, check what we need to do, to avoid exception
         };
-        if (!serverInfo.UseIntegratedSecurity)
+        if (serverInfo.UseIntegratedSecurity)
+        {
+            builder.IntegratedSecurity = true;
+        }
+        else
         {
             builder.UserID = serverInfo.Username;
             builder.Password = serverInfo.Password;

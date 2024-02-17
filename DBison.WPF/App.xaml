@@ -5,158 +5,167 @@
              xmlns:local="clr-namespace:DBison.WPF"
              xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
              StartupUri="MainWindow.xaml">
-  <Application.Resources>
-    <ResourceDictionary>
-      <ResourceDictionary.MergedDictionaries>
-        <!-- MahApps.Metro resource dictionaries. Make sure that all file names are Case Sensitive! -->
-        <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Controls.xaml" />
-        <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Fonts.xaml" />
-        <!-- Theme setting -->
-        <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Themes/Light.Blue.xaml" />
-      </ResourceDictionary.MergedDictionaries>
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <!-- MahApps.Metro resource dictionaries. Make sure that all file names are Case Sensitive! -->
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Controls.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Fonts.xaml" />
+                <!-- Theme setting -->
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Themes/Light.Blue.xaml" />
+            </ResourceDictionary.MergedDictionaries>
 
-      <!--<Style TargetType="TextBox">
+            <Style TargetType="Button">
                 <Style.Resources>
                     <Style TargetType="Border">
                         <Setter Property="CornerRadius"
-                                Value="5" />
-                        <Style.Triggers>
-                            <Trigger Property="IsMouseOver"
-                                     Value="true">
-                                <Setter Property="BorderBrush"
-                                        Value="Black" />
-                            </Trigger>
-                        </Style.Triggers>
+                                Value="10" />
                     </Style>
                 </Style.Resources>
-                <Setter Property="BorderBrush"
-                        Value="Black" />
-                <Setter Property="BorderThickness"
-                        Value="3" />
-                <Setter Property="Background"
-                        Value="Transparent" />
-            </Style>-->
+            </Style>
 
-      <Style TargetType="{x:Type TabItem}">
-        <Setter Property="Template">
-          <Setter.Value>
-            <ControlTemplate TargetType="{x:Type TabItem}">
-              <Grid>
-                <Border Name="Border"
-                        Margin="0 0 5 0"
-                        BorderThickness="1 1 1 0"
-                        CornerRadius="4 4 0 0"
-                        Focusable="False">
-                  <ContentPresenter x:Name="ContentSite"
-                                    ContentSource="Header"
-                                    VerticalAlignment="Center"
-                                    HorizontalAlignment="Center"
-                                    RecognizesAccessKey="True" />
-                </Border>
+            <Style TargetType="{x:Type TabItem}">
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type TabItem}">
+                            <Grid>
+                                <Border Name="Border"
+                                        Margin="0 0 5 0"
+                                        BorderThickness="1 1 1 0"
+                                        CornerRadius="4 4 0 0"
+                                        Focusable="False">
+                                    <ContentPresenter x:Name="ContentSite"
+                                                      ContentSource="Header"
+                                                      VerticalAlignment="Center"
+                                                      HorizontalAlignment="Center"
+                                                      RecognizesAccessKey="True" />
+                                </Border>
 
-              </Grid>
-              <ControlTemplate.Triggers>
-                <Trigger Property="IsSelected"
-                         Value="True">
-                  <Setter Property="FontWeight"
-                          Value="Bold" />
-                  <Setter Property="FontStyle"
-                          Value="Italic" />
-                  <Setter TargetName="Border"
-                          Property="Background"
-                          Value="#00BBC9" />
-                </Trigger>
-                <Trigger Property="IsSelected"
-                         Value="False">
-                  <Setter TargetName="Border"
-                          Property="Background"
-                          Value="#00747C" />
-                </Trigger>
-              </ControlTemplate.Triggers>
-            </ControlTemplate>
-          </Setter.Value>
-        </Setter>
-        <Setter Property="HeaderTemplate">
-          <Setter.Value>
-            <DataTemplate>
-              <Grid Margin="5">
-                <Grid.ColumnDefinitions>
-                  <ColumnDefinition Width="*" />
-                  <ColumnDefinition Width="Auto" />
-                  <ColumnDefinition Width="Auto" />
-                </Grid.ColumnDefinitions>
+                            </Grid>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsSelected"
+                                         Value="True">
+                                    <Setter Property="FontWeight"
+                                            Value="Bold" />
+                                    <Setter Property="FontStyle"
+                                            Value="Italic" />
+                                    <Setter TargetName="Border"
+                                            Property="Background"
+                                            Value="#00BBC9" />
+                                </Trigger>
+                                <Trigger Property="IsSelected"
+                                         Value="False">
+                                    <Setter TargetName="Border"
+                                            Property="Background"
+                                            Value="#00747C" />
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+                <Setter Property="HeaderTemplate">
+                    <Setter.Value>
+                        <DataTemplate>
+                            <Grid Margin="5">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
 
-                <TextBlock Text="{Binding Header}"
-                           Grid.Column="0"
-                           VerticalAlignment="Center" />
-                <mah:ProgressRing Grid.Column="1"
-                                  IsActive="{Binding IsLoading, Mode=TwoWay, FallbackValue=False}"
-                                  Width="16"
-                                  Margin="5 0 0 0"
-                                  Height="16" />
-                <controls:CrossButton Grid.Column="2"
-                                      Margin="5 0 0 0"
-                                      Width="20"
-                                      Command="{Binding [Close]}" />
-              </Grid>
-            </DataTemplate>
-          </Setter.Value>
-        </Setter>
-        <Setter Property="FontFamily"
-                Value="Arial" />
-        <Setter Property="FontSize"
-                Value="16" />
-        <Setter Property="Foreground"
-                Value="White" />
-      </Style>
+                                <TextBlock Text="{Binding Header}"
+                                           Grid.Column="0"
+                                           VerticalAlignment="Center" />
+                                <mah:ProgressRing Grid.Column="1"
+                                                  IsActive="{Binding IsLoading, Mode=TwoWay, FallbackValue=False}"
+                                                  Width="16"
+                                                  Margin="5 0 0 0"
+                                                  Height="16" />
+                                <controls:CrossButton Grid.Column="2"
+                                                      Margin="5 0 0 0"
+                                                      Width="20"
+                                                      Command="{Binding [Close]}" />
+                            </Grid>
+                        </DataTemplate>
+                    </Setter.Value>
+                </Setter>
+                <Setter Property="FontFamily"
+                        Value="Arial" />
+                <Setter Property="FontSize"
+                        Value="16" />
+                <Setter Property="Foreground"
+                        Value="White" />
+            </Style>
 
-      <Style  TargetType="{x:Type controls:TabControlBase}">
-        <Setter Property="OverridesDefaultStyle"
-                Value="True" />
-        <Setter Property="SnapsToDevicePixels"
-                Value="True" />
-        <Setter Property="Template">
-          <Setter.Value>
-            <ControlTemplate TargetType="{x:Type controls:TabControlBase}">
-              <Grid KeyboardNavigation.TabNavigation="Local">
-                <Grid.RowDefinitions>
-                  <RowDefinition Height="Auto" />
-                  <RowDefinition Height="*" />
-                </Grid.RowDefinitions>
-                <TabPanel Name="HeaderPanel"
-                          Grid.Row="0"
-                          Panel.ZIndex="1"
-                          Margin="0,0,4,-1"
-                          IsItemsHost="True"
-                          KeyboardNavigation.TabIndex="1"
-                          Background="Transparent" />
-                <Border Name="Border"
-                        Grid.Row="1"
-                        Background="Transparent"
-                        BorderBrush="Transparent"
-                        BorderThickness="1"
-                        CornerRadius="2"
-                        KeyboardNavigation.TabNavigation="Local"
-                        KeyboardNavigation.DirectionalNavigation="Contained"
-                        KeyboardNavigation.TabIndex="2">
-                  <ContentPresenter Name="PART_SelectedContentHost"
-                                    Margin="0"
-                                    ContentSource="SelectedContent" />
-                </Border>
-              </Grid>
-            </ControlTemplate>
-          </Setter.Value>
-        </Setter>
-      </Style>
+            <Style  TargetType="{x:Type controls:TabControlBase}">
+                <Setter Property="OverridesDefaultStyle"
+                        Value="True" />
+                <Setter Property="SnapsToDevicePixels"
+                        Value="True" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type controls:TabControlBase}">
+                            <Grid KeyboardNavigation.TabNavigation="Local">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="*" />
+                                </Grid.RowDefinitions>
+                                <TabPanel Name="HeaderPanel"
+                                          Grid.Row="0"
+                                          Panel.ZIndex="1"
+                                          Margin="0,0,4,-1"
+                                          IsItemsHost="True"
+                                          KeyboardNavigation.TabIndex="1"
+                                          Background="Transparent" />
+                                <Border Name="Border"
+                                        Grid.Row="1"
+                                        Background="Transparent"
+                                        BorderBrush="Transparent"
+                                        BorderThickness="1"
+                                        CornerRadius="2"
+                                        KeyboardNavigation.TabNavigation="Local"
+                                        KeyboardNavigation.DirectionalNavigation="Contained"
+                                        KeyboardNavigation.TabIndex="2">
+                                    <ContentPresenter Name="PART_SelectedContentHost"
+                                                      Margin="0"
+                                                      ContentSource="SelectedContent" />
+                                </Border>
+                            </Grid>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
 
-      <Style TargetType="{x:Type MenuItem}">
+            <Style TargetType="{x:Type MenuItem}">
 
-        <Setter Property="HorizontalContentAlignment"
-                Value="Stretch" />
-        <Setter Property="VerticalContentAlignment"
-                Value="Stretch" />
-      </Style>
+                <Setter Property="HorizontalContentAlignment"
+                        Value="Stretch" />
+                <Setter Property="VerticalContentAlignment"
+                        Value="Stretch" />
+            </Style>
 
-    </ResourceDictionary>
-  </Application.Resources>
+            <Style TargetType="{x:Type controls:DBisonTextBox}">
+                <Setter Property="Foreground"
+                        Value="#BDBDBD" />
+                <Setter Property="FontSize"
+                        Value="16" />
+                <Setter Property="Padding"
+                        Value="5 0 0 0" />
+                <Setter Property="Height"
+                        Value="20" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type controls:DBisonTextBox}">
+                            <Border Background="#878787"
+                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                    CornerRadius="10">
+                                <ScrollViewer x:Name="PART_ContentHost" />
+                            </Border>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+        </ResourceDictionary>
+    </Application.Resources>
 </Application>

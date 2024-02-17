@@ -12,8 +12,8 @@ namespace DBison.WPF.ViewModels;
 
 public class ServerObjectTreeItemViewModel : ViewModelBase
 {
-    ServerQueryHelper m_ServerQueryHelper;
-    ServerViewModel m_ServerVm;
+    readonly ServerQueryHelper m_ServerQueryHelper;
+    readonly ServerViewModel m_ServerVm;
     public ServerObjectTreeItemViewModel(DatabaseObjectBase databaseObject, ServerQueryHelper serverQueryHelper, ExtendedDatabaseInfo extendedDatabaseRef, ServerViewModel serverVm)
     {
         SelectedBackGround = Brushes.Gray;
@@ -55,7 +55,7 @@ public class ServerObjectTreeItemViewModel : ViewModelBase
 
     public ObservableCollection<ServerObjectTreeItemViewModel> ServerObjects
     {
-        get => Get<ObservableCollection<ServerObjectTreeItemViewModel>>();
+        get => Get<ObservableCollection<ServerObjectTreeItemViewModel>>() ?? new ObservableCollection<ServerObjectTreeItemViewModel>();
         set
         {
             if (value != null)

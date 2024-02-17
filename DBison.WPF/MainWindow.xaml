@@ -68,8 +68,8 @@
   </Window.CommandBindings>
 
   <Border x:Name="MainWindowBorder"
-          BorderBrush="Transparent"
-          BorderThickness="0">
+          BorderBrush="DarkRed"
+          BorderThickness="1">
     <Grid x:Name="parentContainer"
           Background="Transparent">
 
