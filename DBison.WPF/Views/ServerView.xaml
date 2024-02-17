@@ -6,63 +6,139 @@
                           xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
                           xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                           Margin="5">
-  <Grid>
-    <Grid.RowDefinitions>
-      <RowDefinition Height="*" />
-      <RowDefinition Height="Auto" />
-      <RowDefinition Height="*" />
-    </Grid.RowDefinitions>
 
-    <Grid Grid.Row="0"
-          Visibility="{Binding QueryVisibility}">
-      <Grid.RowDefinitions>
-        <RowDefinition Height="*" />
-        <RowDefinition Height="Auto" />
-      </Grid.RowDefinitions>
+    <controls:UserControlBase.Resources>
+        <Style TargetType="{x:Type controls:DBisonTextBox}">
+            <Setter Property="Foreground"
+                    Value="#BDBDBD" />
+            <Setter Property="FontSize"
+                    Value="16" />
+            <Setter Property="Padding"
+                    Value="5" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type controls:DBisonTextBox}">
+                        <Border BorderBrush="Transparent"
+                                CornerRadius="10">
+                            <ScrollViewer x:Name="PART_ContentHost" />
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </controls:UserControlBase.Resources>
 
-      <TextBox Grid.Row="0"
-               FontSize="15"
-               Text="{Binding QueryText, Mode=TwoWay}"
-               AcceptsReturn="True"
-               SelectionChanged="__SelectionChanged"
-               LostFocus="__LostTextBoxFocus" />
+    <Border CornerRadius="10"
+            BorderBrush="#00747C"
+            BorderThickness="1">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
 
-      <StackPanel Orientation="Horizontal"
-                  Grid.Row="1"
-                  HorizontalAlignment="Right"
-                  Margin="0 10 0 10">
+            <Grid Grid.Row="0"
+                  Visibility="{Binding QueryVisibility}">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
 
-        <Button Content="Clear results"
-                Width="100"
-                Command="{Binding [ClearResult]}" />
+                <controls:DBisonTextBox Grid.Row="0"
+                                        FontSize="15"
+                                        Text="{Binding QueryText, Mode=TwoWay}"
+                                        AcceptsReturn="True"
+                                        SelectionChanged="__SelectionChanged"
+                                        LostFocus="__LostTextBoxFocus"
+                                        Focusable="True"
+                                        BorderThickness="0"
+                                        HorizontalScrollBarVisibility="Auto"
+                                        VerticalScrollBarVisibility="Auto" />
 
-        <Button Content="Execute"
-                Width="100"
-                Margin="10 0 0 0"
-                Command="{Binding [ExecuteSQL]}" />
+                <StackPanel Orientation="Horizontal"
+                            Grid.Row="1"
+                            HorizontalAlignment="Right"
+                            Margin="0 10 0 10">
 
-      </StackPanel>
+                    <Button Command="{Binding [ClearResult]}"
+                            Height="20"
+                            Width="20">
+                        <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                                <Border>
+                                    <Border Background="#00747C"
+                                            CornerRadius="5">
+                                        <Rectangle x:Name="PathContent"
+                                                   Fill="DarkRed"
+                                                   Width="12"
+                                                   Height="12" />
+                                    </Border>
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsMouseOver"
+                                             Value="True">
+                                        <Setter TargetName="PathContent"
+                                                Property="Fill"
+                                                Value="Gray" />
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Button.Template>
+                    </Button>
 
-    </Grid>
+                    <Button Margin="5 0 5 0"
+                            Command="{Binding [ExecuteSQL]}"
+                            Height="20"
+                            Width="20">
+                        <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                                <Viewbox>
+                                    <Grid Width="24"
+                                          Height="24">
+                                        <Border Background="#00747C"
+                                                CornerRadius="5">
+                                            <Path x:Name="PathContent"
+                                                  Data="M8 5v14l11-7z"
+                                                  Fill="LightGreen" />
+                                        </Border>
+                                    </Grid>
+                                </Viewbox>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsMouseOver"
+                                             Value="True">
+                                        <Setter TargetName="PathContent"
+                                                Property="Fill"
+                                                Value="Gray" />
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Button.Template>
+                    </Button>
+                </StackPanel>
 
-    <GridSplitter ResizeDirection="Rows"
-                  Grid.Row="1"
-                  Height="5"
-                  Background="White"
-                  Visibility="{Binding QueryVisibility}" />
+            </Grid>
 
-    <ScrollViewer Grid.Row="{Binding ResultGridsRow, Mode=OneWay}"
-                  VerticalAlignment="Top"
-                  Grid.RowSpan="{Binding ResultGridsRowSpan, Mode=OneWay}"
-                  VerticalScrollBarVisibility="Auto">
-      <ItemsControl ItemsSource="{Binding ResultSets, Mode=TwoWay}">
-        <ItemsControl.ItemTemplate>
-          <DataTemplate>
-            <DataGrid ItemsSource="{Binding ResultLines, Mode=TwoWay}"
-                      MaxHeight="{Binding ResultGridsMaxHeight, Mode=OneWay}" />
-          </DataTemplate>
-        </ItemsControl.ItemTemplate>
-      </ItemsControl>
-    </ScrollViewer>
-  </Grid>
+            <GridSplitter ResizeDirection="Rows"
+                          Grid.Row="1"
+                          Height="5"
+                          Background="#00747C"
+                          Visibility="{Binding QueryVisibility}"
+                          Focusable="False" />
+
+            <ScrollViewer Grid.Row="{Binding ResultGridsRow, Mode=OneWay}"
+                          VerticalAlignment="Top"
+                          Grid.RowSpan="{Binding ResultGridsRowSpan, Mode=OneWay}"
+                          VerticalScrollBarVisibility="Auto">
+                <ItemsControl ItemsSource="{Binding ResultSets, Mode=TwoWay}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <DataGrid ItemsSource="{Binding ResultLines, Mode=TwoWay}"
+                                      MaxHeight="{Binding ResultGridsMaxHeight, Mode=OneWay}" />
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </ScrollViewer>
+        </Grid>
+    </Border>
 </controls:UserControlBase>

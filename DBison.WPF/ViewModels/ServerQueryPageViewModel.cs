@@ -133,6 +133,8 @@ public class ServerQueryPageViewModel : ViewModelBase
     #region [FillDataTable]
     public void FillDataTable(string sql, DatabaseInfo databaseInfo)
     {
+        if (sql.IsNullOrEmpty())
+            return;
         bool clearResultBeforeExecuteNewQuery = false;
 
         if (clearResultBeforeExecuteNewQuery) //TODO: Setting
