@@ -1,6 +1,5 @@
 ﻿using DBison.Core.PluginSystem;
 using MahApps.Metro.Controls;
-using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Input;
 
@@ -75,6 +74,17 @@ public partial class MainWindow : MetroWindow
             MainWindowBorder.BorderThickness = new Thickness(2);
             RestoreButton.Visibility = Visibility.Collapsed;
             MaximizeButton.Visibility = Visibility.Visible;
+        }
+    }
+
+    private void __MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+    {
+        if (e.ClickCount == 2)
+        {
+            if (WindowState == WindowState.Maximized)
+                SystemCommands.RestoreWindow(this);
+            else
+                SystemCommands.MaximizeWindow(this);
         }
     }
 }
