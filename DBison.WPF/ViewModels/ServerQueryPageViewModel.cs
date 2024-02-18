@@ -135,7 +135,7 @@ public class ServerQueryPageViewModel : ViewModelBase
     {
         if (sql.IsNullOrEmpty())
             return;
-        bool clearResultBeforeExecuteNewQuery = false;
+        bool clearResultBeforeExecuteNewQuery = true; //Display only one, because we have virtualisation problems
 
         if (clearResultBeforeExecuteNewQuery) //TODO: Setting
             ResultSets.Clear();
@@ -143,7 +143,7 @@ public class ServerQueryPageViewModel : ViewModelBase
         int expectedResults = 0;
         int receivedResults = 0;
 
-        var sqls = sql.Split(";").Where(s => s.IsNotNullOrEmpty()); //First simple way to separate sqls. search another way with regex
+        var sqls = sql.Split(";").Where(s => s.IsNotNullOrEmpty()).Take(1); //First simple way to separate sqls. search another way with regex
         expectedResults = sqls.Count();
 
         if (sqls.Any())
@@ -153,7 +153,7 @@ public class ServerQueryPageViewModel : ViewModelBase
         {
             new Task(() =>
             {
-                var dataTable = m_ServerQueryHelper.FillDataTable(databaseInfo, singleSql);
+                var dataTable = m_ServerQueryHelper.FillDataTable(databaseInfo, singleSql.ToStringValue());
 
                 receivedResults++;
 
@@ -164,10 +164,10 @@ public class ServerQueryPageViewModel : ViewModelBase
                     return;
 
                 __ExecuteOnDispatcher(() =>
-                ResultSets.Add(new ResultSetViewModel()
-                {
-                    ResultLines = dataTable.DefaultView
-                }));
+                 ResultSets.Add(new ResultSetViewModel()
+                 {
+                     ResultLines = dataTable.DefaultView
+                 }));
             }).Start();
         }
     }

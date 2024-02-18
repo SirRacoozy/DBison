@@ -80,7 +80,6 @@
 
             <Grid Grid.Row="0"
                   Height="30"
-                  Background="#F999"
                   PreviewMouseLeftButtonDown="__MouseLeftButtonDown">
                 <StackPanel Orientation="Horizontal"
                             HorizontalAlignment="Left"
@@ -224,7 +223,11 @@
             </Grid>
 
             <views:ServerTabbedPage Grid.Row="1"
-                                    x:Name="AppArea" />
+                                    x:Name="AppArea">
+                <!--<ContextMenu>
+                    <MenuItem Header="foo" />
+                </ContextMenu>-->
+            </views:ServerTabbedPage>
         </Grid>
     </Border>
 

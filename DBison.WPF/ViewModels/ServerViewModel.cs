@@ -210,15 +210,15 @@ public class ServerViewModel : ViewModelBase
                 tablesNode.ServerObjects.Add(__GetTreeItemViewModel(new Table("Loading...."), extendedInfo)); //Needs to be set, to expand and load real objects then
                 databaseTreeItemVM.ServerObjects.Add(tablesNode);
 
-                var viewNode = __GetTreeItemViewModel(new Table("Views") { IsMainNode = true }, extendedInfo);
+                var viewNode = __GetTreeItemViewModel(new View("Views") { IsMainNode = true }, extendedInfo);
                 viewNode.ServerObjects.Add(__GetTreeItemViewModel(new View("Loading...."), extendedInfo)); //Needs to be set, to expand and load real objects then
                 databaseTreeItemVM.ServerObjects.Add(viewNode);
 
-                var triggerNode = __GetTreeItemViewModel(new Table("Trigger") { IsMainNode = true }, extendedInfo);
+                var triggerNode = __GetTreeItemViewModel(new Trigger("Trigger") { IsMainNode = true }, extendedInfo);
                 triggerNode.ServerObjects.Add(__GetTreeItemViewModel(new Trigger("Loading...."), extendedInfo)); //Needs to be set, to expand and load real objects then
                 databaseTreeItemVM.ServerObjects.Add(triggerNode);
 
-                var prodceduresNode = __GetTreeItemViewModel(new Table("Procedures") { IsMainNode = true }, extendedInfo);
+                var prodceduresNode = __GetTreeItemViewModel(new StoredProcedure("Procedures") { IsMainNode = true }, extendedInfo);
                 prodceduresNode.ServerObjects.Add(__GetTreeItemViewModel(new StoredProcedure("Loading...."), extendedInfo)); //Needs to be set, to expand and load real objects then
                 databaseTreeItemVM.ServerObjects.Add(prodceduresNode);
             }

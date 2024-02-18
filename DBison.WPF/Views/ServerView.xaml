@@ -30,7 +30,7 @@
 
     <Border CornerRadius="10"
             BorderBrush="#00747C"
-            BorderThickness="1">
+            BorderThickness="2">
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="*" />
@@ -54,7 +54,8 @@
                                         Focusable="True"
                                         BorderThickness="0"
                                         HorizontalScrollBarVisibility="Auto"
-                                        VerticalScrollBarVisibility="Auto" />
+                                        VerticalScrollBarVisibility="Auto"
+                                        CaretBrush="Gray" />
 
                 <StackPanel Orientation="Horizontal"
                             Grid.Row="1"
@@ -126,19 +127,10 @@
                           Visibility="{Binding QueryVisibility}"
                           Focusable="False" />
 
-            <ScrollViewer Grid.Row="{Binding ResultGridsRow, Mode=OneWay}"
-                          VerticalAlignment="Top"
-                          Grid.RowSpan="{Binding ResultGridsRowSpan, Mode=OneWay}"
-                          VerticalScrollBarVisibility="Auto">
-                <ItemsControl ItemsSource="{Binding ResultSets, Mode=TwoWay}">
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate>
-                            <DataGrid ItemsSource="{Binding ResultLines, Mode=TwoWay}"
-                                      MaxHeight="{Binding ResultGridsMaxHeight, Mode=OneWay}" />
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
-            </ScrollViewer>
+            <DataGrid Grid.Row="{Binding ResultGridsRow, Mode=OneWay}"
+                      Grid.RowSpan="{Binding ResultGridsRowSpan, Mode=OneWay}"
+                      ItemsSource="{Binding ResultSets[0].ResultLines, Mode=TwoWay}"
+                      MaxHeight="{Binding ResultGridsMaxHeight, Mode=OneWay}" />
         </Grid>
     </Border>
 </controls:UserControlBase>

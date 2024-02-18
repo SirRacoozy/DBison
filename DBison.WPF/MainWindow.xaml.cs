@@ -87,4 +87,9 @@ public partial class MainWindow : MetroWindow
                 SystemCommands.MaximizeWindow(this);
         }
     }
+
+    private void __Click(object sender, RoutedEventArgs e)
+    {
+
+    }
 }

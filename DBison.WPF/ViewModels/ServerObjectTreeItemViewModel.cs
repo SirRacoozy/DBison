@@ -1,4 +1,5 @@
-﻿using DBison.Core.Baseclasses;
+﻿using DBison.Core.Attributes;
+using DBison.Core.Baseclasses;
 using DBison.Core.Entities;
 using DBison.Core.Helper;
 using DBison.Core.Utils.Commands;
@@ -75,6 +76,25 @@ public class ServerObjectTreeItemViewModel : ViewModelBase
         set => Set(value);
     }
 
+    public bool IsLoading
+    {
+        get => Get<bool>();
+        set => Set(value);
+    }
+
+    [DependsUpon(nameof(DatabaseObject))]
+    [DependsUpon(nameof(IsLoading))]
+    public string TreeItemHeader
+    {
+        get
+        {
+            var baseName = DatabaseObject.Name;
+            if (IsLoading)
+                baseName += " - Loading";
+            return baseName;
+        }
+    }
+
     public void Execute_NewQuery()
     {
         m_ServerVm.AddNewQueryPage(this);
@@ -102,9 +122,10 @@ public class ServerObjectTreeItemViewModel : ViewModelBase
         });
     }
 
-
     private void __LoadSubObjects()
     {
+        if (ServerObjects.Count > 1) //Objects are already loaded on this node
+            return;
         var task = new Task(() =>
         {
             if (ExtendedDatabaseRef == null || !DatabaseObject.IsMainNode || m_ServerVm == null)
@@ -114,31 +135,31 @@ public class ServerObjectTreeItemViewModel : ViewModelBase
             {
                 if (DatabaseObject is Table)
                 {
-                    m_ServerVm.SetBusyState(true);
+                    __SetLoading(true);
                     m_ServerQueryHelper.LoadTables(ExtendedDatabaseRef);
                     ServerObjects = __GetSubVms(new(ExtendedDatabaseRef.Tables));
-                    m_ServerVm.SetBusyState(false);
+                    __SetLoading(false);
                 }
                 else if (DatabaseObject is View)
                 {
-                    m_ServerVm.SetBusyState(true);
+                    __SetLoading(true);
                     m_ServerQueryHelper.LoadViews(ExtendedDatabaseRef);
                     ServerObjects = __GetSubVms(new(ExtendedDatabaseRef.Views));
-                    m_ServerVm.SetBusyState(false);
+                    __SetLoading(false);
                 }
                 else if (DatabaseObject is Trigger)
                 {
-                    m_ServerVm.SetBusyState(true);
+                    __SetLoading(true);
                     m_ServerQueryHelper.LoadTrigger(ExtendedDatabaseRef);
                     ServerObjects = __GetSubVms(new(ExtendedDatabaseRef.Triggers));
-                    m_ServerVm.SetBusyState(false);
+                    __SetLoading(false);
                 }
                 else if (DatabaseObject is StoredProcedure)
                 {
-                    m_ServerVm.SetBusyState(true);
+                    __SetLoading(true);
                     m_ServerQueryHelper.LoadProcedures(ExtendedDatabaseRef);
                     ServerObjects = __GetSubVms(new(ExtendedDatabaseRef.Procedures));
-                    m_ServerVm.SetBusyState(false);
+                    __SetLoading(false);
                 }
             }
             catch (Exception ex)
@@ -147,6 +168,14 @@ public class ServerObjectTreeItemViewModel : ViewModelBase
             }
         });
         task.Start();
+    }
+
+    private void __SetLoading(bool loading)
+    {
+        System.Windows.Application.Current.Dispatcher.Invoke(new Action(() =>
+        {
+            IsLoading = loading;
+        }));
     }
 
     private ObservableCollection<ServerObjectTreeItemViewModel> __GetSubVms(List<DatabaseObjectBase> databaseObjects)
@@ -165,9 +194,9 @@ public class ServerObjectTreeItemViewModel : ViewModelBase
             {
                 MenuItems.Add(new MenuItem { Header = $"New Query - [{DatabaseObject.Name}]", Command = this["NewQuery"] as ICommand });
             }
-            else if (DatabaseObject is Table tbl)
+            else if (DatabaseObject is Table || DatabaseObject is View)
             {
-                MenuItems.Add(new MenuItem { Header = $"Show {tbl.Name} data", Command = this["ShowTableData"] as ICommand });
+                MenuItems.Add(new MenuItem { Header = $"Show {DatabaseObject.Name} data", Command = this["ShowTableData"] as ICommand });
             }
         }));
     }

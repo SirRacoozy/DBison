@@ -137,11 +137,10 @@
             </Style>
 
             <Style TargetType="{x:Type MenuItem}">
-
                 <Setter Property="HorizontalContentAlignment"
-                        Value="Stretch" />
+                        Value="Center" />
                 <Setter Property="VerticalContentAlignment"
-                        Value="Stretch" />
+                        Value="Center" />
             </Style>
 
             <Style TargetType="{x:Type controls:DBisonTextBox}">
