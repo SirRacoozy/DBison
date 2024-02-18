@@ -43,10 +43,10 @@ public static class Settings
     }
 
     [Range(10, 100)]
-    public static uint TranslucentWindowOpacity
+    public static uint TranslucentOpacity
     {
-        get => SettingsHandler.GetSetting("TranslucentWindowOpacity", 100u);
-        set => SettingsHandler.SetSetting("TranslucentWindowOpacity", value.ToString());
+        get => SettingsHandler.GetSetting("TranslucentOpacity", 100u);
+        set => SettingsHandler.SetSetting("TranslucentOpacity", value.ToString());
     }
 
     [Range(0.1, 2.0)]
