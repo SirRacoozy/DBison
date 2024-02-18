@@ -206,7 +206,7 @@ public class ServerQueryPageViewModel : ViewModelBase
              ResultLines = dataTable.DefaultView
          }));
         __CleanTimer();
-        QueryStatisticText = $"Query executed in {m_Stopwatch.Elapsed.TotalSeconds} seconds - {dataTable.Rows.Count} Rows";
+        QueryStatisticText = $"Query executed in {m_Stopwatch.Elapsed.ToString(@"m\:ss\.ff")} - {dataTable.Rows.Count} Rows";
     }
 
     #endregion
