@@ -10,7 +10,7 @@ public static class StringExtender
         else if (rawValue is string rawString)
             return rawString;
         else
-            return rawValue.ToStringValue();
+            return rawValue.ToString();
     }
 
     public static bool IsNotNullOrEmpty(this string value)

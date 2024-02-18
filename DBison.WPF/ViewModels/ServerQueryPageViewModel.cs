@@ -4,6 +4,7 @@ using DBison.Core.Entities;
 using DBison.Core.Extender;
 using DBison.Core.Helper;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Windows;
 
 namespace DBison.WPF.ViewModels;
@@ -101,6 +102,14 @@ public class ServerQueryPageViewModel : ViewModelBase
     public double ResultGridsMaxHeight => ResultOnly ? 300 : double.NaN;
     #endregion
 
+    #region [QueryStatisticText]
+    public string QueryStatisticText
+    {
+        get => Get<string>();
+        set => Set(value);
+    }
+    #endregion
+
     #endregion
     #endregion
 
@@ -138,7 +147,10 @@ public class ServerQueryPageViewModel : ViewModelBase
         bool clearResultBeforeExecuteNewQuery = true; //Display only one, because we have virtualisation problems
 
         if (clearResultBeforeExecuteNewQuery) //TODO: Setting
+        {
             ResultSets.Clear();
+            QueryStatisticText = "Executing...";
+        }
 
         int expectedResults = 0;
         int receivedResults = 0;
@@ -153,21 +165,7 @@ public class ServerQueryPageViewModel : ViewModelBase
         {
             new Task(() =>
             {
-                var dataTable = m_ServerQueryHelper.FillDataTable(databaseInfo, singleSql.ToStringValue());
-
-                receivedResults++;
-
-                if (expectedResults == receivedResults)
-                    __ExecuteOnDispatcher(() => IsLoading = false);
-
-                if (dataTable == null)
-                    return;
-
-                __ExecuteOnDispatcher(() =>
-                 ResultSets.Add(new ResultSetViewModel()
-                 {
-                     ResultLines = dataTable.DefaultView
-                 }));
+                __ExecuteQuery(databaseInfo, expectedResults, ref receivedResults, singleSql);
             }).Start();
         }
     }
@@ -175,11 +173,42 @@ public class ServerQueryPageViewModel : ViewModelBase
     #endregion
 
     #region - private methods -
+
     #region [__ExecuteOnDispatcher]
     private void __ExecuteOnDispatcher(Action actionToExecute)
     {
         _ = System.Windows.Application.Current.Dispatcher.BeginInvoke(actionToExecute);
     }
     #endregion
+
+    #region [__ExecuteQuery]
+    private void __ExecuteQuery(DatabaseInfo databaseInfo, int expectedResults, ref int receivedResults, string singleSql)
+    {
+        var sw = new Stopwatch();
+        sw.Start();
+        var dataTable = m_ServerQueryHelper.FillDataTable(databaseInfo, singleSql.ToStringValue());
+
+        receivedResults++;
+
+        if (expectedResults == receivedResults)
+            __ExecuteOnDispatcher(() => IsLoading = false);
+
+        if (dataTable == null)
+        {
+            sw.Stop();
+            return;
+        }
+
+        sw.Stop();
+
+        __ExecuteOnDispatcher(() =>
+         ResultSets.Add(new ResultSetViewModel()
+         {
+             ResultLines = dataTable.DefaultView
+         }));
+        QueryStatisticText = $"Query executed in {sw.Elapsed.TotalSeconds} seconds - {dataTable.Rows.Count} Rows";
+    }
+    #endregion
+
     #endregion
 }

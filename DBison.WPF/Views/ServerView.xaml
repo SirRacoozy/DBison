@@ -127,10 +127,24 @@
                           Visibility="{Binding QueryVisibility}"
                           Focusable="False" />
 
-            <DataGrid Grid.Row="{Binding ResultGridsRow, Mode=OneWay}"
-                      Grid.RowSpan="{Binding ResultGridsRowSpan, Mode=OneWay}"
-                      ItemsSource="{Binding ResultSets[0].ResultLines, Mode=TwoWay}"
-                      MaxHeight="{Binding ResultGridsMaxHeight, Mode=OneWay}" />
+            <Grid Grid.Row="{Binding ResultGridsRow, Mode=OneWay}"
+                  Grid.RowSpan="{Binding ResultGridsRowSpan, Mode=OneWay}">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <DataGrid Grid.Row="0"
+                          ItemsSource="{Binding ResultSets[0].ResultLines, Mode=TwoWay}"
+                          MaxHeight="{Binding ResultGridsMaxHeight, Mode=OneWay}" 
+                          AutoGeneratingColumn="__AutoGeneratingColumn"/>
+
+                <TextBlock Text="{Binding QueryStatisticText, Mode=TwoWay}" 
+                           Grid.Row="1"
+                           HorizontalAlignment="Right"
+                           Margin="0 5 10 5"/>
+
+            </Grid>
         </Grid>
     </Border>
 </controls:UserControlBase>
