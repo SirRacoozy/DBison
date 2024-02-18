@@ -37,6 +37,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="App.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
     <Page Update="Themes\Generic.xaml">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
       <Generator></Generator>
