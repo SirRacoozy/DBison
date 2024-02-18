@@ -6,12 +6,15 @@ using DBison.Core.Helper;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Windows;
+using System.Windows.Threading;
 
 namespace DBison.WPF.ViewModels;
 public class ServerQueryPageViewModel : ViewModelBase
 {
     ServerViewModel m_ServerViewModel;
     ServerQueryHelper m_ServerQueryHelper;
+    DispatcherTimer m_ExecutionTimer;
+    Stopwatch m_Stopwatch;
 
     #region Ctor
     public ServerQueryPageViewModel(string name, ServerViewModel serverViewModel, DatabaseObjectBase databaseObject, ServerQueryHelper serverQueryHelper)
@@ -184,8 +187,7 @@ public class ServerQueryPageViewModel : ViewModelBase
     #region [__ExecuteQuery]
     private void __ExecuteQuery(DatabaseInfo databaseInfo, int expectedResults, ref int receivedResults, string singleSql)
     {
-        var sw = new Stopwatch();
-        sw.Start();
+        __PrepareTimer();
         var dataTable = m_ServerQueryHelper.FillDataTable(databaseInfo, singleSql.ToStringValue());
 
         receivedResults++;
@@ -195,20 +197,56 @@ public class ServerQueryPageViewModel : ViewModelBase
 
         if (dataTable == null)
         {
-            sw.Stop();
+            __CleanTimer();
             return;
         }
-
-        sw.Stop();
-
         __ExecuteOnDispatcher(() =>
          ResultSets.Add(new ResultSetViewModel()
          {
              ResultLines = dataTable.DefaultView
          }));
-        QueryStatisticText = $"Query executed in {sw.Elapsed.TotalSeconds} seconds - {dataTable.Rows.Count} Rows";
+        __CleanTimer();
+        QueryStatisticText = $"Query executed in {m_Stopwatch.Elapsed.ToString(@"m\:ss\.ffff")} minutes - {dataTable.Rows.Count.ToString("N0")} Rows";
+    }
+
+    #endregion
+
+    #region [__PrepareTimer]
+    private void __PrepareTimer()
+    {
+        __ExecuteOnDispatcher(() =>
+        {
+            if (m_ExecutionTimer == null)
+            {
+                m_ExecutionTimer = new DispatcherTimer();
+                m_ExecutionTimer.Interval = TimeSpan.FromSeconds(1);
+                m_ExecutionTimer.Tick += __ExecutionTimer_Tick;
+            }
+            m_Stopwatch = new Stopwatch();
+            m_ExecutionTimer?.Stop();
+            m_ExecutionTimer?.Start();
+            m_Stopwatch.Start();
+        });
     }
     #endregion
+
+    private void __CleanTimer()
+    {
+        __ExecuteOnDispatcher(() =>
+        {
+            m_ExecutionTimer?.Stop();
+            m_Stopwatch?.Stop();
+        });
+    }
+
+    private void __ExecutionTimer_Tick(object? sender, EventArgs e)
+    {
+        __ExecuteOnDispatcher(() =>
+        {
+            QueryStatisticText = $"Executing - " + m_Stopwatch.Elapsed.ToString(@"mm\:ss\.ffff");
+        });
+    }
+
 
     #endregion
 }
