@@ -206,7 +206,7 @@ public class ServerQueryPageViewModel : ViewModelBase
              ResultLines = dataTable.DefaultView
          }));
         __CleanTimer();
-        QueryStatisticText = $"Query executed in {m_Stopwatch.Elapsed.ToString(@"m\:ss\.ff")} - {dataTable.Rows.Count} Rows";
+        QueryStatisticText = $"Query executed in {m_Stopwatch.Elapsed.ToString(@"m\:ss\.ffff")} minutes - {dataTable.Rows.Count.ToString("N0")} Rows";
     }
 
     #endregion
@@ -243,7 +243,7 @@ public class ServerQueryPageViewModel : ViewModelBase
     {
         __ExecuteOnDispatcher(() =>
         {
-            QueryStatisticText = $"Executing - " + m_Stopwatch.Elapsed.ToString(@"m\:ss");
+            QueryStatisticText = $"Executing - " + m_Stopwatch.Elapsed.ToString(@"mm\:ss\.ffff");
         });
     }
 
