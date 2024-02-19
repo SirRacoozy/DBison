@@ -1,4 +1,5 @@
-﻿using System.Configuration;
+﻿using Newtonsoft.Json;
+using System.Configuration;
 
 namespace DBison.Core.Utils.SettingsSystem;
 internal static class SettingsHandler
@@ -23,6 +24,9 @@ internal static class SettingsHandler
                 return defaultValue;
 
             var setting = m_Config.AppSettings.Settings[key].Value;
+
+            if (typeof(T) == typeof(List<string>))
+                return (T)Convert.ChangeType(JsonConvert.DeserializeObject<List<string>>(setting), typeof(List<string>));
 
             return string.IsNullOrEmpty(setting) ? defaultValue : (T)Convert.ChangeType(setting, typeof(T));
         }

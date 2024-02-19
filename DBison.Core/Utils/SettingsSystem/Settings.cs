@@ -1,4 +1,5 @@
 ﻿using DBison.Core.Attributes;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -101,6 +102,12 @@ public static class Settings
         set => SettingsHandler.SetSetting("OpenQueryOnServerAdded", value.ToString());
     }
 
+    [Setting("Database", "Deactivation of DML list", typeof(List<string>))]
+    public static List<string> DeactionDMLList
+    {
+        get => SettingsHandler.GetSetting("DeactionDMLList", new List<string>());
+        set => SettingsHandler.SetSetting("DeactionDMLList", JsonConvert.SerializeObject(value));
+    }
     public static string GetAllSettingsString()
     {
         var props = typeof(Settings).GetProperties();
