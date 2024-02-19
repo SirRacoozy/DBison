@@ -213,14 +213,14 @@ public class ViewModelBase : INotifyPropertyChanged, IDisposable
 
     private void __ProcessPropertyAttributes(PropertyInfo property)
     {
-        var attributes = property.GetCustomAttributes<DependsUpon>();
+        var attributes = property.GetCustomAttributes<DependsUponAttribute>();
         if (attributes.Any())
             m_DependsUponDict[property.Name] = new DependsUponObject { DependendObjects = attributes.Where(a => a.MemberName.IsNotNullOrEmpty()).Select(m => m.MemberName).ToList() };
     }
 
     private void __ProcessMethodAttributes(MethodInfo method)
     {
-        var attributes = method.GetCustomAttributes<DependsUpon>();
+        var attributes = method.GetCustomAttributes<DependsUponAttribute>();
         if (attributes.Any())
             m_DependsUponDict[method.Name] = new DependsUponObject { DependendObjects = attributes.Where(a => a.MemberName.IsNotNullOrEmpty()).Select(m => m.MemberName).ToList() };
     }
