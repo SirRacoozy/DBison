@@ -1,8 +1,8 @@
 ﻿using DBison.Core.Attributes;
-using DBison.Core.Baseclasses;
 using DBison.Core.Entities;
 using DBison.Core.Helper;
 using DBison.Core.Utils.Commands;
+using DBison.WPF.ClientBaseClasses;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Windows.Controls;
@@ -11,7 +11,7 @@ using System.Windows.Media;
 
 namespace DBison.WPF.ViewModels;
 
-public class ServerObjectTreeItemViewModel : ViewModelBase
+public class ServerObjectTreeItemViewModel : ClientViewModelBase
 {
     readonly ServerQueryHelper m_ServerQueryHelper;
     readonly ServerViewModel m_ServerVm;

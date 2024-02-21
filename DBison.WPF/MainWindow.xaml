@@ -12,6 +12,7 @@
                  ShowCloseButton="False"
                  ShowMaxRestoreButton="False"
                  ShowMinButton="False"
+                 WindowState="Maximized"
                  x:Name="this">
 
     <Window.Resources>

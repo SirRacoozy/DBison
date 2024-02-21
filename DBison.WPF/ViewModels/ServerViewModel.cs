@@ -1,12 +1,12 @@
-﻿using DBison.Core.Baseclasses;
-using DBison.Core.Entities;
+﻿using DBison.Core.Entities;
 using DBison.Core.Extender;
 using DBison.Core.Helper;
+using DBison.WPF.ClientBaseClasses;
 using System.Collections.ObjectModel;
 using System.Windows.Media;
 
 namespace DBison.WPF.ViewModels;
-public class ServerViewModel : ViewModelBase
+public class ServerViewModel : ClientViewModelBase
 {
     ServerQueryHelper m_ServerQueryHelper;
     Action<object?, Exception> m_OnError;

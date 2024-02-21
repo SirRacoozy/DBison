@@ -1,11 +1,11 @@
 ﻿using DBison.Core.Attributes;
-using DBison.Core.Baseclasses;
 using DBison.Core.Entities;
 using DBison.Core.Extender;
+using DBison.WPF.ClientBaseClasses;
 using System.Windows;
 
 namespace DBison.WPF.ViewModels;
-public class AddServerDialogViewModel : ViewModelBase
+public class AddServerDialogViewModel : ClientViewModelBase
 {
     private Window m_Window;
     public event EventHandler<ServerInfo> OkClicked;

@@ -1,5 +1,5 @@
-﻿using DBison.Core.Baseclasses;
-using DBison.Core.Entities;
+﻿using DBison.Core.Entities;
+using DBison.WPF.ClientBaseClasses;
 using DBison.WPF.Dialogs;
 using DBison.WPF.ViewModels;
 using MahApps.Metro.Controls;
@@ -8,7 +8,7 @@ using System.Collections.ObjectModel;
 using System.Windows;
 
 namespace DBison.WPF;
-public class MainWindowViewModel : ViewModelBase
+public class MainWindowViewModel : ClientViewModelBase
 {
     bool m_Error = false;
     public MainWindowViewModel()
@@ -52,7 +52,7 @@ public class MainWindowViewModel : ViewModelBase
 
     public void RemoveServer(ServerViewModel server)
     {
-        if(server != null && Server.Contains(server))
+        if (server != null && Server.Contains(server))
         {
             Server.Remove(server);
             server.Dispose();

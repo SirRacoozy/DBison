@@ -1,20 +1,20 @@
 ﻿using DBison.Core.Attributes;
-using DBison.Core.Baseclasses;
 using DBison.Core.Entities;
 using DBison.Core.Extender;
 using DBison.Core.Helper;
+using DBison.WPF.ClientBaseClasses;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Threading;
 
 namespace DBison.WPF.ViewModels;
-public class ServerQueryPageViewModel : ViewModelBase
+public class ServerQueryPageViewModel : ClientViewModelBase
 {
     ServerViewModel m_ServerViewModel;
     ServerQueryHelper m_ServerQueryHelper;
     DispatcherTimer m_ExecutionTimer;
-    Stopwatch m_Stopwatch;
+    Stopwatch m_Stopwatch = new Stopwatch();
 
     #region Ctor
     public ServerQueryPageViewModel(string name, ServerViewModel serverViewModel, DatabaseObjectBase databaseObject, ServerQueryHelper serverQueryHelper)
@@ -124,6 +124,16 @@ public class ServerQueryPageViewModel : ViewModelBase
     }
     #endregion
 
+    [DependsUpon(nameof(QueryText))]
+    [DependsUpon(nameof(SelectedQueryText))]
+    [DependsUpon(nameof(IsLoading))]
+    public bool CanExecute_ExecuteSQL()
+    {
+        if (IsLoading)
+            return false;
+        return (SelectedQueryText != null && SelectedQueryText.Trim().IsNotNullOrEmpty()) || (QueryText != null && QueryText.Trim().IsNotNullOrEmpty());
+    }
+
     #region [Execute_ExecuteSQL]
     public void Execute_ExecuteSQL()
     {
@@ -132,10 +142,35 @@ public class ServerQueryPageViewModel : ViewModelBase
     }
     #endregion
 
+    [DependsUpon(nameof(IsLoading))]
+    [DependsUpon(nameof(ResultSets))]
+    public bool CanExecute_ClearResult()
+    {
+        return !IsLoading && ResultSets.Any(r => r.ResultLines.Count != 0);
+    }
+
     #region [Execute_ClearResult]
     public void Execute_ClearResult()
     {
         ResultSets.Clear();
+        OnPropertyChanged(nameof(IsLoading));
+        QueryStatisticText = string.Empty;
+    }
+    #endregion
+
+    #region [CanExecute_CancelQuery]
+    [DependsUpon(nameof(IsLoading))]
+    public bool CanExecute_CancelQuery()
+    {
+        return IsLoading;
+    }
+    #endregion
+
+    #region [Execute_CancelQuery]
+    public void Execute_CancelQuery()
+    {
+        m_ServerQueryHelper.Cancel();
+        IsLoading = false;
     }
     #endregion
 
@@ -154,12 +189,7 @@ public class ServerQueryPageViewModel : ViewModelBase
             ResultSets.Clear();
             QueryStatisticText = "Executing...";
         }
-
-        int expectedResults = 0;
-        int receivedResults = 0;
-
         var sqls = sql.Split(";").Where(s => s.IsNotNullOrEmpty()).Take(1); //First simple way to separate sqls. search another way with regex
-        expectedResults = sqls.Count();
 
         if (sqls.Any())
             IsLoading = true;
@@ -168,7 +198,7 @@ public class ServerQueryPageViewModel : ViewModelBase
         {
             new Task(() =>
             {
-                __ExecuteQuery(databaseInfo, expectedResults, ref receivedResults, singleSql);
+                __ExecuteQuery(databaseInfo, singleSql);
             }).Start();
         }
     }
@@ -185,34 +215,33 @@ public class ServerQueryPageViewModel : ViewModelBase
     #endregion
 
     #region [__ExecuteQuery]
-    private void __ExecuteQuery(DatabaseInfo databaseInfo, int expectedResults, ref int receivedResults, string singleSql)
+    private void __ExecuteQuery(DatabaseInfo databaseInfo, string singleSql)
     {
-        __PrepareTimer();
-        var dataTable = m_ServerQueryHelper.FillDataTable(databaseInfo, singleSql.ToStringValue());
+        __PrepareTimer(() =>
+        {
+            var dataTable = m_ServerQueryHelper.FillDataTable(databaseInfo, singleSql.ToStringValue(), __Error);
 
-        receivedResults++;
-
-        if (expectedResults == receivedResults)
             __ExecuteOnDispatcher(() => IsLoading = false);
 
-        if (dataTable == null)
-        {
+            if (dataTable == null)
+            {
+                __CleanTimer();
+                return;
+            }
+            __ExecuteOnDispatcher(() =>
+             ResultSets.Add(new ResultSetViewModel()
+             {
+                 ResultLines = dataTable.DefaultView
+             }));
             __CleanTimer();
-            return;
-        }
-        __ExecuteOnDispatcher(() =>
-         ResultSets.Add(new ResultSetViewModel()
-         {
-             ResultLines = dataTable.DefaultView
-         }));
-        __CleanTimer();
-        QueryStatisticText = $"Query executed in {m_Stopwatch.Elapsed.ToString(@"m\:ss\.ffff")} minutes - {dataTable.Rows.Count.ToString("N0")} Rows";
+            QueryStatisticText = $"Query executed in {m_Stopwatch.Elapsed.ToString(@"m\:ss\.ffff")} minutes - {dataTable.Rows.Count.ToString("N0")} Rows";
+        });
     }
 
     #endregion
 
     #region [__PrepareTimer]
-    private void __PrepareTimer()
+    private void __PrepareTimer(Action onTimerPrepared)
     {
         __ExecuteOnDispatcher(() =>
         {
@@ -227,6 +256,7 @@ public class ServerQueryPageViewModel : ViewModelBase
             m_ExecutionTimer?.Start();
             m_Stopwatch.Start();
         });
+        onTimerPrepared?.Invoke();
     }
     #endregion
 
@@ -247,6 +277,12 @@ public class ServerQueryPageViewModel : ViewModelBase
         });
     }
 
+
+    private void __Error(Exception ex)
+    {
+        QueryStatisticText = $"ERROR occured";
+        m_ServerViewModel.ExecuteError(ex);
+    }
 
     #endregion
 }

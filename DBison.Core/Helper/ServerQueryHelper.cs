@@ -2,11 +2,13 @@
 using DBison.Core.Extender;
 using Microsoft.Data.SqlClient;
 using System.Data;
+using System.Data.Common;
 
 namespace DBison.Core.Helper;
 public class ServerQueryHelper
 {
     ServerInfo m_Server;
+    private SqlCommand m_Command;
     public ServerQueryHelper(ServerInfo serverInfo)
     {
         m_Server = serverInfo;
@@ -137,23 +139,41 @@ public class ServerQueryHelper
         }
     }
 
-    public DataTable FillDataTable(DatabaseInfo databaseInfo, string sql)
+    public DataTable FillDataTable(DatabaseInfo databaseInfo, string sql, Action<Exception> errorCallback)
     {
         if (sql.IsNullOrEmpty())
             return null;
 
-        using (var access = new DataConnection(databaseInfo))
+        try
         {
-            using (SqlDataAdapter dataAdapter = new SqlDataAdapter(sql, access.GetConnectionRef()))
+            using (var access = new DataConnection(databaseInfo))
             {
-                using (SqlCommandBuilder commandBuilder = new SqlCommandBuilder(dataAdapter))
+                using (SqlDataAdapter dataAdapter = new SqlDataAdapter(sql, access.GetConnectionRef()))
                 {
-                    var table = new DataTable();
-                    dataAdapter.Fill(table);
-                    return table;
+                    m_Command = dataAdapter.SelectCommand ?? dataAdapter.UpdateCommand ?? dataAdapter.InsertCommand ?? dataAdapter.DeleteCommand;
+                    using (SqlCommandBuilder commandBuilder = new SqlCommandBuilder(dataAdapter))
+                    {
+                        var table = new DataTable();
+                        dataAdapter.Fill(table);
+                        return table;
+                    }
                 }
             }
         }
+        catch (Exception ex)
+        {
+            errorCallback(ex);
+            return null;
+        }
+        finally
+        {
+            m_Command = null;
+        }
+    }
+
+    public void Cancel()
+    {
+        m_Command?.Cancel();
     }
 
     private void __LoadDataBases()
