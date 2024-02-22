@@ -110,7 +110,7 @@ public class DatabaseConnectionManager
     {
         var builder = new SqlConnectionStringBuilder()
         {
-            DataSource = serverInfo.ServerName,
+            DataSource = serverInfo.Name,
             InitialCatalog = databaseInfo.Name,
             TrustServerCertificate = true, //TODO: do not always trust, check what we need to do, to avoid exception
         };

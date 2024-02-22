@@ -63,7 +63,7 @@
                       Background="White"
                       Visibility="Collapsed"/>
 
-        <controls:TabControlBase ItemsSource="{Binding Server, Mode=TwoWay}"
+        <controls:TabControlBase ItemsSource="{Binding QueryPages, Mode=OneWay}"
                                  SelectedIndex="0"
                                  SelectedItem="{Binding SelectedServer, Mode=TwoWay}"
                                  Grid.Row="0"
@@ -74,15 +74,7 @@
 
             <controls:TabControlBase.ContentTemplate>
                 <DataTemplate>
-                    <controls:TabControlBase ItemsSource="{Binding ServerQueryPages, Mode=TwoWay}"
-                                             SelectedIndex="0"
-                                             SelectedItem="{Binding SelectedQueryPage, Mode=TwoWay}">
-                        <controls:TabControlBase.ContentTemplate>
-                            <DataTemplate>
-                                <local:ServerView Grid.Row="1" />
-                            </DataTemplate>
-                        </controls:TabControlBase.ContentTemplate>
-                    </controls:TabControlBase>
+                    <local:ServerView Grid.Row="1"  />
                 </DataTemplate>
             </controls:TabControlBase.ContentTemplate>
 

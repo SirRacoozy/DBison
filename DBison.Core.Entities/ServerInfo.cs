@@ -5,8 +5,7 @@ public class ServerInfo
 {
     public ServerInfo(string serverName)
     {
-        ServerName = serverName;
-        //DatabaseInfos = new List<DatabaseInfo>();
+        Name = serverName;
     }
 
     #region [ServerName]
@@ -14,7 +13,7 @@ public class ServerInfo
     /// Gets or sets the ServerName.
     /// We can connect to an SQL Server with IP or Hostname
     /// </summary>
-    public string ServerName { get; private set; }
+    public string Name { get; private set; }
     #endregion
 
     #region [ServerAddress]

@@ -9,11 +9,11 @@
                        Margin="5">
     <local:UserControlBase.Resources>
     </local:UserControlBase.Resources>
-    <Grid DataContext="{Binding SelectedServer}">
+    <Grid>
         <mah:ProgressRing IsActive="{Binding IsBusy, Mode=TwoWay, FallbackValue=false}"
                           Visibility="Visible" />
         <TreeView Background="Transparent"
-                  ItemsSource="{Binding ServerObjects, Mode=TwoWay}">
+                  ItemsSource="{Binding Server, Mode=TwoWay}">
             <TreeView.Resources>
                 <Style TargetType="TreeViewItem">
                     <Setter Property="IsExpanded"

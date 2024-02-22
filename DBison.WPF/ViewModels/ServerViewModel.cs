@@ -31,8 +31,8 @@ public class ServerViewModel : ClientViewModelBase
         set => Set(value);
     }
 
-    #region [Server]
-    public ServerInfo Server
+    #region [DatabaseObject]
+    public ServerInfo DatabaseObject
     {
         get => Get<ServerInfo>() ?? new ServerInfo("LOCALHOST");
         set => Set(value);
@@ -84,9 +84,9 @@ public class ServerViewModel : ClientViewModelBase
     {
         get
         {
-            if (Server.ServerName.IsNotNullOrEmpty())
-                return Server.ServerName;
-            return Server.ServerAddress.ToString();
+            if (DatabaseObject.Name.IsNotNullOrEmpty())
+                return DatabaseObject.Name;
+            return DatabaseObject.ServerAddress.ToString();
         }
     }
     #endregion
@@ -106,7 +106,7 @@ public class ServerViewModel : ClientViewModelBase
 
     public void Execute_Close()
     {
-        m_MainWindowViewModel.RemoveServer(this);
+        m_MainWindowViewModel.RemoveServer(this); // REMOVE?
     }
 
     #region [SetBusyState]
@@ -125,6 +125,7 @@ public class ServerViewModel : ClientViewModelBase
         var viewModel = new ServerQueryPageViewModel($"Query {ServerQueryPages.Count + 1} [{serverObjectTreeItemViewModel.DatabaseObject.Name}]", this, serverObjectTreeItemViewModel.DatabaseObject, m_ServerQueryHelper);
         ServerQueryPages.Add(viewModel);
         SelectedQueryPage = viewModel;
+        m_MainWindowViewModel.QueryPagesChanged();
     }
     #endregion
 
@@ -144,6 +145,7 @@ public class ServerViewModel : ClientViewModelBase
         viewModel.FillDataTable(sql, serverObjectTreeItemViewModel.ExtendedDatabaseRef);
         ServerQueryPages.Add(viewModel);
         SelectedQueryPage = viewModel;
+        m_MainWindowViewModel.QueryPagesChanged();
     }
     #endregion
 
@@ -162,6 +164,7 @@ public class ServerViewModel : ClientViewModelBase
             queryVm.Dispose();
             OnPropertyChanged(nameof(ServerQueryPages));
             SelectedQueryPage = ServerQueryPages.FirstOrDefault();
+            m_MainWindowViewModel.QueryPagesChanged();
         }
     }
 
@@ -183,7 +186,7 @@ public class ServerViewModel : ClientViewModelBase
         {
             m_ServerQueryHelper = new ServerQueryHelper(server);
             m_ServerQueryHelper.LoadServerObjects();
-            Server = server;
+            DatabaseObject = server;
             __InitTreeView(server);
         }
         catch (Exception ex)

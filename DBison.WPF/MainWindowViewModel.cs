@@ -25,6 +25,20 @@ public class MainWindowViewModel : ClientViewModelBase
     }
     #endregion
 
+    public ObservableCollection<ServerQueryPageViewModel> QueryPages
+    {
+        get => Get<ObservableCollection<ServerQueryPageViewModel>>();
+        set => Set(value);
+    }
+
+    #region [SelectedQueryPage]
+    public ServerQueryPageViewModel SelectedQueryPage
+    {
+        get => Get<ServerQueryPageViewModel>();
+        set => Set(value);
+    }
+    #endregion
+
     #region [SelectedServer]
     public ServerViewModel SelectedServer
     {
@@ -60,6 +74,13 @@ public class MainWindowViewModel : ClientViewModelBase
             OnPropertyChanged(nameof(Server));
             SelectedServer = Server.FirstOrDefault();
         }
+    }
+
+    public void QueryPagesChanged()
+    {
+        QueryPages = new(Server.SelectMany(s => s.ServerQueryPages));
+        OnPropertyChanged(nameof(QueryPages));
+        SelectedQueryPage = QueryPages.Last();
     }
 
     private void __InitServers()

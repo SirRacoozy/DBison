@@ -35,7 +35,7 @@ public class DatabaseInfo : DatabaseObjectBase
     /// Gets the hash code of the object.
     /// </summary>
     /// <returns>The hash code.</returns>
-    public override int GetHashCode() => HashCode.Combine(Name, Server.ServerName, Server.Username, Server.Password, Server.UseIntegratedSecurity);
+    public override int GetHashCode() => HashCode.Combine(Name, Server.Name, Server.Username, Server.Password, Server.UseIntegratedSecurity);
     #endregion
 
     #region [Equals]
