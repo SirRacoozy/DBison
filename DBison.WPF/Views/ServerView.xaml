@@ -50,17 +50,17 @@
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
 
-                <controls:DBisonTextBox Grid.Row="0"
-                                        FontSize="15"
-                                        Text="{Binding QueryText, Mode=TwoWay}"
-                                        AcceptsReturn="True"
-                                        SelectionChanged="__SelectionChanged"
-                                        LostFocus="__LostTextBoxFocus"
-                                        Focusable="True"
-                                        BorderThickness="0"
-                                        HorizontalScrollBarVisibility="Auto"
-                                        VerticalScrollBarVisibility="Auto"
-                                        CaretBrush="Gray" />
+                <controls:LineNumberedTextBox Grid.Row="0"
+                                              FontSize="15"
+                                              Text="{Binding QueryText, Mode=TwoWay}"
+                                              AcceptsReturn="True"
+                                              SelectionChanged="__SelectionChanged"
+                                              LostFocus="__LostTextBoxFocus"
+                                              Focusable="True"
+                                              BorderThickness="0"
+                                              HorizontalScrollBarVisibility="Auto"
+                                              VerticalScrollBarVisibility="Auto"
+                                              CaretBrush="Gray" />
 
                 <StackPanel Orientation="Horizontal"
                             Grid.Row="1"

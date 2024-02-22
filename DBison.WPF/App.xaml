@@ -165,6 +165,41 @@
                 </Setter>
             </Style>
 
+            <Style TargetType="{x:Type controls:LineNumberedTextBox}">
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type controls:LineNumberedTextBox}">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+
+                                <!-- ScrollViewer für Zeilennummern -->
+                                <ScrollViewer x:Name="sv1"
+                                              Grid.Column="0"
+                                              VerticalScrollBarVisibility="Hidden"
+                                              HorizontalScrollBarVisibility="Disabled"
+                                              Loaded="__ScrollViewerLoaded">
+                                    <TextBlock x:Name="PART_LineNumberTextBlock"
+                                               VerticalAlignment="Top"
+                                               HorizontalAlignment="Right"
+                                               TextAlignment="Right"
+                                               Padding="5 0 5 0" />
+                                </ScrollViewer>
+
+                                <!-- ScrollViewer für TextBox-Inhalt -->
+                                <ScrollViewer Grid.Column="1"
+                                              x:Name="PART_ContentHost"
+                                              VerticalScrollBarVisibility="Auto"
+                                              HorizontalScrollBarVisibility="Auto"
+                                              Loaded="__ScrollViewerLoaded"/>
+                            </Grid>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
         </ResourceDictionary>
     </Application.Resources>
 </Application>
