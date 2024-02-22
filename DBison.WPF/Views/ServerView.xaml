@@ -47,25 +47,23 @@
                   Visibility="{Binding QueryVisibility}">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*" />
-                    <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
 
-                <controls:LineNumberedTextBox Grid.Row="0"
-                                              FontSize="15"
+                <controls:LineNumberedTextBox FontSize="15"
                                               Text="{Binding QueryText, Mode=TwoWay}"
                                               AcceptsReturn="True"
                                               SelectionChanged="__SelectionChanged"
                                               LostFocus="__LostTextBoxFocus"
-                                              Focusable="True"
                                               BorderThickness="0"
                                               HorizontalScrollBarVisibility="Auto"
                                               VerticalScrollBarVisibility="Auto"
-                                              CaretBrush="Gray" />
+                                              CaretBrush="Gray"
+                                              Margin="0 5 0 5" />
 
                 <StackPanel Orientation="Horizontal"
-                            Grid.Row="1"
+                            Margin="0 10 15 10"
                             HorizontalAlignment="Right"
-                            Margin="0 10 0 10">
+                            VerticalAlignment="Bottom">
 
                     <controls:CrossButton Command="{Binding [ClearResult]}"
                                           Height="20"
