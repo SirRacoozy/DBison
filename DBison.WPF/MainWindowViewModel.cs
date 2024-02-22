@@ -14,6 +14,7 @@ public class MainWindowViewModel : ClientViewModelBase
     public MainWindowViewModel()
     {
         __InitServers();
+        __ExecuteOnDispatcherWithDelay(Execute_AddServer, TimeSpan.FromSeconds(1));
     }
 
     #region [Server]
@@ -90,4 +91,14 @@ public class MainWindowViewModel : ClientViewModelBase
             metroWnd.ShowMessageAsync("Exception occured", e.Message);
         }
     }
+
+    private void __ExecuteOnDispatcherWithDelay(Action action, TimeSpan delay)
+    {
+        new Task(() => 
+        {
+            Thread.Sleep(delay);
+            Application.Current.Dispatcher.Invoke(action);
+        }).Start();
+    }
+
 }
