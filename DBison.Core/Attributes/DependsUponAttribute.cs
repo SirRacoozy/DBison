@@ -1,10 +1,10 @@
 ﻿namespace DBison.Core.Attributes;
 
 [AttributeUsage(AttributeTargets.Method | AttributeTargets.Property, AllowMultiple = true)]
-public class DependsUpon : Attribute
+public class DependsUponAttribute : Attribute
 {
     public string MemberName;
-    public DependsUpon(string memberName)
+    public DependsUponAttribute(string memberName)
     {
         MemberName = memberName;
     }
