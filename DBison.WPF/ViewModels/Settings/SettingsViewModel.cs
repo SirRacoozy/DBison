@@ -4,6 +4,7 @@ using DBison.Core.Utils.SettingsSystem;
 using DBison.WPF.ClientBaseClasses;
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
+using System.Reflection;
 using System.Windows.Controls;
 
 namespace DBison.WPF.ViewModels;
@@ -29,12 +30,11 @@ public class SettingsViewModel : ClientViewModelBase
                 if (rangeAttributes != null && rangeAttributes.FirstOrDefault() is RangeAttribute rangeAttribute)
                     range = rangeAttribute;
                 var settingsGroup = __AddOrGetSettingsGroupIfNeeded(settingAttribute);
-                settingsGroup.SettingItems.Add(new SettingItemViewModel(settingAttribute, range, property.GetValue(settingAttribute)));
+                settingsGroup.SettingItems.Add(__GetNewSettingsItemViewModel(property, settingAttribute, range));
             }
         }
         OnPropertyChanged(nameof(TabItems));
     }
-
 
     public ObservableCollection<SettingGroupViewModel> SettingGroups
     {
@@ -54,6 +54,13 @@ public class SettingsViewModel : ClientViewModelBase
         settingsGroup = new SettingGroupViewModel(groupName, attribute.Header);
         SettingGroups.Add(settingsGroup);
         return settingsGroup;
+    }
+
+    private SettingItemViewModel __GetNewSettingsItemViewModel(PropertyInfo property, SettingAttribute settingAttribute, RangeAttribute range)
+    {
+        var viewModel = new SettingItemViewModel(settingAttribute, range, property);
+        
+        return viewModel;
     }
 
 }

@@ -57,7 +57,8 @@ internal static class SettingsHandler
                 m_Config.AppSettings.Settings.Add(key, value);
             else
                 m_Config.AppSettings.Settings[key].Value = value;
-
+            m_Config.Save(ConfigurationSaveMode.Modified);
+            ConfigurationManager.RefreshSection(m_Config.AppSettings.SectionInformation.Name);
             return true;
         }
         catch (Exception)
