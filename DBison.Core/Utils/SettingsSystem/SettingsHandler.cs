@@ -23,6 +23,9 @@ internal static class SettingsHandler
             if (m_Config == null)
                 return defaultValue;
 
+            if (m_Config.AppSettings.Settings[key] == null)
+                m_Config.AppSettings.Settings.Add(key, defaultValue.ToString());
+
             var setting = m_Config.AppSettings.Settings[key].Value;
 
             if (typeof(T) == typeof(List<string>))

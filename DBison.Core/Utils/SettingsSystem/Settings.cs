@@ -1,11 +1,7 @@
 ﻿using DBison.Core.Attributes;
 using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace DBison.Core.Utils.SettingsSystem;
 
@@ -64,7 +60,7 @@ public static class Settings
         get => SettingsHandler.GetSetting("UIScaling", 1.0);
         set => SettingsHandler.SetSetting("UIScaling", value.ToString());
     }
-    
+
     [Setting("Performance", "Use Session Store", typeof(bool))]
     public static bool UseSessionStore
     {

@@ -3,7 +3,7 @@
                  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                 xmlns:local="clr-namespace:DBison.WPF"
+                 xmlns:local="clr-namespace:DBison.WPF.Converter"
                  xmlns:sys="clr-namespace:System;assembly=mscorlib"
                  xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
                  xmlns:views="clr-namespace:DBison.WPF.Views"
@@ -16,7 +16,9 @@
                  x:Name="this">
 
     <Window.Resources>
+
         <ResourceDictionary>
+            <local:WidthDividerConverter x:Key="WidthDividerConverter" />
 
             <sys:Double x:Key="EllipseSize">18</sys:Double>
 
@@ -224,13 +226,22 @@
             </Grid>
 
             <views:ServerTabbedPage Grid.Row="1"
-                                    x:Name="AppArea">
-                <!--<ContextMenu>
-                    <MenuItem Header="foo" />
-                </ContextMenu>-->
-            </views:ServerTabbedPage>
+                                    x:Name="AppArea" />
         </Grid>
     </Border>
+
+    <mah:MetroWindow.Flyouts>
+        <mah:FlyoutsControl>
+            <mah:Flyout Header="Settings"
+                        IsOpen="{Binding AreSettingsOpen, Mode=TwoWay}"
+                        Width="{Binding ElementName=this, Path=ActualWidth,
+                Converter={StaticResource WidthDividerConverter}, ConverterParameter=2}"
+                        Position="Right">
+                <views:SettingsDialogContent Margin="10"
+                                             DataContext="{Binding SettingsVm, Mode=OneWay}" />
+            </mah:Flyout>
+        </mah:FlyoutsControl>
+    </mah:MetroWindow.Flyouts>
 
 </mah:MetroWindow>
   

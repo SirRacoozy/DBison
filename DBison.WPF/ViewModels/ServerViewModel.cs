@@ -122,7 +122,7 @@ public class ServerViewModel : ClientViewModelBase
     #region [AddNewQueryPage]
     public void AddNewQueryPage(ServerObjectTreeItemViewModel serverObjectTreeItemViewModel)
     {
-        var viewModel = new ServerQueryPageViewModel($"Query {ServerQueryPages.Count + 1} [{serverObjectTreeItemViewModel.DatabaseObject.Name}]", this, serverObjectTreeItemViewModel.DatabaseObject, m_ServerQueryHelper);
+        var viewModel = new ServerQueryPageViewModel($"Query {ServerQueryPages.Count + 1} - {DatabaseObject.Name}.{serverObjectTreeItemViewModel.DatabaseObject.Name}", this, serverObjectTreeItemViewModel.DatabaseObject, m_ServerQueryHelper);
         ServerQueryPages.Add(viewModel);
         SelectedQueryPage = viewModel;
         m_MainWindowViewModel.QueryPagesChanged();
@@ -137,7 +137,7 @@ public class ServerViewModel : ClientViewModelBase
         if (serverObjectTreeItemViewModel.DatabaseObject is not Table)
             return;
 
-        var viewModel = new ServerQueryPageViewModel($"Table Data TOP {top} ({serverObjectTreeItemViewModel.DatabaseObject.Name})", this, serverObjectTreeItemViewModel.DatabaseObject, m_ServerQueryHelper);
+        var viewModel = new ServerQueryPageViewModel($"Table Data TOP {top} ({DatabaseObject.Name}.{serverObjectTreeItemViewModel.DatabaseObject.Name})", this, serverObjectTreeItemViewModel.DatabaseObject, m_ServerQueryHelper);
         viewModel.ResultOnly = true;
 
         var sql = $"SELECT TOP {top} * FROM {serverObjectTreeItemViewModel.DatabaseObject.Name}";

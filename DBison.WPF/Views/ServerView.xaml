@@ -164,7 +164,8 @@
                 <DataGrid Grid.Row="0"
                           ItemsSource="{Binding ResultSets[0].ResultLines, Mode=TwoWay}"
                           MaxHeight="{Binding ResultGridsMaxHeight, Mode=OneWay}"
-                          AutoGeneratingColumn="__AutoGeneratingColumn" />
+                          AutoGeneratingColumn="__AutoGeneratingColumn"
+                          VerticalAlignment="Stretch"/>
 
                 <TextBlock Text="{Binding QueryStatisticText, Mode=TwoWay}"
                            Grid.Row="1"

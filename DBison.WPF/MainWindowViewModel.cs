@@ -13,6 +13,7 @@ public class MainWindowViewModel : ClientViewModelBase
     bool m_Error = false;
     public MainWindowViewModel()
     {
+        __GetSettings();
         __InitServers();
         __ExecuteOnDispatcherWithDelay(Execute_AddServer, TimeSpan.FromSeconds(1));
     }
@@ -58,11 +59,32 @@ public class MainWindowViewModel : ClientViewModelBase
     }
     #endregion
 
+    #region [SettingsVm]
+    public SettingsViewModel SettingsVm
+    {
+        get => Get<SettingsViewModel>();
+        set => Set(value);
+    }
+    #endregion
+
+    #region [AreSettingsOpen]
+    public bool AreSettingsOpen
+    {
+        get => Get<bool>();
+        set => Set(value);
+    }
+    #endregion
+
     public void Execute_AddServer()
     {
         var dialog = new AddServerDialog();
         dialog.ServerConnectRequested += (sender, e) => __AddServer(e);
         dialog.ShowDialog();
+    }
+
+    public void Execute_OpenSettings()
+    {
+        AreSettingsOpen = !AreSettingsOpen;
     }
 
     public void RemoveServer(ServerViewModel server)
@@ -115,11 +137,16 @@ public class MainWindowViewModel : ClientViewModelBase
 
     private void __ExecuteOnDispatcherWithDelay(Action action, TimeSpan delay)
     {
-        new Task(() => 
+        new Task(() =>
         {
             Thread.Sleep(delay);
             Application.Current.Dispatcher.Invoke(action);
         }).Start();
+    }
+
+    private void __GetSettings()
+    {
+        SettingsVm = new SettingsViewModel();
     }
 
 }
