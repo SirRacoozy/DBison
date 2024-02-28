@@ -7,6 +7,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
     <ApplicationIcon>Resources\AppIcon.ico</ApplicationIcon>
+    <Authors>Marvin "SirRacoozy" Mees, Timo "timi99200" Schulze</Authors>
   </PropertyGroup>
 
   <ItemGroup>

@@ -7,6 +7,8 @@
 
     <IsPackable>false</IsPackable>
     <IsTestProject>true</IsTestProject>
+    <Authors>Marvin "SirRacoozy" Mees, Timo "timi99200" Schulze</Authors>
+
   </PropertyGroup>
 
   <ItemGroup>
