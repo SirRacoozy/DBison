@@ -15,7 +15,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DBison.Plugin", "DBison.Plu
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DBison.ExamplePlugin", "DBison.ExamplePlugin\DBison.ExamplePlugin.csproj", "{D15DC4A2-3CC1-4FC0-82F3-FC0060216934}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DBison.Core.Entities", "DBison.Core.Entities\DBison.Core.Entities.csproj", "{332DC27E-3EE5-44D5-B6DE-EA35FD583B0C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DBison.Core.Entities", "DBison.Core.Entities\DBison.Core.Entities.csproj", "{332DC27E-3EE5-44D5-B6DE-EA35FD583B0C}"
+EndProject
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "DBison.Setup", "DBison.Setup\DBison.Setup.vdproj", "{981044D1-CB22-40AF-948E-FFD5F7AB9807}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -47,6 +49,8 @@ Global
 		{332DC27E-3EE5-44D5-B6DE-EA35FD583B0C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{332DC27E-3EE5-44D5-B6DE-EA35FD583B0C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{332DC27E-3EE5-44D5-B6DE-EA35FD583B0C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{981044D1-CB22-40AF-948E-FFD5F7AB9807}.Debug|Any CPU.ActiveCfg = Release
+		{981044D1-CB22-40AF-948E-FFD5F7AB9807}.Release|Any CPU.ActiveCfg = Release
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
