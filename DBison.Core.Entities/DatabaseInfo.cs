@@ -1,20 +1,14 @@
 ﻿
+using DBison.Core.Entities.Interfaces;
+
 namespace DBison.Core.Entities;
 public class DatabaseInfo : DatabaseObjectBase
 {
-    public DatabaseInfo(string name, ServerInfo serverInfo) : base(name)
+    public DatabaseInfo(string name, ServerInfo server, DatabaseInfo dataBase) : base(name, server, dataBase)
     {
-        Server = serverInfo;
     }
 
     #region - properties -
-
-    #region [Server]
-    /// <summary>
-    /// Gets or sets the server.
-    /// </summary>
-    public ServerInfo Server { get; set; } 
-    #endregion
 
     #endregion
 

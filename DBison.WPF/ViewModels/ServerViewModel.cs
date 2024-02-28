@@ -1,6 +1,7 @@
 ﻿using DBison.Core.Entities;
 using DBison.Core.Extender;
 using DBison.Core.Helper;
+using DBison.Core.Utils.SettingsSystem;
 using DBison.WPF.ClientBaseClasses;
 using System.Collections.ObjectModel;
 using System.Windows.Media;
@@ -123,29 +124,24 @@ public class ServerViewModel : ClientViewModelBase
     public void AddNewQueryPage(ServerObjectTreeItemViewModel serverObjectTreeItemViewModel)
     {
         var viewModel = new ServerQueryPageViewModel($"Query {ServerQueryPages.Count + 1} - {DatabaseObject.Name}.{serverObjectTreeItemViewModel.DatabaseObject.Name}", this, serverObjectTreeItemViewModel.DatabaseObject, m_ServerQueryHelper);
-        ServerQueryPages.Add(viewModel);
-        SelectedQueryPage = viewModel;
-        m_MainWindowViewModel.QueryPagesChanged();
+        __AddQueryPage(viewModel);
     }
     #endregion
 
     #region [AddTableDataPage]
     public void AddTableDataPage(ServerObjectTreeItemViewModel serverObjectTreeItemViewModel)
     {
-        int top = 100;
+        int top = Settings.Limit;
 
-        if (serverObjectTreeItemViewModel.DatabaseObject is not Table)
+        if (serverObjectTreeItemViewModel.DatabaseObject is not Table && serverObjectTreeItemViewModel.DatabaseObject is not View)
             return;
 
-        var viewModel = new ServerQueryPageViewModel($"Table Data TOP {top} ({DatabaseObject.Name}.{serverObjectTreeItemViewModel.DatabaseObject.Name})", this, serverObjectTreeItemViewModel.DatabaseObject, m_ServerQueryHelper);
-        viewModel.ResultOnly = true;
-
         var sql = $"SELECT TOP {top} * FROM {serverObjectTreeItemViewModel.DatabaseObject.Name}";
+        var viewModel = new ServerQueryPageViewModel($"Table Data TOP {top} ({DatabaseObject.Name}.{serverObjectTreeItemViewModel.DatabaseObject.Name})", this, serverObjectTreeItemViewModel.DatabaseObject, m_ServerQueryHelper);
+        viewModel.QueryText = sql;
 
         viewModel.FillDataTable(sql, serverObjectTreeItemViewModel.ExtendedDatabaseRef);
-        ServerQueryPages.Add(viewModel);
-        SelectedQueryPage = viewModel;
-        m_MainWindowViewModel.QueryPagesChanged();
+        __AddQueryPage(viewModel);
     }
     #endregion
 
@@ -168,13 +164,6 @@ public class ServerViewModel : ClientViewModelBase
         }
     }
 
-    #endregion
-
-    #region [Dispose]
-    protected override void Dispose(bool disposing)
-    {
-        base.Dispose(disposing);
-    }
     #endregion
 
     #region - private methods -
@@ -201,7 +190,7 @@ public class ServerViewModel : ClientViewModelBase
     {
         var treeItems = new ObservableCollection<ServerObjectTreeItemViewModel>(); //Should be the main nodes
 
-        var databaseNode = __GetTreeItemViewModel(new DatabaseInfo("Databases", new ServerInfo("")) { IsMainNode = true }, null); //First Main Node
+        var databaseNode = __GetTreeItemViewModel(new DatabaseInfo("Databases", server, null) { IsMainNode = true }, null); //First Main Node
         databaseNode.IsExpanded = true;
         foreach (var dataBase in server.DatabaseInfos)
         {
@@ -209,20 +198,20 @@ public class ServerViewModel : ClientViewModelBase
 
             if (dataBase is ExtendedDatabaseInfo extendedInfo)
             {
-                var tablesNode = __GetTreeItemViewModel(new Table("Tables") { IsMainNode = true }, extendedInfo);
-                tablesNode.ServerObjects.Add(__GetTreeItemViewModel(new Table("Loading...."), extendedInfo)); //Needs to be set, to expand and load real objects then
+                var tablesNode = __GetTreeItemViewModel(new Table("Tables", server, extendedInfo) { IsMainNode = true }, extendedInfo);
+                tablesNode.ServerObjects.Add(__GetTreeItemViewModel(new Table("Loading....", server, extendedInfo), extendedInfo)); //Needs to be set, to expand and load real objects then
                 databaseTreeItemVM.ServerObjects.Add(tablesNode);
 
-                var viewNode = __GetTreeItemViewModel(new View("Views") { IsMainNode = true }, extendedInfo);
-                viewNode.ServerObjects.Add(__GetTreeItemViewModel(new View("Loading...."), extendedInfo)); //Needs to be set, to expand and load real objects then
+                var viewNode = __GetTreeItemViewModel(new View("Views", server, extendedInfo) { IsMainNode = true }, extendedInfo);
+                viewNode.ServerObjects.Add(__GetTreeItemViewModel(new View("Loading....", server, extendedInfo), extendedInfo)); //Needs to be set, to expand and load real objects then
                 databaseTreeItemVM.ServerObjects.Add(viewNode);
 
-                var triggerNode = __GetTreeItemViewModel(new Trigger("Trigger") { IsMainNode = true }, extendedInfo);
-                triggerNode.ServerObjects.Add(__GetTreeItemViewModel(new Trigger("Loading...."), extendedInfo)); //Needs to be set, to expand and load real objects then
+                var triggerNode = __GetTreeItemViewModel(new Trigger("Trigger", server, extendedInfo) { IsMainNode = true }, extendedInfo);
+                triggerNode.ServerObjects.Add(__GetTreeItemViewModel(new Trigger("Loading....", server, extendedInfo), extendedInfo)); //Needs to be set, to expand and load real objects then
                 databaseTreeItemVM.ServerObjects.Add(triggerNode);
 
-                var prodceduresNode = __GetTreeItemViewModel(new StoredProcedure("Procedures") { IsMainNode = true }, extendedInfo);
-                prodceduresNode.ServerObjects.Add(__GetTreeItemViewModel(new StoredProcedure("Loading...."), extendedInfo)); //Needs to be set, to expand and load real objects then
+                var prodceduresNode = __GetTreeItemViewModel(new StoredProcedure("Procedures", server, extendedInfo) { IsMainNode = true }, extendedInfo);
+                prodceduresNode.ServerObjects.Add(__GetTreeItemViewModel(new StoredProcedure("Loading....", server, extendedInfo), extendedInfo)); //Needs to be set, to expand and load real objects then
                 databaseTreeItemVM.ServerObjects.Add(prodceduresNode);
             }
 
@@ -244,5 +233,21 @@ public class ServerViewModel : ClientViewModelBase
     }
     #endregion
 
+    #region [__AddQueryPage]
+    private void __AddQueryPage(ServerQueryPageViewModel viewModel)
+    {
+        ServerQueryPages.Add(viewModel);
+        SelectedQueryPage = viewModel;
+        m_MainWindowViewModel.QueryPagesChanged();
+    }
+    #endregion
+
+    #endregion
+
+    #region [Dispose]
+    protected override void Dispose(bool disposing)
+    {
+        base.Dispose(disposing);
+    }
     #endregion
 }

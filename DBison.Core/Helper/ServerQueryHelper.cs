@@ -39,7 +39,7 @@ public class ServerQueryHelper
                         while (reader.Read())
                         {
                             var name = reader[0].ToStringValue();
-                            extendedDatabase.Tables.Add(new Table(name));
+                            extendedDatabase.Tables.Add(new Table(name, m_Server, extendedDatabase));
                         }
                     }
                 }
@@ -69,7 +69,7 @@ public class ServerQueryHelper
                         while (reader.Read())
                         {
                             var name = reader[0].ToStringValue();
-                            extendedDatabase.Views.Add(new View(name));
+                            extendedDatabase.Views.Add(new View(name, m_Server, extendedDatabase));
                         }
                     }
                 }
@@ -99,7 +99,7 @@ public class ServerQueryHelper
                         while (reader.Read())
                         {
                             var name = reader[0].ToStringValue();
-                            extendedDatabase.Triggers.Add(new Trigger(name));
+                            extendedDatabase.Triggers.Add(new Trigger(name, m_Server, extendedDatabase));
                         }
                     }
                 }
@@ -129,7 +129,7 @@ public class ServerQueryHelper
                         while (reader.Read())
                         {
                             var name = reader[0].ToStringValue();
-                            extendedDatabase.Procedures.Add(new StoredProcedure(name));
+                            extendedDatabase.Procedures.Add(new StoredProcedure(name, m_Server, extendedDatabase));
                         }
                     }
                 }
@@ -152,6 +152,7 @@ public class ServerQueryHelper
                 using (SqlDataAdapter dataAdapter = new SqlDataAdapter(sql, access.GetConnectionRef()))
                 {
                     m_Command = dataAdapter.SelectCommand ?? dataAdapter.UpdateCommand ?? dataAdapter.InsertCommand ?? dataAdapter.DeleteCommand;
+                    //m_Command.CommandTimeout = Settings.Timeout;
                     using (SqlCommandBuilder commandBuilder = new SqlCommandBuilder(dataAdapter))
                     {
                         var table = new DataTable();
@@ -187,14 +188,14 @@ public class ServerQueryHelper
         var sql = "SELECT name as dataBaseName, state_desc isOnline FROM sys.databases " +
             "WHERE name NOT IN ('master','tempdb','model','msdb')" +
             "ORDER BY name ASC";
-        using (var access = new DataConnection(new DatabaseInfo("master", m_Server)))
+        using (var access = new DataConnection(new DatabaseInfo("master", m_Server, null)))
         {
             var reader = access.GetReader(sql);
             if (reader != null && reader.HasRows)
             {
                 while (reader.Read())
                 {
-                    m_Server.DatabaseInfos.Add(new ExtendedDatabaseInfo(reader[0].ToStringValue(), m_Server)
+                    m_Server.DatabaseInfos.Add(new ExtendedDatabaseInfo(reader[0].ToStringValue(), m_Server, null)
                     {
 
                     });

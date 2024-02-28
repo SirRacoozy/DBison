@@ -53,14 +53,6 @@ public class ServerQueryPageViewModel : ClientViewModelBase
     }
     #endregion
 
-    #region [ResultOnly]
-    public bool ResultOnly
-    {
-        get => Get<bool>();
-        set => Set(value);
-    }
-    #endregion
-
     #region [IsLoading]
     public bool IsLoading
     {
@@ -83,26 +75,6 @@ public class ServerQueryPageViewModel : ClientViewModelBase
         get => Get<ObservableCollection<ResultSetViewModel>>();
         set => Set(value);
     }
-    #endregion
-
-    #region [QueryVisibility]
-    [DependsUpon(nameof(ResultOnly))]
-    public Visibility QueryVisibility => ResultOnly ? Visibility.Collapsed : Visibility.Visible;
-    #endregion
-
-    #region [ResultGridsRow]
-    [DependsUpon(nameof(ResultOnly))]
-    public int ResultGridsRow => ResultOnly ? 0 : 2;
-    #endregion
-
-    #region [ResultGridsRowSpan]
-    [DependsUpon(nameof(ResultOnly))]
-    public int ResultGridsRowSpan => ResultOnly ? 3 : 1;
-    #endregion
-
-    #region [ResultGridsMaxHeight]
-    [DependsUpon(nameof(ResultOnly))]
-    public double ResultGridsMaxHeight => ResultOnly ? 300 : double.NaN;
     #endregion
 
     #region [QueryStatisticText]
