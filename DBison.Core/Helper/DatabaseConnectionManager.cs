@@ -2,29 +2,28 @@
 using Microsoft.Data.SqlClient;
 using System.Collections.Concurrent;
 using System.Data;
-using System.Linq;
 
 namespace DBison.Core.Helper;
 public class DatabaseConnectionManager
 {
 
-	#region - ctor -
+    #region - ctor -
     /// <summary>
     /// Creates an instance of the database connection manager.
     /// </summary>
-	internal DatabaseConnectionManager()
-	{
-		m_Connections = new();
-	}
-	#endregion
+    internal DatabaseConnectionManager()
+    {
+        m_Connections = new();
+    }
+    #endregion
 
-	#region - properties -
+    #region - properties -
 
-	#region [Instance]
+    #region [Instance]
     /// <summary>
     /// Gets the instance of the manager.
     /// </summary>
-	public static DatabaseConnectionManager Instance = m_Manager ?? new();
+    public static DatabaseConnectionManager Instance = m_Manager ?? new();
     #endregion
 
     #region [m_Manager]
@@ -32,57 +31,58 @@ public class DatabaseConnectionManager
     /// Gets or sets the current manager.
     /// </summary>
     private static DatabaseConnectionManager? m_Manager { get; set; }
-	#endregion
+    #endregion
 
-	#region [m_Connections]
+    #region [m_Connections]
     /// <summary>
     /// Gets or sets the connection dictionary.
     /// </summary>
-	private ConcurrentDictionary<DatabaseInfo, SqlConnection> m_Connections { get; set; }
-	#endregion
+    private ConcurrentDictionary<DatabaseInfo, SqlConnection> m_Connections { get; set; }
+    #endregion
 
-	#endregion
+    #endregion
 
-	#region - methods -
+    #region - methods -
 
-	#region [AddOrGetConnection]
+    #region [AddOrGetConnection]
     /// <summary>
     /// Add or get the connection for a provided DatabaseInfo object.
     /// </summary>
+    /// <param name="serverInfo">The server info object.</param>
     /// <param name="databaseInfo">The database info object.</param>
     /// <returns>The sql connection.</returns>
-	public SqlConnection AddOrGetConnection(DatabaseInfo databaseInfo)
-	{
-		if(m_Connections.ContainsKey(databaseInfo))
-		{
-			if (m_Connections.TryGetValue(databaseInfo, out var connection))
-				return connection;
-			connection = __CreateConnection(databaseInfo);
-			m_Connections[databaseInfo] = connection;
-			return connection;
-		}
+    public SqlConnection AddOrGetConnection(ServerInfo serverInfo, DatabaseInfo databaseInfo)
+    {
+        if (m_Connections.ContainsKey(databaseInfo))
+        {
+            if (m_Connections.TryGetValue(databaseInfo, out var connection))
+                return connection;
+            connection = __CreateConnection(serverInfo, databaseInfo);
+            m_Connections[databaseInfo] = connection;
+            return connection;
+        }
 
-		var conn = __CreateConnection(databaseInfo);
+        var conn = __CreateConnection(serverInfo, databaseInfo);
         _ = m_Connections.TryAdd(databaseInfo, conn);
-		return conn;
-	}
-	#endregion
+        return conn;
+    }
+    #endregion
 
-	#region [CloseConnection]
+    #region [CloseConnection]
     /// <summary>
     /// Closes the provided sql connection.
     /// </summary>
     /// <param name="connection">The sql connection to close.</param>
     /// <exception cref="ArgumentNullException">Throws if the connection is null.</exception>
-	public void CloseConnection(SqlConnection connection)
-	{
+    public void CloseConnection(SqlConnection connection)
+    {
         ArgumentNullException.ThrowIfNull(connection);
         if (connection.State != ConnectionState.Closed)
-			connection.Close();
-		var connectionsToRemove = m_Connections.Where(x => x.Value.Equals(connection));
-		foreach (var conn in connectionsToRemove)
+            connection.Close();
+        var connectionsToRemove = m_Connections.Where(x => x.Value.Equals(connection));
+        foreach (var conn in connectionsToRemove)
             _ = m_Connections.TryRemove(conn);
-	}
+    }
     #endregion
 
     #region [CloseConnection]
@@ -92,35 +92,41 @@ public class DatabaseConnectionManager
     /// <param name="databaseInfo">The database info object.</param>
     /// <exception cref="ArgumentNullException">Throws if the database info object is null.</exception>
     public void CloseConnection(DatabaseInfo databaseInfo)
-	{
+    {
         ArgumentNullException.ThrowIfNull(databaseInfo);
         if (m_Connections.ContainsKey(databaseInfo))
-			CloseConnection(m_Connections[databaseInfo]);
-	}
-	#endregion
+            CloseConnection(m_Connections[databaseInfo]);
+    }
+    #endregion
 
-	#region [__CreateConnection]
+    #region [__CreateConnection]
     /// <summary>
     /// Creates a connection for a given database info object.
     /// </summary>
+    /// <param name="serverInfo">The server info object.</param>
     /// <param name="databaseInfo">The database info object.</param>
     /// <returns>The sql connection.</returns>
-	private SqlConnection __CreateConnection(DatabaseInfo databaseInfo)
-	{
-		var builder = new SqlConnectionStringBuilder()
-		{
-			DataSource = databaseInfo.Server,
-			InitialCatalog = databaseInfo.Name,
-		};
-		if(!databaseInfo.UseIntegratedSecurity)
-		{
-			builder.UserID = databaseInfo.Username;
-			builder.Password = databaseInfo.Password;
-		}
-		return new SqlConnection(builder.ToString());
-	}
-	#endregion
+    private SqlConnection __CreateConnection(ServerInfo serverInfo, DatabaseInfo databaseInfo)
+    {
+        var builder = new SqlConnectionStringBuilder()
+        {
+            DataSource = serverInfo.Name,
+            InitialCatalog = databaseInfo.Name,
+            TrustServerCertificate = true, //TODO: do not always trust, check what we need to do, to avoid exception
+        };
+        if (serverInfo.UseIntegratedSecurity)
+        {
+            builder.IntegratedSecurity = true;
+        }
+        else
+        {
+            builder.UserID = serverInfo.Username;
+            builder.Password = serverInfo.Password;
+        }
+        return new SqlConnection(builder.ToString());
+    }
+    #endregion
 
-	#endregion
+    #endregion
 
 }

@@ -7,14 +7,16 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="..\DBison.Core\Entities\DatabaseInfo.cs" Link="Entities\DatabaseInfo.cs" />
-    <Compile Include="..\DBison.Core\Entities\ExtendedDatabaseInfo.cs" Link="Entities\ExtendedDatabaseInfo.cs" />
-    <Compile Include="..\DBison.Core\Helper\OperationResult.cs" Link="Helper\OperationResult.cs" />
+    <Compile Remove="Entities\**" />
+    <Compile Remove="Helper\**" />
+    <EmbeddedResource Remove="Entities\**" />
+    <EmbeddedResource Remove="Helper\**" />
+    <None Remove="Entities\**" />
+    <None Remove="Helper\**" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Entities\" />
-    <Folder Include="Helper\" />
+    <ProjectReference Include="..\DBison.Core.Entities\DBison.Core.Entities.csproj" />
   </ItemGroup>
 
 </Project>

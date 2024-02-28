@@ -1,5 +1,4 @@
-﻿
-using DBison.Core.Entities;
+﻿using DBison.Core.Entities;
 
 namespace DBison.Plugin;
 
