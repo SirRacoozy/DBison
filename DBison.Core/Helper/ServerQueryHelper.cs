@@ -2,7 +2,6 @@
 using DBison.Core.Extender;
 using Microsoft.Data.SqlClient;
 using System.Data;
-using System.Data.Common;
 
 namespace DBison.Core.Helper;
 public class ServerQueryHelper
@@ -13,6 +12,8 @@ public class ServerQueryHelper
     {
         m_Server = serverInfo;
     }
+
+    public bool IgnoreNextException { get; set; }
 
     public void LoadServerObjects()
     {
@@ -162,7 +163,9 @@ public class ServerQueryHelper
         }
         catch (Exception ex)
         {
-            errorCallback(ex);
+            if (!IgnoreNextException)
+                errorCallback(ex);
+            IgnoreNextException = false;
             return null;
         }
         finally
@@ -173,6 +176,7 @@ public class ServerQueryHelper
 
     public void Cancel()
     {
+        IgnoreNextException = true;
         m_Command?.Cancel();
     }
 

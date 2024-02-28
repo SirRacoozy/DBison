@@ -171,6 +171,7 @@ public class ServerQueryPageViewModel : ClientViewModelBase
     {
         m_ServerQueryHelper.Cancel();
         IsLoading = false;
+        QueryStatisticText = string.Empty;
     }
     #endregion
 
