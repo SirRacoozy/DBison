@@ -8,6 +8,8 @@
     <UseWPF>true</UseWPF>
     <ApplicationIcon>Resources\AppIcon.ico</ApplicationIcon>
     <Authors>Marvin "SirRacoozy" Mees, Timo "timi99200" Schulze</Authors>
+    <VersionPrefix>0.0.1</VersionPrefix>
+    <FileVersion>0.0.1</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>
