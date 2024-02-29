@@ -15,7 +15,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DBison.Plugin", "DBison.Plu
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DBison.ExamplePlugin", "DBison.ExamplePlugin\DBison.ExamplePlugin.csproj", "{D15DC4A2-3CC1-4FC0-82F3-FC0060216934}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DBison.Core.Entities", "DBison.Core.Entities\DBison.Core.Entities.csproj", "{332DC27E-3EE5-44D5-B6DE-EA35FD583B0C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DBison.Core.Entities", "DBison.Core.Entities\DBison.Core.Entities.csproj", "{332DC27E-3EE5-44D5-B6DE-EA35FD583B0C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
