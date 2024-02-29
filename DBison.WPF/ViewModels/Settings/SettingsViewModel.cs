@@ -25,6 +25,8 @@ public class SettingsViewModel : ClientViewModelBase
             var attributes = property.GetCustomAttributes(typeof(SettingAttribute), false);
             if (attributes != null && attributes.FirstOrDefault() is SettingAttribute settingAttribute)
             {
+                if (!settingAttribute.IsVisible)
+                    continue;
                 RangeAttribute range = null;
                 var rangeAttributes = property.GetCustomAttributes(typeof(RangeAttribute), false);
                 if (rangeAttributes != null && rangeAttributes.FirstOrDefault() is RangeAttribute rangeAttribute)
@@ -59,7 +61,7 @@ public class SettingsViewModel : ClientViewModelBase
     private SettingItemViewModel __GetNewSettingsItemViewModel(PropertyInfo property, SettingAttribute settingAttribute, RangeAttribute range)
     {
         var viewModel = new SettingItemViewModel(settingAttribute, range, property);
-        
+
         return viewModel;
     }
 

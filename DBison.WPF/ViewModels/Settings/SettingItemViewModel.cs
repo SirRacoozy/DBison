@@ -42,6 +42,12 @@ public class SettingItemViewModel : ClientViewModelBase
         set => Set(value);
     }
 
+    public string Tooltip
+    {
+        get => Get<string>();
+        set => Set(value);
+    }
+
     public object Value
     {
         get => Get<object>();
@@ -78,6 +84,7 @@ public class SettingItemViewModel : ClientViewModelBase
         RangeAttribute = rangeAttribute;
         SettingType = SettingAttribute.Type;
         Header = SettingAttribute.Header;
+        Tooltip = SettingAttribute.ToolTip;
         if (SettingType == typeof(uint) || SettingType == typeof(int))
             Value = Convert.ToDouble(value);
         else
