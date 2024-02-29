@@ -97,11 +97,18 @@ public class MainWindowViewModel : ClientViewModelBase
             OnPropertyChanged(nameof(ServerItems));
             SelectedServer = ServerItems.FirstOrDefault();
         }
+        if (SelectedServer == null)
+        {
+            QueryPages = new ObservableCollection<ServerQueryPageViewModel>();
+            OnPropertyChanged(nameof(QueryPages));
+        }
     }
 
     [DependsUpon(nameof(SelectedServer))]
     public void QueryPagesChanged()
     {
+        if (SelectedServer == null)
+            return;
         QueryPages = new(SelectedServer?.ServerQueryPages);
         OnPropertyChanged(nameof(QueryPages));
         SelectedQueryPage = QueryPages.LastOrDefault();
