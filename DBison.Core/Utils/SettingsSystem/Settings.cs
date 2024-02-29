@@ -7,7 +7,7 @@ namespace DBison.Core.Utils.SettingsSystem;
 
 public static class Settings
 {
-    [Setting("Visual", "Font Size", typeof(uint))]
+    [Setting("Visual", "Font Size", "Changes the font size", typeof(uint))]
     [Range(10, 100)]
     public static uint FontSize
     {
@@ -15,14 +15,14 @@ public static class Settings
         set => SettingsHandler.SetSetting("FontSize", value.ToString());
     }
 
-    [Setting("Visual", "Use Dark Mode", typeof(bool))]
+    [Setting("Visual", "Use Dark Mode", "Activates or deactivates the dark mode", typeof(bool))]
     public static bool UseDarkMode
     {
         get => SettingsHandler.GetSetting("UseDarkMode", false);
         set => SettingsHandler.SetSetting("UseDarkMode", value.ToString());
     }
 
-    [Setting("Performance", "Timeout", typeof(int))]
+    [Setting("Performance", "Timeout", "Sets the timeout for any query to the database in seconds", typeof(int))]
     [Range(-1, int.MaxValue)]
     public static int Timeout
     {
@@ -30,7 +30,7 @@ public static class Settings
         set => SettingsHandler.SetSetting("Timeout", value.ToString());
     }
 
-    [Setting("Performance", "Limit", typeof(int))]
+    [Setting("Performance", "Limit", "Limits the default number of results in a single query", typeof(int))]
     [Range(-1, int.MaxValue)]
     public static int Limit
     {
@@ -38,14 +38,14 @@ public static class Settings
         set => SettingsHandler.SetSetting("Limit", value.ToString());
     }
 
-    [Setting("Visual", "Use Translucent Window", typeof(bool))]
+    [Setting("Visual", "Use Translucent Window", "Activates the translucency of the window", typeof(bool), isVisible: false)]
     public static bool UseTranslucentWindow
     {
         get => SettingsHandler.GetSetting("UseTranslucentWindow", false);
         set => SettingsHandler.SetSetting("UseTranslucentWindow", value.ToString());
     }
 
-    [Setting("Visual", "Translucent Opacity", typeof(uint))]
+    [Setting("Visual", "Translucent Opacity", "Sets the translucenct opacity", typeof(uint), isVisible: false)]
     [Range(10, 100)]
     public static uint TranslucentOpacity
     {
@@ -53,7 +53,7 @@ public static class Settings
         set => SettingsHandler.SetSetting("TranslucentOpacity", value.ToString());
     }
 
-    [Setting("Visual", "UI Scaling", typeof(double))]
+    [Setting("Visual", "UI Scaling", "Sets the UI scaling between 0.1 and 2.0", typeof(double))]
     [Range(0.1, 2.0)]
     public static double UIScaling
     {
@@ -61,14 +61,14 @@ public static class Settings
         set => SettingsHandler.SetSetting("UIScaling", value.ToString());
     }
 
-    [Setting("Performance", "Use Session Store", typeof(bool))]
+    [Setting("Performance", "Use Session Store", "Enables/Diables the session store", typeof(bool), isVisible: false)]
     public static bool UseSessionStore
     {
         get => SettingsHandler.GetSetting("UseSessionStore", false);
         set => SettingsHandler.SetSetting("UseSessionStore", value.ToString());
     }
 
-    [Setting("Performance", "Max Backup Count", typeof(int))]
+    [Setting("Performance", "Max Backup Count", "Sets the maximum number of backups to keep (default: infinite)",typeof(int))]
     [Range(-1, 100)]
     public static int MaxBackupCount
     {
@@ -76,7 +76,7 @@ public static class Settings
         set => SettingsHandler.SetSetting("MaxBackupCount", value.ToString());
     }
 
-    [Setting("Performance", "Max Log Size", typeof(double))]
+    [Setting("Performance", "Max Log Size", "Sets the max log size at which a warning appears",typeof(double))]
     [Range(-1.0, 100.0)]
     public static double MaxLogSize
     {
@@ -84,21 +84,21 @@ public static class Settings
         set => SettingsHandler.SetSetting("MaxLogSize", value.ToString());
     }
 
-    [Setting("Database", "Show Extended Database Information", typeof(bool))]
+    [Setting("Database", "Show Extended Database Information", "Enables/Disables a context menu to show extended database information",typeof(bool))]
     public static bool ShowExtendedDatabaseInformation
     {
         get => SettingsHandler.GetSetting("ShowExtendedDatabaseInformation", false);
         set => SettingsHandler.SetSetting("ShowExtendedDatabaseInformation", value.ToString());
     }
 
-    [Setting("Database", "Open Query On Server Added", typeof(bool))]
+    [Setting("Database", "Open Query On Server Added", "Enables/Disables the opening of a new query tab when a server is added",typeof(bool))]
     public static bool OpenQueryOnServerAdded
     {
         get => SettingsHandler.GetSetting("OpenQueryOnServerAdded", true);
         set => SettingsHandler.SetSetting("OpenQueryOnServerAdded", value.ToString());
     }
 
-    [Setting("Database", "Deactivation of DML list", typeof(List<string>))]
+    [Setting("Database", "Deactivation of DML list", "", typeof(List<string>), isVisible: false)]
     public static List<string> DeactionDMLList
     {
         get => SettingsHandler.GetSetting("DeactionDMLList", new List<string>());
