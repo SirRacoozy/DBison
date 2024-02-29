@@ -5,6 +5,7 @@ using DBison.Core.Utils.Commands;
 using DBison.WPF.ClientBaseClasses;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -54,6 +55,7 @@ public class ServerObjectTreeItemViewModel : ClientViewModelBase
         }
     }
 
+    public Visibility CloseVisibility => Visibility.Collapsed;
     public ObservableCollection<ServerObjectTreeItemViewModel> ServerObjects
     {
         get => Get<ObservableCollection<ServerObjectTreeItemViewModel>>() ?? new ObservableCollection<ServerObjectTreeItemViewModel>();
@@ -133,28 +135,28 @@ public class ServerObjectTreeItemViewModel : ClientViewModelBase
 
             try
             {
-                if (DatabaseObject is Table)
+                if (DatabaseObject is DBisonTable)
                 {
                     __SetLoading(true);
                     m_ServerQueryHelper.LoadTables(ExtendedDatabaseRef);
                     ServerObjects = __GetSubVms(new(ExtendedDatabaseRef.Tables));
                     __SetLoading(false);
                 }
-                else if (DatabaseObject is View)
+                else if (DatabaseObject is DBisonView)
                 {
                     __SetLoading(true);
                     m_ServerQueryHelper.LoadViews(ExtendedDatabaseRef);
                     ServerObjects = __GetSubVms(new(ExtendedDatabaseRef.Views));
                     __SetLoading(false);
                 }
-                else if (DatabaseObject is Trigger)
+                else if (DatabaseObject is DBisonTrigger)
                 {
                     __SetLoading(true);
                     m_ServerQueryHelper.LoadTrigger(ExtendedDatabaseRef);
                     ServerObjects = __GetSubVms(new(ExtendedDatabaseRef.Triggers));
                     __SetLoading(false);
                 }
-                else if (DatabaseObject is StoredProcedure)
+                else if (DatabaseObject is DBisonStoredProcedure)
                 {
                     __SetLoading(true);
                     m_ServerQueryHelper.LoadProcedures(ExtendedDatabaseRef);
@@ -194,7 +196,7 @@ public class ServerObjectTreeItemViewModel : ClientViewModelBase
             {
                 MenuItems.Add(new MenuItem { Header = $"New Query - [{DatabaseObject.Name}]", Command = this["NewQuery"] as ICommand });
             }
-            else if (DatabaseObject is Table || DatabaseObject is View)
+            else if (DatabaseObject is DBisonTable || DatabaseObject is DBisonView)
             {
                 MenuItems.Add(new MenuItem { Header = $"Show {DatabaseObject.Name} data", Command = this["ShowTableData"] as ICommand });
             }

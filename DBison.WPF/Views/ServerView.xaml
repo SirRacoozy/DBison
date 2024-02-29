@@ -43,8 +43,7 @@
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
 
-            <Grid Grid.Row="0"
-                  Visibility="{Binding QueryVisibility}">
+            <Grid Grid.Row="0">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
@@ -151,11 +150,9 @@
                           Grid.Row="1"
                           Height="5"
                           Background="#00747C"
-                          Visibility="{Binding QueryVisibility}"
                           Focusable="False" />
 
-            <Grid Grid.Row="{Binding ResultGridsRow, Mode=OneWay}"
-                  Grid.RowSpan="{Binding ResultGridsRowSpan, Mode=OneWay}">
+            <Grid Grid.Row="2">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*" />
                     <RowDefinition Height="Auto" />
@@ -163,9 +160,8 @@
 
                 <DataGrid Grid.Row="0"
                           ItemsSource="{Binding ResultSets[0].ResultLines, Mode=TwoWay}"
-                          MaxHeight="{Binding ResultGridsMaxHeight, Mode=OneWay}"
                           AutoGeneratingColumn="__AutoGeneratingColumn"
-                          VerticalAlignment="Stretch"/>
+                          VerticalAlignment="Stretch" />
 
                 <TextBlock Text="{Binding QueryStatisticText, Mode=TwoWay}"
                            Grid.Row="1"

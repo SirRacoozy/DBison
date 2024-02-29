@@ -1,9 +1,13 @@
-﻿namespace DBison.Core.Entities;
-public abstract class DatabaseObjectBase
+﻿using DBison.Core.Entities.Interfaces;
+
+namespace DBison.Core.Entities;
+public abstract class DatabaseObjectBase : IServerDataBaseContext
 {
-    public DatabaseObjectBase(string name)
+    public DatabaseObjectBase(string name, ServerInfo server, DatabaseInfo dataBase)
     {
         Name = name;
+        Server = server;
+        DataBase = dataBase;
     }
 
     #region [Name]
@@ -14,4 +18,6 @@ public abstract class DatabaseObjectBase
     #endregion
 
     public bool IsMainNode { get; set; }
+    public ServerInfo Server { get; private set; }
+    public DatabaseInfo DataBase { get; private set; }
 }
