@@ -111,7 +111,7 @@
                         <Setter Property="ContentTemplate">
                           <Setter.Value>
                             <DataTemplate>
-                              <mah:DateTimePicker SelectedDateTime="{Binding FallbackValue, Mode=TwoWay}" DataContext="{Binding DataContext, ElementName=this}"/>
+                              <mah:DateTimePicker SelectedDateTime="{Binding Value, Mode=TwoWay}" DataContext="{Binding DataContext, ElementName=this}"/>
                             </DataTemplate>
                           </Setter.Value>
                         </Setter>
