@@ -15,18 +15,12 @@ public partial class ServerTabbedPage : UserControlBase
     private void __TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
     {
         if (DataContext is MainWindowViewModel mainVm && sender is TextBox t)
-        {
             mainVm.FilterText = t.Text;
-        }
     }
 
     private void __SelectedItemChanged(object sender, System.Windows.RoutedPropertyChangedEventArgs<object> e)
     {
-        if(sender is ServerInfoTreeView tv && tv.DataContext is MainWindowViewModel mainVm)
-        {
-
+        if (sender is ServerInfoTreeView tv && tv.DataContext is MainWindowViewModel mainVm)
             mainVm.SetSelectedServerIfNeeded(tv.TreeView.SelectedItem);
-            //tv.SelectedItem
-        }
     }
 }

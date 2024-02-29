@@ -170,9 +170,5 @@ public class MainWindowViewModel : ClientViewModelBase
             if (serverVm != null && SelectedServer != serverVm)
                 SelectedServer = serverVm;
         }
-        else
-        {
-
-        }
     }
 }

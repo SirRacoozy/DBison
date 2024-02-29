@@ -31,16 +31,14 @@ public class ServerQueryHelper
                 var sql = "SELECT name, type  FROM sys.all_objects " +
               "WHERE type IN ('U') AND is_ms_shipped != 1 " +
               "ORDER BY name ASC";
-                using (var access = new DataConnection(databaseInfo))
+                using var access = new DataConnection(databaseInfo);
+                var reader = access.GetReader(sql);
+                if (reader != null && reader.HasRows)
                 {
-                    var reader = access.GetReader(sql);
-                    if (reader != null && reader.HasRows)
+                    while (reader.Read())
                     {
-                        while (reader.Read())
-                        {
-                            var name = reader[0].ToStringValue();
-                            extendedDatabase.Tables.Add(new DBisonTable(name, m_Server, extendedDatabase));
-                        }
+                        var name = reader[0].ToStringValue();
+                        extendedDatabase.Tables.Add(new DBisonTable(name, m_Server, extendedDatabase));
                     }
                 }
             }
@@ -61,16 +59,14 @@ public class ServerQueryHelper
                 var sql = "SELECT name, type  FROM sys.all_objects " +
               "WHERE type IN ('V') AND is_ms_shipped != 1 " +
               "ORDER BY name ASC";
-                using (var access = new DataConnection(databaseInfo))
+                using var access = new DataConnection(databaseInfo);
+                var reader = access.GetReader(sql);
+                if (reader != null && reader.HasRows)
                 {
-                    var reader = access.GetReader(sql);
-                    if (reader != null && reader.HasRows)
+                    while (reader.Read())
                     {
-                        while (reader.Read())
-                        {
-                            var name = reader[0].ToStringValue();
-                            extendedDatabase.Views.Add(new DBisonView(name, m_Server, extendedDatabase));
-                        }
+                        var name = reader[0].ToStringValue();
+                        extendedDatabase.Views.Add(new DBisonView(name, m_Server, extendedDatabase));
                     }
                 }
             }
@@ -91,16 +87,14 @@ public class ServerQueryHelper
                 var sql = "SELECT name, type  FROM sys.all_objects " +
               "WHERE type IN ('TR') AND is_ms_shipped != 1 " +
               "ORDER BY name ASC";
-                using (var access = new DataConnection(databaseInfo))
+                using var access = new DataConnection(databaseInfo);
+                var reader = access.GetReader(sql);
+                if (reader != null && reader.HasRows)
                 {
-                    var reader = access.GetReader(sql);
-                    if (reader != null && reader.HasRows)
+                    while (reader.Read())
                     {
-                        while (reader.Read())
-                        {
-                            var name = reader[0].ToStringValue();
-                            extendedDatabase.Triggers.Add(new DBisonTrigger(name, m_Server, extendedDatabase));
-                        }
+                        var name = reader[0].ToStringValue();
+                        extendedDatabase.Triggers.Add(new DBisonTrigger(name, m_Server, extendedDatabase));
                     }
                 }
             }
@@ -121,16 +115,14 @@ public class ServerQueryHelper
                 var sql = "SELECT name, type  FROM sys.all_objects " +
               "WHERE type IN ('P') AND is_ms_shipped != 1 " +
               "ORDER BY name ASC";
-                using (var access = new DataConnection(databaseInfo))
+                using var access = new DataConnection(databaseInfo);
+                var reader = access.GetReader(sql);
+                if (reader != null && reader.HasRows)
                 {
-                    var reader = access.GetReader(sql);
-                    if (reader != null && reader.HasRows)
+                    while (reader.Read())
                     {
-                        while (reader.Read())
-                        {
-                            var name = reader[0].ToStringValue();
-                            extendedDatabase.Procedures.Add(new DBisonStoredProcedure(name, m_Server, extendedDatabase));
-                        }
+                        var name = reader[0].ToStringValue();
+                        extendedDatabase.Procedures.Add(new DBisonStoredProcedure(name, m_Server, extendedDatabase));
                     }
                 }
             }
@@ -147,20 +139,13 @@ public class ServerQueryHelper
 
         try
         {
-            using (var access = new DataConnection(databaseInfo))
-            {
-                using (SqlDataAdapter dataAdapter = new SqlDataAdapter(sql, access.GetConnectionRef()))
-                {
-                    m_Command = dataAdapter.SelectCommand ?? dataAdapter.UpdateCommand ?? dataAdapter.InsertCommand ?? dataAdapter.DeleteCommand;
-                    //m_Command.CommandTimeout = Settings.Timeout;
-                    using (SqlCommandBuilder commandBuilder = new SqlCommandBuilder(dataAdapter))
-                    {
-                        var table = new DataTable();
-                        dataAdapter.Fill(table);
-                        return table;
-                    }
-                }
-            }
+            using var access = new DataConnection(databaseInfo);
+            using SqlDataAdapter dataAdapter = new SqlDataAdapter(sql, access.GetConnectionRef());
+            m_Command = dataAdapter.SelectCommand ?? dataAdapter.UpdateCommand ?? dataAdapter.InsertCommand ?? dataAdapter.DeleteCommand;
+            using SqlCommandBuilder commandBuilder = new SqlCommandBuilder(dataAdapter);
+            var table = new DataTable();
+            dataAdapter.Fill(table);
+            return table;
         }
         catch (Exception ex)
         {
@@ -188,18 +173,16 @@ public class ServerQueryHelper
         var sql = "SELECT name as dataBaseName, state_desc isOnline FROM sys.databases " +
             "WHERE name NOT IN ('master','tempdb','model','msdb')" +
             "ORDER BY name ASC";
-        using (var access = new DataConnection(new DatabaseInfo("master", m_Server, null)))
+        using var access = new DataConnection(new DatabaseInfo("master", m_Server, null));
+        var reader = access.GetReader(sql);
+        if (reader != null && reader.HasRows)
         {
-            var reader = access.GetReader(sql);
-            if (reader != null && reader.HasRows)
+            while (reader.Read())
             {
-                while (reader.Read())
+                m_Server.DatabaseInfos.Add(new ExtendedDatabaseInfo(reader[0].ToStringValue(), m_Server, null)
                 {
-                    m_Server.DatabaseInfos.Add(new ExtendedDatabaseInfo(reader[0].ToStringValue(), m_Server, null)
-                    {
 
-                    });
-                }
+                });
             }
         }
     }
