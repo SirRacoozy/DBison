@@ -28,13 +28,25 @@ public class ServerViewModel : ClientViewModelBase
     #region - properties -
     #region - public properties -
 
+    #region [SelectedBackGround]
     public Brush SelectedBackGround
     {
         get => Get<Brush>();
         set => Set(value);
     }
+    #endregion
 
+    #region [CloseVisibility]
     public Visibility CloseVisibility => Visibility.Visible;
+    #endregion
+
+    #region [IsExpanded]
+    public bool IsExpanded
+    {
+        get => Get<bool>();
+        set => Set(value);
+    }
+    #endregion
 
     #region [DatabaseObject]
     public ServerInfo DatabaseObject
@@ -91,14 +103,6 @@ public class ServerViewModel : ClientViewModelBase
     }
     #endregion
 
-    #region [IsBusy]
-    public bool IsBusy
-    {
-        get => Get<bool>();
-        set => Set(value);
-    }
-    #endregion
-
     #endregion
     #endregion
 
@@ -108,16 +112,6 @@ public class ServerViewModel : ClientViewModelBase
     {
         m_MainWindowViewModel.RemoveServer(this);
     }
-
-    #region [SetBusyState]
-    public void SetBusyState(bool busy)
-    {
-        System.Windows.Application.Current.Dispatcher.Invoke(() =>
-        {
-            IsBusy = busy;
-        });
-    }
-    #endregion
 
     #region [AddNewQueryPage]
     public void AddNewQueryPage(ServerObjectTreeItemViewModel serverObjectTreeItemViewModel)
