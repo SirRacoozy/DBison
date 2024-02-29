@@ -177,7 +177,7 @@
                 </Grid>
 
                 <controls:ServerInfoTreeView Grid.Row="1"
-                                             TreeView.SelectedItemChanged="__SelectedItemChanged"/>
+                                             TreeView.SelectedItemChanged="__SelectedItemChanged" />
 
             </Grid>
 

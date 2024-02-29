@@ -114,10 +114,12 @@ public class ServerViewModel : ClientViewModelBase
     }
 
     #region [AddNewQueryPage]
-    public void AddNewQueryPage(ServerObjectTreeItemViewModel serverObjectTreeItemViewModel)
+    public void AddNewQueryPage(DatabaseObjectBase databaseObject, string queryText)
+        => __AddQueryPage(databaseObject, databaseObject.Name, queryText);
+    public void AddNewQueryPage(ServerObjectTreeItemViewModel serverObjectTreeItemViewModel, string queryText)
     {
-        var viewModel = new ServerQueryPageViewModel($"Query {ServerQueryPages.Count + 1} - {DatabaseObject.Name}.{serverObjectTreeItemViewModel.DatabaseObject.Name}", this, serverObjectTreeItemViewModel.DatabaseObject, m_ServerQueryHelper);
-        __AddQueryPage(viewModel);
+        var databaseObjectName = DatabaseObject.Name;
+        __AddQueryPage(serverObjectTreeItemViewModel?.DatabaseObject, databaseObjectName, queryText);
     }
     #endregion
 
@@ -134,7 +136,7 @@ public class ServerViewModel : ClientViewModelBase
         viewModel.QueryText = sql;
 
         viewModel.FillDataTable(sql, serverObjectTreeItemViewModel.ExtendedDatabaseRef);
-        __AddQueryPage(viewModel);
+        __AddQueryPage(viewModel, string.Empty);
     }
     #endregion
 
@@ -229,8 +231,18 @@ public class ServerViewModel : ClientViewModelBase
     #endregion
 
     #region [__AddQueryPage]
-    private void __AddQueryPage(ServerQueryPageViewModel viewModel)
+    private void __AddQueryPage(DatabaseObjectBase databaseObject, string databaseObjectName, string queryText)
     {
+        if (databaseObjectName.IsNullOrEmpty())
+            databaseObjectName = databaseObject.Name;
+        var viewModel = new ServerQueryPageViewModel($"Query {ServerQueryPages.Count + 1} - {databaseObjectName}.{databaseObjectName}", this, databaseObject, m_ServerQueryHelper);
+        __AddQueryPage(viewModel, queryText);
+    }
+
+    private void __AddQueryPage(ServerQueryPageViewModel viewModel, string queryText)
+    {
+        if(queryText.IsNotNullOrEmpty())
+            viewModel.QueryText = queryText;
         ServerQueryPages.Add(viewModel);
         SelectedQueryPage = viewModel;
         m_MainWindowViewModel.QueryPagesChanged();

@@ -3,8 +3,10 @@ using DBison.Core.Entities;
 using DBison.Core.Extender;
 using DBison.Core.Helper;
 using DBison.WPF.ClientBaseClasses;
+using Microsoft.Win32;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.IO;
 using System.Windows.Threading;
 
 namespace DBison.WPF.ViewModels;
@@ -145,6 +147,28 @@ public class ServerQueryPageViewModel : ClientViewModelBase
         m_ServerQueryHelper.Cancel();
         IsLoading = false;
         QueryStatisticText = string.Empty;
+    }
+    #endregion
+
+    #region [Execute_SaveQueryAs]
+    public void Execute_SaveQueryAs()
+    {
+        if (QueryText == null || QueryText.Trim().IsNullOrEmpty())
+            return;
+
+        var textToExport = QueryText;
+
+        var dlg = new SaveFileDialog()
+        {
+            AddExtension = true,
+            AddToRecent = true,
+            DefaultExt = "sql",
+            FileName = "SQLQuery",
+            Filter = "sql files (*.sql)|*.sql|All files (*.*)|*.*",
+        };
+        dlg.ShowDialog();
+        if (dlg.FileName.IsNotNullOrEmpty())
+            File.WriteAllText(dlg.FileName, textToExport);
     }
     #endregion
 

@@ -15,6 +15,25 @@
                  WindowState="Maximized"
                  x:Name="this">
 
+    <mah:MetroWindow.InputBindings>
+        <KeyBinding Modifiers="Ctrl"
+                    Key="T"
+                    Command="{Binding [NewQuery]}" />
+
+        <KeyBinding Modifiers="Ctrl"
+                    Key="W"
+                    Command="{Binding SelectedQueryPage.[Close]}" />
+
+        <KeyBinding Modifiers="Ctrl"
+                    Key="S"
+                    Command="{Binding SelectedQueryPage.[SaveQueryAs]}" />
+
+        <KeyBinding Modifiers="Ctrl"
+                    Key="O"
+                    Command="{Binding [OpenQueryFromFile]}" />
+
+    </mah:MetroWindow.InputBindings>
+
     <Window.Resources>
 
         <ResourceDictionary>

@@ -1,11 +1,14 @@
 ﻿using DBison.Core.Attributes;
 using DBison.Core.Entities;
+using DBison.Core.Extender;
 using DBison.WPF.ClientBaseClasses;
 using DBison.WPF.Dialogs;
 using DBison.WPF.ViewModels;
 using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
+using Microsoft.Win32;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Windows;
 
 namespace DBison.WPF;
@@ -49,6 +52,14 @@ public class MainWindowViewModel : ClientViewModelBase
     }
     #endregion
 
+    #region [LastSelectedDatabase]
+    public DatabaseInfo LastSelectedDatabase
+    {
+        get => Get<DatabaseInfo>();
+        set => Set(value);
+    }
+    #endregion
+
     #region [FilterText]
     public string FilterText
     {
@@ -88,6 +99,31 @@ public class MainWindowViewModel : ClientViewModelBase
         AreSettingsOpen = !AreSettingsOpen;
     }
 
+    public void Execute_NewQuery()
+    {
+        __AddQueryPageIfPossible(string.Empty);
+    }
+
+    public void Execute_OpenQueryFromFile()
+    {
+        var dlg = new OpenFileDialog()
+        {
+            Filter = "sql files (*.sql)|*.sql|All files (*.*)|*.*",
+        };
+        dlg.ShowDialog();
+        if (dlg.FileName.IsNotNullOrEmpty())
+        {
+            try
+            {
+                __AddQueryPageIfPossible(File.ReadAllText(dlg.FileName));
+            }
+            catch (Exception)
+            {
+                //Ignore for first time
+            }
+        }
+    }
+
     public void RemoveServer(ServerViewModel server)
     {
         if (server != null && ServerItems.Contains(server))
@@ -112,6 +148,16 @@ public class MainWindowViewModel : ClientViewModelBase
         QueryPages = new(SelectedServer?.ServerQueryPages);
         OnPropertyChanged(nameof(QueryPages));
         SelectedQueryPage = QueryPages.LastOrDefault();
+    }
+
+    private void __AddQueryPageIfPossible(string queryText)
+    {
+        if (SelectedServer != null && SelectedServer.DatabaseObject is ServerInfo serverInfo)
+        {
+            var dataBase = LastSelectedDatabase ?? serverInfo.DatabaseInfos.FirstOrDefault();
+            if (dataBase != null)
+                SelectedServer.AddNewQueryPage(dataBase, queryText);
+        }
     }
 
     private void __InitServers()
@@ -163,12 +209,15 @@ public class MainWindowViewModel : ClientViewModelBase
         if (selectedItem is ServerViewModel serverViewModel)
         {
             SelectedServer = serverViewModel;
+            LastSelectedDatabase = serverViewModel.DatabaseObject.DatabaseInfos.FirstOrDefault();
         }
         else if (selectedItem is ServerObjectTreeItemViewModel treeItemObject)
         {
             var serverVm = ServerItems.FirstOrDefault(x => x.DatabaseObject == treeItemObject.DatabaseObject.Server);
             if (serverVm != null && SelectedServer != serverVm)
                 SelectedServer = serverVm;
+            if (LastSelectedDatabase != treeItemObject.DatabaseObject.DataBase)
+                LastSelectedDatabase = treeItemObject.DatabaseObject.DataBase;
         }
     }
 }
