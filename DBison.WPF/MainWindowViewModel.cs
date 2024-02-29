@@ -87,6 +87,11 @@ public class MainWindowViewModel : ClientViewModelBase
     }
     #endregion
 
+    public void Execute_QuitApplication()
+    {
+        Environment.Exit(0);
+    }
+
     public void Execute_AddServer()
     {
         var dialog = new AddServerDialog();
