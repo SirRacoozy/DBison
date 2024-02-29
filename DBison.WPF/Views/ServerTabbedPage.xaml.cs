@@ -1,5 +1,7 @@
 ﻿using DBison.WPF.Controls;
+using DBison.WPF.ViewModels;
 using System.Windows.Controls;
+using System.Windows.Input;
 
 namespace DBison.WPF.Views;
 /// <summary>
@@ -22,5 +24,13 @@ public partial class ServerTabbedPage : UserControlBase
     {
         if (sender is ServerInfoTreeView tv && tv.DataContext is MainWindowViewModel mainVm)
             mainVm.SetSelectedServerIfNeeded(tv.TreeView.SelectedItem);
+    }
+
+    private void __MouseWheelClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
+    {
+        if (e.ChangedButton == MouseButton.Middle && sender is Grid grd && grd.DataContext is ServerQueryPageViewModel queryPageVm)
+        {
+            queryPageVm.Execute_Close();
+        }
     }
 }

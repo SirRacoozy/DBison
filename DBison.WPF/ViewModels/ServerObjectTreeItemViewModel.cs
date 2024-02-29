@@ -99,7 +99,7 @@ public class ServerObjectTreeItemViewModel : ClientViewModelBase
 
     public void Execute_NewQuery()
     {
-        m_ServerVm.AddNewQueryPage(this);
+        m_ServerVm.AddNewQueryPage(this, string.Empty);
     }
 
     public void Execute_ShowTableData()
