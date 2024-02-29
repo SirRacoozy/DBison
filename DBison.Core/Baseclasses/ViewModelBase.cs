@@ -21,7 +21,7 @@ public class ViewModelBase : INotifyPropertyChanged, IDisposable
     private readonly List<string> m_CommandNames;
     private IDictionary<string, MethodInfo> m_Methods;
     private IDictionary<string, DependsUponObject> m_DependsUponDict;
-    private bool m_DisposedValue;
+    public bool IsDisposed;
 
     public ViewModelBase()
     {
@@ -165,7 +165,7 @@ public class ViewModelBase : INotifyPropertyChanged, IDisposable
 
     protected virtual void Dispose(bool disposing)
     {
-        if (!m_DisposedValue)
+        if (!IsDisposed)
         {
             if (disposing)
             {
@@ -174,7 +174,7 @@ public class ViewModelBase : INotifyPropertyChanged, IDisposable
 
             // TODO: free unmanaged resources (unmanaged objects) and override finalizer
             // TODO: set large fields to null
-            m_DisposedValue = true;
+            IsDisposed = true;
         }
     }
 

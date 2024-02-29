@@ -13,7 +13,8 @@
         <mah:ProgressRing IsActive="{Binding IsBusy, Mode=TwoWay, FallbackValue=false}"
                           Visibility="Visible" />
         <TreeView Background="Transparent"
-                  ItemsSource="{Binding Server, Mode=TwoWay}">
+                  ItemsSource="{Binding ServerItems, Mode=TwoWay}"
+                  x:Name="ThisTreeView">
             <TreeView.Resources>
                 <Style TargetType="TreeViewItem">
                     <Setter Property="IsExpanded"
@@ -22,12 +23,23 @@
             </TreeView.Resources>
             <TreeView.ItemTemplate>
                 <HierarchicalDataTemplate ItemsSource="{Binding ServerObjects, Mode=TwoWay}">
-                    <TextBlock Text="{Binding DatabaseObject.Name}"
-                               FontSize="20">
-                        <TextBlock.ContextMenu>
-                            <ContextMenu ItemsSource="{Binding MenuItems, Mode=TwoWay}" />
-                        </TextBlock.ContextMenu>
-                    </TextBlock>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="{Binding DatabaseObject.Name}"
+                                   FontSize="20"
+                                   Grid.Column="0">
+                            <TextBlock.ContextMenu>
+                                <ContextMenu ItemsSource="{Binding MenuItems, Mode=TwoWay}" />
+                            </TextBlock.ContextMenu>
+                        </TextBlock>
+                        <local:CrossButton Grid.Column="1"
+                                           Margin="5 0 0 0"
+                                           Command="{Binding [Close]}"
+                                           Visibility="{Binding CloseVisibility, FallbackValue=Collapsed}"/>
+                    </Grid>
                 </HierarchicalDataTemplate>
             </TreeView.ItemTemplate>
         </TreeView>

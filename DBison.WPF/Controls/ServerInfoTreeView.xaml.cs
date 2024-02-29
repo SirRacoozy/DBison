@@ -1,4 +1,6 @@
-﻿namespace DBison.WPF.Controls
+﻿using System.Windows.Controls;
+
+namespace DBison.WPF.Controls
 {
     /// <summary>
     /// Interaction logic for ServerInfoTreeView.xaml
@@ -9,5 +11,7 @@
         {
             InitializeComponent();
         }
+
+        public TreeView TreeView => ThisTreeView;
     }
 }

@@ -4,6 +4,8 @@ using DBison.Core.Helper;
 using DBison.Core.Utils.SettingsSystem;
 using DBison.WPF.ClientBaseClasses;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
+using System.Windows;
 using System.Windows.Media;
 
 namespace DBison.WPF.ViewModels;
@@ -31,6 +33,8 @@ public class ServerViewModel : ClientViewModelBase
         get => Get<Brush>();
         set => Set(value);
     }
+
+    public Visibility CloseVisibility => Visibility.Visible;
 
     #region [DatabaseObject]
     public ServerInfo DatabaseObject
@@ -61,12 +65,7 @@ public class ServerViewModel : ClientViewModelBase
         set
         {
             if (Get<ObservableCollection<ServerQueryPageViewModel>>() == null && value != null)
-            {
-                value.CollectionChanged += (sender, e) =>
-                {
-                    OnPropertyChanged(nameof(ServerQueryPages));
-                };
-            }
+                value.CollectionChanged += __CollectionChanged;
             Set(value);
         }
     }
@@ -107,7 +106,7 @@ public class ServerViewModel : ClientViewModelBase
 
     public void Execute_Close()
     {
-        m_MainWindowViewModel.RemoveServer(this); // REMOVE?
+        m_MainWindowViewModel.RemoveServer(this);
     }
 
     #region [SetBusyState]
@@ -133,7 +132,7 @@ public class ServerViewModel : ClientViewModelBase
     {
         int top = Settings.Limit;
 
-        if (serverObjectTreeItemViewModel.DatabaseObject is not Table && serverObjectTreeItemViewModel.DatabaseObject is not View)
+        if (serverObjectTreeItemViewModel.DatabaseObject is not DBisonTable && serverObjectTreeItemViewModel.DatabaseObject is not DBisonView)
             return;
 
         var sql = $"SELECT TOP {top} * FROM {serverObjectTreeItemViewModel.DatabaseObject.Name}";
@@ -152,6 +151,7 @@ public class ServerViewModel : ClientViewModelBase
     }
     #endregion
 
+    #region [RemoveQuery]
     public void RemoveQuery(ServerQueryPageViewModel queryVm)
     {
         if (queryVm != null && ServerQueryPages.Contains(queryVm))
@@ -163,6 +163,7 @@ public class ServerViewModel : ClientViewModelBase
             m_MainWindowViewModel.QueryPagesChanged();
         }
     }
+    #endregion
 
     #endregion
 
@@ -198,20 +199,20 @@ public class ServerViewModel : ClientViewModelBase
 
             if (dataBase is ExtendedDatabaseInfo extendedInfo)
             {
-                var tablesNode = __GetTreeItemViewModel(new Table("Tables", server, extendedInfo) { IsMainNode = true }, extendedInfo);
-                tablesNode.ServerObjects.Add(__GetTreeItemViewModel(new Table("Loading....", server, extendedInfo), extendedInfo)); //Needs to be set, to expand and load real objects then
+                var tablesNode = __GetTreeItemViewModel(new DBisonTable("Tables", server, extendedInfo) { IsMainNode = true }, extendedInfo);
+                tablesNode.ServerObjects.Add(__GetTreeItemViewModel(new DBisonTable("Loading....", server, extendedInfo), extendedInfo)); //Needs to be set, to expand and load real objects then
                 databaseTreeItemVM.ServerObjects.Add(tablesNode);
 
-                var viewNode = __GetTreeItemViewModel(new View("Views", server, extendedInfo) { IsMainNode = true }, extendedInfo);
-                viewNode.ServerObjects.Add(__GetTreeItemViewModel(new View("Loading....", server, extendedInfo), extendedInfo)); //Needs to be set, to expand and load real objects then
+                var viewNode = __GetTreeItemViewModel(new DBisonView("Views", server, extendedInfo) { IsMainNode = true }, extendedInfo);
+                viewNode.ServerObjects.Add(__GetTreeItemViewModel(new DBisonView("Loading....", server, extendedInfo), extendedInfo)); //Needs to be set, to expand and load real objects then
                 databaseTreeItemVM.ServerObjects.Add(viewNode);
 
-                var triggerNode = __GetTreeItemViewModel(new Trigger("Trigger", server, extendedInfo) { IsMainNode = true }, extendedInfo);
-                triggerNode.ServerObjects.Add(__GetTreeItemViewModel(new Trigger("Loading....", server, extendedInfo), extendedInfo)); //Needs to be set, to expand and load real objects then
+                var triggerNode = __GetTreeItemViewModel(new DBisonTrigger("Trigger", server, extendedInfo) { IsMainNode = true }, extendedInfo);
+                triggerNode.ServerObjects.Add(__GetTreeItemViewModel(new DBisonTrigger("Loading....", server, extendedInfo), extendedInfo)); //Needs to be set, to expand and load real objects then
                 databaseTreeItemVM.ServerObjects.Add(triggerNode);
 
-                var prodceduresNode = __GetTreeItemViewModel(new StoredProcedure("Procedures", server, extendedInfo) { IsMainNode = true }, extendedInfo);
-                prodceduresNode.ServerObjects.Add(__GetTreeItemViewModel(new StoredProcedure("Loading....", server, extendedInfo), extendedInfo)); //Needs to be set, to expand and load real objects then
+                var prodceduresNode = __GetTreeItemViewModel(new DBisonStoredProcedure("Procedures", server, extendedInfo) { IsMainNode = true }, extendedInfo);
+                prodceduresNode.ServerObjects.Add(__GetTreeItemViewModel(new DBisonStoredProcedure("Loading....", server, extendedInfo), extendedInfo)); //Needs to be set, to expand and load real objects then
                 databaseTreeItemVM.ServerObjects.Add(prodceduresNode);
             }
 
@@ -242,11 +243,28 @@ public class ServerViewModel : ClientViewModelBase
     }
     #endregion
 
+    #region [__CollectionChanged]
+    private void __CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
+    {
+        OnPropertyChanged(nameof(ServerQueryPages));
+    }
+    #endregion
+
     #endregion
 
     #region [Dispose]
     protected override void Dispose(bool disposing)
     {
+        if (!disposing || IsDisposed)
+            return;
+
+        ServerQueryPages.CollectionChanged -= __CollectionChanged;
+        foreach (var queryPage in ServerQueryPages)
+        {
+            queryPage.Dispose();
+        }
+        ServerQueryPages = null;
+
         base.Dispose(disposing);
     }
     #endregion

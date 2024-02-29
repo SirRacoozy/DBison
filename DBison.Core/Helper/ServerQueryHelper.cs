@@ -39,7 +39,7 @@ public class ServerQueryHelper
                         while (reader.Read())
                         {
                             var name = reader[0].ToStringValue();
-                            extendedDatabase.Tables.Add(new Table(name, m_Server, extendedDatabase));
+                            extendedDatabase.Tables.Add(new DBisonTable(name, m_Server, extendedDatabase));
                         }
                     }
                 }
@@ -69,7 +69,7 @@ public class ServerQueryHelper
                         while (reader.Read())
                         {
                             var name = reader[0].ToStringValue();
-                            extendedDatabase.Views.Add(new View(name, m_Server, extendedDatabase));
+                            extendedDatabase.Views.Add(new DBisonView(name, m_Server, extendedDatabase));
                         }
                     }
                 }
@@ -99,7 +99,7 @@ public class ServerQueryHelper
                         while (reader.Read())
                         {
                             var name = reader[0].ToStringValue();
-                            extendedDatabase.Triggers.Add(new Trigger(name, m_Server, extendedDatabase));
+                            extendedDatabase.Triggers.Add(new DBisonTrigger(name, m_Server, extendedDatabase));
                         }
                     }
                 }
@@ -129,7 +129,7 @@ public class ServerQueryHelper
                         while (reader.Read())
                         {
                             var name = reader[0].ToStringValue();
-                            extendedDatabase.Procedures.Add(new StoredProcedure(name, m_Server, extendedDatabase));
+                            extendedDatabase.Procedures.Add(new DBisonStoredProcedure(name, m_Server, extendedDatabase));
                         }
                     }
                 }

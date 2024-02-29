@@ -5,9 +5,9 @@ public class ExtendedDatabaseInfo : DatabaseInfo
     {
     }
 
-    public List<StoredProcedure> Procedures { get; private set; } = [];
-    public List<Table> Tables { get; private set; } = [];
-    public List<Trigger> Triggers { get; private set; } = [];
-    public List<View> Views { get; private set; } = [];
+    public List<DBisonStoredProcedure> Procedures { get; private set; } = [];
+    public List<DBisonTable> Tables { get; private set; } = [];
+    public List<DBisonTrigger> Triggers { get; private set; } = [];
+    public List<DBisonView> Views { get; private set; } = [];
 
 }

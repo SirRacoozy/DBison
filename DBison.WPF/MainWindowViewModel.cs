@@ -1,4 +1,5 @@
-﻿using DBison.Core.Entities;
+﻿using DBison.Core.Attributes;
+using DBison.Core.Entities;
 using DBison.WPF.ClientBaseClasses;
 using DBison.WPF.Dialogs;
 using DBison.WPF.ViewModels;
@@ -18,8 +19,8 @@ public class MainWindowViewModel : ClientViewModelBase
         __ExecuteOnDispatcherWithDelay(Execute_AddServer, TimeSpan.FromSeconds(1));
     }
 
-    #region [Server]
-    public ObservableCollection<ServerViewModel> Server
+    #region [ServerItems]
+    public ObservableCollection<ServerViewModel> ServerItems
     {
         get => Get<ObservableCollection<ServerViewModel>>();
         set => Set(value);
@@ -89,32 +90,33 @@ public class MainWindowViewModel : ClientViewModelBase
 
     public void RemoveServer(ServerViewModel server)
     {
-        if (server != null && Server.Contains(server))
+        if (server != null && ServerItems.Contains(server))
         {
-            Server.Remove(server);
+            ServerItems.Remove(server);
             server.Dispose();
-            OnPropertyChanged(nameof(Server));
-            SelectedServer = Server.FirstOrDefault();
+            OnPropertyChanged(nameof(ServerItems));
+            SelectedServer = ServerItems.FirstOrDefault();
         }
     }
 
+    [DependsUpon(nameof(SelectedServer))]
     public void QueryPagesChanged()
     {
-        QueryPages = new(Server.SelectMany(s => s.ServerQueryPages));
+        QueryPages = new(SelectedServer?.ServerQueryPages);
         OnPropertyChanged(nameof(QueryPages));
-        SelectedQueryPage = QueryPages.Last();
+        SelectedQueryPage = QueryPages.LastOrDefault();
     }
 
     private void __InitServers()
     {
-        Server = new ObservableCollection<ServerViewModel>();
-        SelectedServer = Server.FirstOrDefault();
+        ServerItems = new ObservableCollection<ServerViewModel>();
+        SelectedServer = ServerItems.FirstOrDefault();
     }
 
     private void __AddServer(ServerInfo server)
     {
-        if (Server == null)
-            Server = new ObservableCollection<ServerViewModel>();
+        if (ServerItems == null)
+            ServerItems = new ObservableCollection<ServerViewModel>();
         var newServerViewModel = new ServerViewModel(server, __NewServerViewModel_ErrorOccured, this);
         if (m_Error)
         {
@@ -122,7 +124,7 @@ public class MainWindowViewModel : ClientViewModelBase
             m_Error = false;
             return;
         }
-        Server.Add(newServerViewModel);
+        ServerItems.Add(newServerViewModel);
         SelectedServer = newServerViewModel;
     }
 
@@ -149,4 +151,21 @@ public class MainWindowViewModel : ClientViewModelBase
         SettingsVm = new SettingsViewModel();
     }
 
+    internal void SetSelectedServerIfNeeded(object selectedItem)
+    {
+        if (selectedItem is ServerViewModel serverViewModel)
+        {
+            SelectedServer = serverViewModel;
+        }
+        else if (selectedItem is ServerObjectTreeItemViewModel treeItemObject)
+        {
+            var serverVm = ServerItems.FirstOrDefault(x => x.DatabaseObject == treeItemObject.DatabaseObject.Server);
+            if (serverVm != null && SelectedServer != serverVm)
+                SelectedServer = serverVm;
+        }
+        else
+        {
+
+        }
+    }
 }

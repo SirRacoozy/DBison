@@ -5,7 +5,6 @@ using DBison.Core.Helper;
 using DBison.WPF.ClientBaseClasses;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
-using System.Windows;
 using System.Windows.Threading;
 
 namespace DBison.WPF.ViewModels;
@@ -141,6 +140,8 @@ public class ServerQueryPageViewModel : ClientViewModelBase
     #region [Execute_CancelQuery]
     public void Execute_CancelQuery()
     {
+        if (!IsLoading)
+            return;
         m_ServerQueryHelper.Cancel();
         IsLoading = false;
         QueryStatisticText = string.Empty;
@@ -256,6 +257,21 @@ public class ServerQueryPageViewModel : ClientViewModelBase
         QueryStatisticText = $"ERROR occured";
         m_ServerViewModel.ExecuteError(ex);
     }
-
     #endregion
+
+    protected override void Dispose(bool disposing)
+    {
+        if (!disposing || IsDisposed)
+            return;
+
+        Execute_CancelQuery();
+
+        if (m_ExecutionTimer != null)
+        {
+            m_ExecutionTimer.Tick -= __ExecutionTimer_Tick;
+            m_ExecutionTimer = null;
+        }
+
+        base.Dispose(disposing);
+    }
 }

@@ -19,4 +19,14 @@ public partial class ServerTabbedPage : UserControlBase
             mainVm.FilterText = t.Text;
         }
     }
+
+    private void __SelectedItemChanged(object sender, System.Windows.RoutedPropertyChangedEventArgs<object> e)
+    {
+        if(sender is ServerInfoTreeView tv && tv.DataContext is MainWindowViewModel mainVm)
+        {
+
+            mainVm.SetSelectedServerIfNeeded(tv.TreeView.SelectedItem);
+            //tv.SelectedItem
+        }
+    }
 }
