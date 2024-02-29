@@ -22,7 +22,7 @@
                 <ColumnDefinition Width="1*" />
                 <ColumnDefinition Width="1*" />
               </Grid.ColumnDefinitions>
-              <TextBlock Text="{Binding Header}"
+              <TextBlock Text="{Binding Header}" ToolTip="{Binding Tooltip}"
                                        Grid.Column="0" />
 
               <ContentControl Grid.Column="2"
