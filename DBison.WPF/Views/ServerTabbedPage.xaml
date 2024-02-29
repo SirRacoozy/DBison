@@ -49,7 +49,8 @@
             <Setter Property="HeaderTemplate">
                 <Setter.Value>
                     <DataTemplate>
-                        <Grid Margin="5">
+                        <Grid Margin="5"
+                              MouseDown="__MouseWheelClick">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="Auto" />
