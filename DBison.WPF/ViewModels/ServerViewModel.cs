@@ -14,14 +14,17 @@ public class ServerViewModel : ClientViewModelBase
     ServerQueryHelper m_ServerQueryHelper;
     Action<object?, Exception> m_OnError;
     MainWindowViewModel m_MainWindowViewModel;
+    private string m_Filter;
+    private ServerInfo m_Server;
 
     #region [Ctor]
     public ServerViewModel(ServerInfo server, Action<object?, Exception> onError, MainWindowViewModel mainWindowViewModel)
     {
+        m_Server = server;
         m_MainWindowViewModel = mainWindowViewModel;
         SelectedBackGround = Brushes.Gray;
         m_OnError = onError;
-        __InitServer(server);
+        __InitServer();
     }
     #endregion
 
@@ -43,7 +46,12 @@ public class ServerViewModel : ClientViewModelBase
     #region [IsExpanded]
     public bool IsExpanded
     {
-        get => Get<bool>();
+        get
+        {
+            if (m_Filter.IsNotNullOrEmpty())
+                return true;
+            return Get<bool>();
+        }
         set => Set(value);
     }
     #endregion
@@ -100,10 +108,12 @@ public class ServerViewModel : ClientViewModelBase
 
     #region - public methods -
 
+    #region [Execute_Close]
     public void Execute_Close()
     {
         m_MainWindowViewModel.RemoveServer(this);
     }
+    #endregion
 
     #region [AddNewQueryPage]
     public void AddNewQueryPage(DatabaseObjectBase databaseObject, string queryText)
@@ -152,19 +162,29 @@ public class ServerViewModel : ClientViewModelBase
     }
     #endregion
 
+    #region [Filter]
+    public void Filter(string filter)
+    {
+        m_Filter = filter;
+        OnPropertyChanged(nameof(IsExpanded));
+        __InitTreeView();
+    }
+    #endregion
+
     #endregion
 
     #region - private methods -
 
     #region [__InitServer]
-    private void __InitServer(ServerInfo server)
+    private void __InitServer()
     {
         try
         {
-            m_ServerQueryHelper = new ServerQueryHelper(server);
+            m_ServerQueryHelper = new ServerQueryHelper(m_Server);
             m_ServerQueryHelper.LoadServerObjects();
-            DatabaseObject = server;
-            __InitTreeView(server);
+            DatabaseObject = m_Server;
+            m_Filter = string.Empty; //Ensure no filtering
+            __InitTreeView();
         }
         catch (Exception ex)
         {
@@ -174,32 +194,33 @@ public class ServerViewModel : ClientViewModelBase
     #endregion
 
     #region [__InitTreeView]
-    private void __InitTreeView(ServerInfo server)
+    private void __InitTreeView()
     {
         var treeItems = new ObservableCollection<ServerObjectTreeItemViewModel>(); //Should be the main nodes
 
-        var databaseNode = __GetTreeItemViewModel(new DatabaseInfo("Databases", server, null) { IsMainNode = true }, null); //First Main Node
+        var databaseNode = __GetTreeItemViewModel(new DatabaseInfo("Databases", m_Server, null) { IsMainNode = true }, null); //First Main Node
         databaseNode.IsExpanded = true;
-        foreach (var dataBase in server.DatabaseInfos)
+        foreach (var dataBase in m_Server.DatabaseInfos)
         {
             var databaseTreeItemVM = __GetTreeItemViewModel(dataBase, null);
+            databaseTreeItemVM.DatabaseObject.IsMainNode = true;
 
             if (dataBase is ExtendedDatabaseInfo extendedInfo)
             {
-                var tablesNode = __GetTreeItemViewModel(new DBisonTable("Tables", server, extendedInfo) { IsMainNode = true }, extendedInfo);
-                tablesNode.ServerObjects.Add(__GetTreeItemViewModel(new DBisonTable("Loading....", server, extendedInfo), extendedInfo)); //Needs to be set, to expand and load real objects then
+                var tablesNode = __GetTreeItemViewModel(new DBisonTable("Tables", m_Server, extendedInfo) { IsMainNode = true }, extendedInfo);
+                tablesNode.ServerObjects.Add(__GetTreeItemViewModel(new DBisonTable("Loading....", m_Server, extendedInfo), extendedInfo)); //Needs to be set, to expand and load real objects then
                 databaseTreeItemVM.ServerObjects.Add(tablesNode);
 
-                var viewNode = __GetTreeItemViewModel(new DBisonView("Views", server, extendedInfo) { IsMainNode = true }, extendedInfo);
-                viewNode.ServerObjects.Add(__GetTreeItemViewModel(new DBisonView("Loading....", server, extendedInfo), extendedInfo)); //Needs to be set, to expand and load real objects then
+                var viewNode = __GetTreeItemViewModel(new DBisonView("Views", m_Server, extendedInfo) { IsMainNode = true }, extendedInfo);
+                viewNode.ServerObjects.Add(__GetTreeItemViewModel(new DBisonView("Loading....", m_Server, extendedInfo), extendedInfo)); //Needs to be set, to expand and load real objects then
                 databaseTreeItemVM.ServerObjects.Add(viewNode);
 
-                var triggerNode = __GetTreeItemViewModel(new DBisonTrigger("Trigger", server, extendedInfo) { IsMainNode = true }, extendedInfo);
-                triggerNode.ServerObjects.Add(__GetTreeItemViewModel(new DBisonTrigger("Loading....", server, extendedInfo), extendedInfo)); //Needs to be set, to expand and load real objects then
+                var triggerNode = __GetTreeItemViewModel(new DBisonTrigger("Trigger", m_Server, extendedInfo) { IsMainNode = true }, extendedInfo);
+                triggerNode.ServerObjects.Add(__GetTreeItemViewModel(new DBisonTrigger("Loading....", m_Server, extendedInfo), extendedInfo)); //Needs to be set, to expand and load real objects then
                 databaseTreeItemVM.ServerObjects.Add(triggerNode);
 
-                var prodceduresNode = __GetTreeItemViewModel(new DBisonStoredProcedure("Procedures", server, extendedInfo) { IsMainNode = true }, extendedInfo);
-                prodceduresNode.ServerObjects.Add(__GetTreeItemViewModel(new DBisonStoredProcedure("Loading....", server, extendedInfo), extendedInfo)); //Needs to be set, to expand and load real objects then
+                var prodceduresNode = __GetTreeItemViewModel(new DBisonStoredProcedure("Procedures", m_Server, extendedInfo) { IsMainNode = true }, extendedInfo);
+                prodceduresNode.ServerObjects.Add(__GetTreeItemViewModel(new DBisonStoredProcedure("Loading....", m_Server, extendedInfo), extendedInfo)); //Needs to be set, to expand and load real objects then
                 databaseTreeItemVM.ServerObjects.Add(prodceduresNode);
             }
 
@@ -215,7 +236,10 @@ public class ServerViewModel : ClientViewModelBase
     #region [__GetTreeItemViewModel]
     private ServerObjectTreeItemViewModel __GetTreeItemViewModel(DatabaseObjectBase databaseObject, ExtendedDatabaseInfo extendedDatabaseRef)
     {
-        var treeItemViewModel = new ServerObjectTreeItemViewModel(databaseObject, m_ServerQueryHelper, extendedDatabaseRef, this);
+        var treeItemViewModel = new ServerObjectTreeItemViewModel(databaseObject, m_ServerQueryHelper, extendedDatabaseRef, this)
+        {
+            Filter = m_Filter,
+        };
         treeItemViewModel.ServerObjects = new ObservableCollection<ServerObjectTreeItemViewModel>();
         return treeItemViewModel;
     }

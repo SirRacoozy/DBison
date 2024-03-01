@@ -1,5 +1,6 @@
 ﻿using DBison.Core.Attributes;
 using DBison.Core.Entities;
+using DBison.Core.Extender;
 using DBison.Core.Helper;
 using DBison.Core.Utils.Commands;
 using DBison.WPF.ClientBaseClasses;
@@ -46,12 +47,35 @@ public class ServerObjectTreeItemViewModel : ClientViewModelBase
 
     public bool IsExpanded
     {
-        get => Get<bool>();
+        get
+        {
+            if (Filter.IsNotNullOrEmpty())
+                return true;
+            return Get<bool>();
+        }
         set
         {
             Set(value);
             if (value && ServerObjects.Count == 1)
                 __LoadSubObjects();
+        }
+    }
+
+    public string Filter
+    {
+        get
+        {
+            if (!DatabaseObject.IsMainNode)
+                return string.Empty;
+            return Get<string>();
+        }
+        set
+        {
+            if (DatabaseObject.IsMainNode && value != Filter)
+            {
+                Set(value);
+                __LoadSubObjects();
+            }
         }
     }
 
@@ -126,7 +150,7 @@ public class ServerObjectTreeItemViewModel : ClientViewModelBase
 
     private void __LoadSubObjects()
     {
-        if (ServerObjects.Count > 1) //Objects are already loaded on this node
+        if (ServerObjects.Count > 1 && Filter.IsNullOrEmpty()) //Objects are already loaded on this node
             return;
         var task = new Task(() =>
         {
@@ -138,28 +162,28 @@ public class ServerObjectTreeItemViewModel : ClientViewModelBase
                 if (DatabaseObject is DBisonTable)
                 {
                     __SetLoading(true);
-                    m_ServerQueryHelper.LoadTables(ExtendedDatabaseRef);
+                    m_ServerQueryHelper.LoadTables(ExtendedDatabaseRef, Filter);
                     ServerObjects = __GetSubVms(new(ExtendedDatabaseRef.Tables));
                     __SetLoading(false);
                 }
                 else if (DatabaseObject is DBisonView)
                 {
                     __SetLoading(true);
-                    m_ServerQueryHelper.LoadViews(ExtendedDatabaseRef);
+                    m_ServerQueryHelper.LoadViews(ExtendedDatabaseRef, Filter);
                     ServerObjects = __GetSubVms(new(ExtendedDatabaseRef.Views));
                     __SetLoading(false);
                 }
                 else if (DatabaseObject is DBisonTrigger)
                 {
                     __SetLoading(true);
-                    m_ServerQueryHelper.LoadTrigger(ExtendedDatabaseRef);
+                    m_ServerQueryHelper.LoadTrigger(ExtendedDatabaseRef, Filter);
                     ServerObjects = __GetSubVms(new(ExtendedDatabaseRef.Triggers));
                     __SetLoading(false);
                 }
                 else if (DatabaseObject is DBisonStoredProcedure)
                 {
                     __SetLoading(true);
-                    m_ServerQueryHelper.LoadProcedures(ExtendedDatabaseRef);
+                    m_ServerQueryHelper.LoadProcedures(ExtendedDatabaseRef, Filter);
                     ServerObjects = __GetSubVms(new(ExtendedDatabaseRef.Procedures));
                     __SetLoading(false);
                 }

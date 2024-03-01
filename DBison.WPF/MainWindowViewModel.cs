@@ -20,6 +20,8 @@ public class MainWindowViewModel : ClientViewModelBase
         __ExecuteOnDispatcherWithDelay(Execute_AddServer, TimeSpan.FromSeconds(1));
     }
 
+    #region - public properties -
+
     #region [ServerItems]
     public ObservableCollection<ServerViewModel> ServerItems
     {
@@ -67,9 +69,14 @@ public class MainWindowViewModel : ClientViewModelBase
         set
         {
             Set(value);
+            __Filter();
         }
     }
     #endregion
+
+    #endregion
+
+    #region - commands -
 
     #region [Execute_QuitApplication]
     public void Execute_QuitApplication()
@@ -123,6 +130,11 @@ public class MainWindowViewModel : ClientViewModelBase
     }
     #endregion
 
+    #endregion
+
+    #region - public methods
+
+    #region [RemoveServer]
     public void RemoveServer(ServerViewModel server)
     {
         if (server != null && ServerItems.Contains(server))
@@ -138,7 +150,9 @@ public class MainWindowViewModel : ClientViewModelBase
             OnPropertyChanged(nameof(TabItems));
         }
     }
+    #endregion
 
+    #region [QueryPagesChanged]
     [DependsUpon(nameof(SelectedServer))]
     public void QueryPagesChanged()
     {
@@ -155,62 +169,9 @@ public class MainWindowViewModel : ClientViewModelBase
         else
             SelectedTabItem = null;
     }
+    #endregion
 
-    private void __AddQueryPageIfPossible(string queryText)
-    {
-        if (SelectedServer != null && SelectedServer.DatabaseObject is ServerInfo serverInfo)
-        {
-            var dataBase = LastSelectedDatabase ?? serverInfo.DatabaseInfos.FirstOrDefault();
-            if (dataBase != null)
-                SelectedServer.AddNewQueryPage(dataBase, queryText);
-        }
-    }
-
-    private void __ToggleSettingsPageIfNeeded()
-    {
-        if (!TabItems.Any(q => q is SettingsTabViewModel))
-            TabItems.Add(new SettingsTabViewModel(this) { Header = "Settings" });
-        else
-            CloseSettings();
-        SelectedTabItem = TabItems.LastOrDefault(s => s is SettingsTabViewModel);
-    }
-
-    private void __InitServers()
-    {
-        ServerItems = new ObservableCollection<ServerViewModel>();
-        SelectedServer = ServerItems.FirstOrDefault();
-    }
-
-    private void __AddServer(ServerInfo server)
-    {
-        if (ServerItems == null)
-            ServerItems = new ObservableCollection<ServerViewModel>();
-        var newServerViewModel = new ServerViewModel(server, __NewServerViewModel_ErrorOccured, this);
-        if (m_HasAddServerError)
-        {
-            newServerViewModel.Dispose();
-            m_HasAddServerError = false;
-            return;
-        }
-        ServerItems.Add(newServerViewModel);
-        SelectedServer = newServerViewModel;
-    }
-
-    private void __NewServerViewModel_ErrorOccured(object? sender, Exception e)
-    {
-        m_HasAddServerError = true;
-        ShowExceptionMessage(e);
-    }
-
-    private void __ExecuteOnDispatcherWithDelay(Action action, TimeSpan delay)
-    {
-        new Task(() =>
-        {
-            Thread.Sleep(delay);
-            Application.Current.Dispatcher.Invoke(action);
-        }).Start();
-    }
-
+    #region [SetSelectedServerIfNeeded]
     internal void SetSelectedServerIfNeeded(object selectedItem)
     {
         if (selectedItem is ServerViewModel serverViewModel)
@@ -227,9 +188,100 @@ public class MainWindowViewModel : ClientViewModelBase
                 LastSelectedDatabase = treeItemObject.DatabaseObject.DataBase;
         }
     }
+    #endregion
 
+    #region [CloseSettings]
     internal void CloseSettings()
     {
         TabItems = new(TabItems.Where(x => x is not SettingsTabViewModel));
     }
+    #endregion
+
+    #endregion
+
+    #region - private methods -
+
+    #region [__AddQueryPageIfPossible]
+    private void __AddQueryPageIfPossible(string queryText)
+    {
+        if (SelectedServer != null && SelectedServer.DatabaseObject is ServerInfo serverInfo)
+        {
+            var dataBase = LastSelectedDatabase ?? serverInfo.DatabaseInfos.FirstOrDefault();
+            if (dataBase != null)
+                SelectedServer.AddNewQueryPage(dataBase, queryText);
+        }
+    }
+    #endregion
+
+    #region [__ToggleSettingsPageIfNeeded]
+    private void __ToggleSettingsPageIfNeeded()
+    {
+        if (!TabItems.Any(q => q is SettingsTabViewModel))
+            TabItems.Add(new SettingsTabViewModel(this) { Header = "Settings" });
+        else
+            CloseSettings();
+        SelectedTabItem = TabItems.LastOrDefault(s => s is SettingsTabViewModel);
+    }
+    #endregion
+
+    #region [__InitServers]
+    private void __InitServers()
+    {
+        ServerItems = new ObservableCollection<ServerViewModel>();
+        SelectedServer = ServerItems.FirstOrDefault();
+    }
+    #endregion
+
+    #region [__AddServer]
+    private void __AddServer(ServerInfo server)
+    {
+        if (ServerItems == null)
+            ServerItems = new ObservableCollection<ServerViewModel>();
+        var newServerViewModel = new ServerViewModel(server, __NewServerViewModel_ErrorOccured, this);
+        if (m_HasAddServerError)
+        {
+            newServerViewModel.Dispose();
+            m_HasAddServerError = false;
+            return;
+        }
+        ServerItems.Add(newServerViewModel);
+        SelectedServer = newServerViewModel;
+    }
+    #endregion
+
+    #region [__NewServerViewModel_ErrorOccured]
+    private void __NewServerViewModel_ErrorOccured(object? sender, Exception e)
+    {
+        m_HasAddServerError = true;
+        ShowExceptionMessage(e);
+    }
+    #endregion
+
+    #region [__ExecuteOnDispatcherWithDelay]
+    private void __ExecuteOnDispatcherWithDelay(Action action, TimeSpan delay)
+    {
+        new Task(() =>
+        {
+            Thread.Sleep(delay);
+            Application.Current.Dispatcher.Invoke(action);
+        }).Start();
+    }
+    #endregion
+
+    #region [__Filter]
+    private void __Filter()
+    {
+        if (FilterText.IsNullOrEmpty())
+            return;
+
+        var textToFilter = FilterText.Trim();
+        foreach (var serverItem in ServerItems)
+        {
+            serverItem.Filter(textToFilter);
+        }
+    }
+    #endregion
+
+    #endregion
+
 }
