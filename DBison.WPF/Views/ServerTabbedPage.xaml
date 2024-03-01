@@ -212,7 +212,7 @@
                       Background="White"
                       Visibility="Collapsed" />
 
-        <controls:TabControlBase ItemsSource="{Binding QueryPages, Mode=OneWay}"
+        <controls:TabControlBase ItemsSource="{Binding TabItems, Mode=OneWay}"
                                  SelectedIndex="0"
                                  SelectedItem="{Binding SelectedTabItem, Mode=TwoWay}"
                                  Grid.Row="0"

@@ -252,6 +252,7 @@ public class ServerQueryPageViewModel : TabItemViewModelBase
     }
     #endregion
 
+    #region [__CleanTimer]
     private void __CleanTimer()
     {
         __ExecuteOnDispatcher(() =>
@@ -260,6 +261,7 @@ public class ServerQueryPageViewModel : TabItemViewModelBase
             m_Stopwatch?.Stop();
         });
     }
+    #endregion
 
     private void __ExecutionTimer_Tick(object? sender, EventArgs e)
     {
