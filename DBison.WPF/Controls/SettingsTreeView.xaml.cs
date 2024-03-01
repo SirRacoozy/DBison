@@ -17,7 +17,7 @@ public partial class SettingsTreeView : UserControl
 
     private void __SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
     {
-        if (sender is TreeView tv && tv.DataContext is SettingsViewModel settingsVm && tv.SelectedItem is SettingGroupViewModel groupVm)
+        if (sender is TreeView tv && tv.DataContext is SettingsTabViewModel settingsVm && tv.SelectedItem is SettingGroupViewModel groupVm)
             settingsVm.SelectedSettingsGroup = groupVm;
     }
 }

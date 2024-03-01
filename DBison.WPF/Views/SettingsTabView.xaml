@@ -4,8 +4,7 @@
              xmlns:local="clr-namespace:DBison.WPF.Views"
              xmlns:controls="clr-namespace:DBison.WPF.Controls"
              xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
-             xmlns:system="clr-namespace:System;assembly=netstandard"
-             DataContext="{Binding SettingsViewModel, Mode=OneWay}">
+             xmlns:system="clr-namespace:System;assembly=netstandard">
 
   <UserControl.Resources>
     <Style TargetType="ItemsControl">

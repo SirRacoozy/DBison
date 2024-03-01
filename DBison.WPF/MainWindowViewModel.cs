@@ -18,7 +18,6 @@ public class MainWindowViewModel : ClientViewModelBase
     public MainWindowViewModel()
     {
         QueryPages = new ObservableCollection<TabItemViewModelBase>();
-        __GetSettings();
         __InitServers();
         __ExecuteOnDispatcherWithDelay(Execute_AddServer, TimeSpan.FromSeconds(1));
     }
@@ -69,14 +68,6 @@ public class MainWindowViewModel : ClientViewModelBase
         {
             Set(value);
         }
-    }
-    #endregion
-
-    #region [SettingsVm]
-    public SettingsViewModel SettingsVm
-    {
-        get => Get<SettingsViewModel>();
-        set => Set(value);
     }
     #endregion
 
@@ -168,7 +159,7 @@ public class MainWindowViewModel : ClientViewModelBase
     private void __AddSettingsPageIfNeeded()
     {
         if (!QueryPages.Any(q => q is SettingsTabViewModel))
-            QueryPages.Add(new SettingsTabViewModel(this) { SettingsViewModel = SettingsVm, Header = "Settings" });
+            QueryPages.Add(new SettingsTabViewModel(this) { Header = "Settings" });
         SelectedTabItem = QueryPages.LastOrDefault(s => s is SettingsTabViewModel);
     }
 
@@ -209,11 +200,6 @@ public class MainWindowViewModel : ClientViewModelBase
             Thread.Sleep(delay);
             Application.Current.Dispatcher.Invoke(action);
         }).Start();
-    }
-
-    private void __GetSettings()
-    {
-        SettingsVm = new SettingsViewModel();
     }
 
     internal void SetSelectedServerIfNeeded(object selectedItem)
