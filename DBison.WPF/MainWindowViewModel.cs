@@ -17,6 +17,7 @@ public class MainWindowViewModel : ClientViewModelBase
     bool m_Error = false;
     public MainWindowViewModel()
     {
+        QueryPages = new ObservableCollection<TabItemViewModelBase>();
         __GetSettings();
         __InitServers();
         __ExecuteOnDispatcherWithDelay(Execute_AddServer, TimeSpan.FromSeconds(1));
@@ -30,16 +31,16 @@ public class MainWindowViewModel : ClientViewModelBase
     }
     #endregion
 
-    public ObservableCollection<ServerQueryPageViewModel> QueryPages
+    public ObservableCollection<TabItemViewModelBase> QueryPages
     {
-        get => Get<ObservableCollection<ServerQueryPageViewModel>>();
+        get => Get<ObservableCollection<TabItemViewModelBase>>();
         set => Set(value);
     }
 
-    #region [SelectedQueryPage]
-    public ServerQueryPageViewModel SelectedQueryPage
+    #region [SelectedTabItem]
+    public TabItemViewModelBase SelectedTabItem
     {
-        get => Get<ServerQueryPageViewModel>();
+        get => Get<TabItemViewModelBase>();
         set => Set(value);
     }
     #endregion
@@ -79,14 +80,6 @@ public class MainWindowViewModel : ClientViewModelBase
     }
     #endregion
 
-    #region [AreSettingsOpen]
-    public bool AreSettingsOpen
-    {
-        get => Get<bool>();
-        set => Set(value);
-    }
-    #endregion
-
     public void Execute_QuitApplication()
     {
         Environment.Exit(0);
@@ -101,7 +94,7 @@ public class MainWindowViewModel : ClientViewModelBase
 
     public void Execute_OpenSettings()
     {
-        AreSettingsOpen = !AreSettingsOpen;
+        __AddSettingsPageIfNeeded();
     }
 
     public void Execute_NewQuery()
@@ -140,7 +133,7 @@ public class MainWindowViewModel : ClientViewModelBase
         }
         if (SelectedServer == null)
         {
-            QueryPages = new ObservableCollection<ServerQueryPageViewModel>();
+            QueryPages = new(QueryPages.Where(q => q is SettingsTabViewModel));
             OnPropertyChanged(nameof(QueryPages));
         }
     }
@@ -150,9 +143,16 @@ public class MainWindowViewModel : ClientViewModelBase
     {
         if (SelectedServer == null)
             return;
+        var settingPage = QueryPages.FirstOrDefault(q => q is SettingsTabViewModel);
         QueryPages = new(SelectedServer?.ServerQueryPages);
+        if (settingPage != null)
+            QueryPages.Add(settingPage);
         OnPropertyChanged(nameof(QueryPages));
-        SelectedQueryPage = QueryPages.LastOrDefault();
+        var lastQueryPage = QueryPages.LastOrDefault(x => x is ServerQueryPageViewModel);
+        if (lastQueryPage != null)
+            SelectedTabItem = (ServerQueryPageViewModel)lastQueryPage;
+        else
+            SelectedTabItem = null; //TODO: Settingstab?
     }
 
     private void __AddQueryPageIfPossible(string queryText)
@@ -163,6 +163,12 @@ public class MainWindowViewModel : ClientViewModelBase
             if (dataBase != null)
                 SelectedServer.AddNewQueryPage(dataBase, queryText);
         }
+    }
+
+    private void __AddSettingsPageIfNeeded()
+    {
+        if(!QueryPages.Any(q => q is SettingsTabViewModel))
+            QueryPages.Add(new SettingsTabViewModel { SettingsViewModel = SettingsVm, Header = "Settings" });
     }
 
     private void __InitServers()

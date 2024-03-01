@@ -4,8 +4,6 @@ using DBison.Core.Utils.SettingsSystem;
 using DBison.WPF.ClientBaseClasses;
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
-using System.Reflection;
-using System.Windows.Controls;
 
 namespace DBison.WPF.ViewModels;
 public class SettingsViewModel : ClientViewModelBase
@@ -32,10 +30,16 @@ public class SettingsViewModel : ClientViewModelBase
                 if (rangeAttributes != null && rangeAttributes.FirstOrDefault() is RangeAttribute rangeAttribute)
                     range = rangeAttribute;
                 var settingsGroup = __AddOrGetSettingsGroupIfNeeded(settingAttribute);
-                settingsGroup.SettingItems.Add(__GetNewSettingsItemViewModel(property, settingAttribute, range));
+                settingsGroup.SettingItems.Add(new SettingItemViewModel(settingAttribute, range, property));
             }
         }
-        OnPropertyChanged(nameof(TabItems));
+        SelectedSettingsGroup = SettingGroups.FirstOrDefault();
+    }
+
+    public SettingGroupViewModel SelectedSettingsGroup
+    {
+        get => Get<SettingGroupViewModel>();
+        set => Set(value);
     }
 
     public ObservableCollection<SettingGroupViewModel> SettingGroups
@@ -44,25 +48,16 @@ public class SettingsViewModel : ClientViewModelBase
         set => Set(value);
     }
 
-    public ObservableCollection<TabItem> TabItems => new(SettingGroups.Select(g => g.TabItem));
-
     private SettingGroupViewModel __AddOrGetSettingsGroupIfNeeded(SettingAttribute attribute)
     {
         SettingGroupViewModel settingsGroup;
         var groupName = attribute.GroupName;
-        settingsGroup = SettingGroups.FirstOrDefault(g => g.GroupName.IsEquals(groupName));
+        settingsGroup = SettingGroups.FirstOrDefault(g => g.Name.IsEquals(groupName));
         if (settingsGroup != null)
             return settingsGroup;
         settingsGroup = new SettingGroupViewModel(groupName, attribute.Header);
         SettingGroups.Add(settingsGroup);
         return settingsGroup;
-    }
-
-    private SettingItemViewModel __GetNewSettingsItemViewModel(PropertyInfo property, SettingAttribute settingAttribute, RangeAttribute range)
-    {
-        var viewModel = new SettingItemViewModel(settingAttribute, range, property);
-
-        return viewModel;
     }
 
 }

@@ -78,6 +78,28 @@
                     Value="16" />
             <Setter Property="Foreground"
                     Value="White" />
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding Setting}"
+                             Value="False">
+                    <DataTrigger.Setters>
+                        <Setter Property="Content">
+                            <Setter.Value>
+                                <local:ServerView Grid.Row="1" />
+                            </Setter.Value>
+                        </Setter>
+                    </DataTrigger.Setters>
+                </DataTrigger>
+                <DataTrigger Binding="{Binding Setting}"
+                             Value="True">
+                    <DataTrigger.Setters>
+                        <Setter Property="Content">
+                            <Setter.Value>
+                                <local:SettingsTabView />
+                            </Setter.Value>
+                        </Setter>
+                    </DataTrigger.Setters>
+                </DataTrigger>
+            </Style.Triggers>
         </Style>
 
         <Style  TargetType="{x:Type controls:TabControlBase}">
@@ -192,20 +214,12 @@
 
         <controls:TabControlBase ItemsSource="{Binding QueryPages, Mode=OneWay}"
                                  SelectedIndex="0"
-                                 SelectedItem="{Binding SelectedQueryPage, Mode=TwoWay}"
+                                 SelectedItem="{Binding SelectedTabItem, Mode=TwoWay}"
                                  Grid.Row="0"
                                  Grid.RowSpan="2"
                                  Grid.Column="2"
                                  BorderBrush="Transparent"
-                                 BorderThickness="0">
-
-            <controls:TabControlBase.ContentTemplate>
-                <DataTemplate>
-                    <local:ServerView Grid.Row="1" />
-                </DataTemplate>
-            </controls:TabControlBase.ContentTemplate>
-
-        </controls:TabControlBase>
+                                 BorderThickness="0" />
 
     </Grid>
 </controls:UserControlBase>

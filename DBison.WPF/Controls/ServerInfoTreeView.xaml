@@ -7,8 +7,6 @@
                        xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
                        Background="Transparent"
                        Margin="5">
-    <local:UserControlBase.Resources>
-    </local:UserControlBase.Resources>
     <Grid>
         <TreeView Background="Transparent"
                   ItemsSource="{Binding ServerItems, Mode=TwoWay}"

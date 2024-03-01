@@ -10,7 +10,7 @@ using System.IO;
 using System.Windows.Threading;
 
 namespace DBison.WPF.ViewModels;
-public class ServerQueryPageViewModel : ClientViewModelBase
+public class ServerQueryPageViewModel : TabItemViewModelBase
 {
     ServerViewModel m_ServerViewModel;
     ServerQueryHelper m_ServerQueryHelper;
@@ -19,6 +19,7 @@ public class ServerQueryPageViewModel : ClientViewModelBase
 
     #region Ctor
     public ServerQueryPageViewModel(string name, ServerViewModel serverViewModel, DatabaseObjectBase databaseObject, ServerQueryHelper serverQueryHelper)
+        : base(false)
     {
         DatabaseObject = databaseObject;
         m_ServerViewModel = serverViewModel;
@@ -30,13 +31,6 @@ public class ServerQueryPageViewModel : ClientViewModelBase
 
     #region - properties -
     #region - public properties -
-    #region [Header]
-    public string Header
-    {
-        get => Get<string>();
-        set => Set(value);
-    }
-    #endregion
 
     #region [SelectedQueryText]
     public string SelectedQueryText

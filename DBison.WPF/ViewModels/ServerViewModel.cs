@@ -83,14 +83,6 @@ public class ServerViewModel : ClientViewModelBase
     }
     #endregion
 
-    #region [SelectedQueryPage]
-    public ServerQueryPageViewModel SelectedQueryPage
-    {
-        get => Get<ServerQueryPageViewModel>();
-        set => Set(value);
-    }
-    #endregion
-
     #region [Header]
     public string Header
     {
@@ -155,7 +147,6 @@ public class ServerViewModel : ClientViewModelBase
             ServerQueryPages.Remove(queryVm);
             queryVm.Dispose();
             OnPropertyChanged(nameof(ServerQueryPages));
-            SelectedQueryPage = ServerQueryPages.FirstOrDefault();
             m_MainWindowViewModel.QueryPagesChanged();
         }
     }
@@ -244,7 +235,6 @@ public class ServerViewModel : ClientViewModelBase
         if(queryText.IsNotNullOrEmpty())
             viewModel.QueryText = queryText;
         ServerQueryPages.Add(viewModel);
-        SelectedQueryPage = viewModel;
         m_MainWindowViewModel.QueryPagesChanged();
     }
     #endregion
