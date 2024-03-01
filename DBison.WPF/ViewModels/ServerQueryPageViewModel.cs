@@ -104,7 +104,8 @@ public class ServerQueryPageViewModel : TabItemViewModelBase
     #region [Execute_ExecuteSQL]
     public void Execute_ExecuteSQL()
     {
-        if (DatabaseObject is DatabaseInfo dbInfo)
+        DatabaseInfo dbInfo = DatabaseObject is DatabaseInfo tmpDbInfo ? tmpDbInfo : DatabaseObject.DataBase;
+        if (dbInfo != null)
             FillDataTable(SelectedQueryText.IsNotNullOrEmpty() ? SelectedQueryText : QueryText, dbInfo);
     }
     #endregion
