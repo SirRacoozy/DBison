@@ -1,10 +1,7 @@
 ﻿using DBison.Core.Baseclasses;
 using DBison.Core.Utils.Commands;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using MahApps.Metro.Controls;
+using MahApps.Metro.Controls.Dialogs;
 using System.Windows;
 
 namespace DBison.WPF.ClientBaseClasses
@@ -20,5 +17,14 @@ namespace DBison.WPF.ClientBaseClasses
                     command.OnCanExecuteChanged();
             }));
         }
+
+        public void ShowExceptionMessage(Exception e)
+        {
+            if (Application.Current.MainWindow is MetroWindow metroWnd)
+            {
+                metroWnd.ShowMessageAsync("Exception occured", e.Message);
+            }
+        }
+
     }
 }

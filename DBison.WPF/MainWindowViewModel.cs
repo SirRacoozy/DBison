@@ -4,8 +4,6 @@ using DBison.Core.Extender;
 using DBison.WPF.ClientBaseClasses;
 using DBison.WPF.Dialogs;
 using DBison.WPF.ViewModels;
-using MahApps.Metro.Controls;
-using MahApps.Metro.Controls.Dialogs;
 using Microsoft.Win32;
 using System.Collections.ObjectModel;
 using System.IO;
@@ -14,10 +12,10 @@ using System.Windows;
 namespace DBison.WPF;
 public class MainWindowViewModel : ClientViewModelBase
 {
-    bool m_Error = false;
+    bool m_HasAddServerError = false;
     public MainWindowViewModel()
     {
-        __GetSettings();
+        TabItems = new ObservableCollection<TabItemViewModelBase>();
         __InitServers();
         __ExecuteOnDispatcherWithDelay(Execute_AddServer, TimeSpan.FromSeconds(1));
     }
@@ -30,16 +28,18 @@ public class MainWindowViewModel : ClientViewModelBase
     }
     #endregion
 
-    public ObservableCollection<ServerQueryPageViewModel> QueryPages
+    #region [TabItems]
+    public ObservableCollection<TabItemViewModelBase> TabItems
     {
-        get => Get<ObservableCollection<ServerQueryPageViewModel>>();
+        get => Get<ObservableCollection<TabItemViewModelBase>>();
         set => Set(value);
     }
+    #endregion
 
-    #region [SelectedQueryPage]
-    public ServerQueryPageViewModel SelectedQueryPage
+    #region [SelectedTabItem]
+    public TabItemViewModelBase SelectedTabItem
     {
-        get => Get<ServerQueryPageViewModel>();
+        get => Get<TabItemViewModelBase>();
         set => Set(value);
     }
     #endregion
@@ -71,44 +71,37 @@ public class MainWindowViewModel : ClientViewModelBase
     }
     #endregion
 
-    #region [SettingsVm]
-    public SettingsViewModel SettingsVm
-    {
-        get => Get<SettingsViewModel>();
-        set => Set(value);
-    }
-    #endregion
-
-    #region [AreSettingsOpen]
-    public bool AreSettingsOpen
-    {
-        get => Get<bool>();
-        set => Set(value);
-    }
-    #endregion
-
+    #region [Execute_QuitApplication]
     public void Execute_QuitApplication()
     {
         Environment.Exit(0);
     }
+    #endregion
 
+    #region [Execute_AddServer]
     public void Execute_AddServer()
     {
         var dialog = new AddServerDialog();
         dialog.ServerConnectRequested += (sender, e) => __AddServer(e);
         dialog.ShowDialog();
     }
+    #endregion
 
-    public void Execute_OpenSettings()
+    #region [Execute_ToggleSettings]
+    public void Execute_ToggleSettings()
     {
-        AreSettingsOpen = !AreSettingsOpen;
+        __ToggleSettingsPageIfNeeded();
     }
+    #endregion
 
+    #region [Execute_NewQuery]
     public void Execute_NewQuery()
     {
         __AddQueryPageIfPossible(string.Empty);
     }
+    #endregion
 
+    #region [Execute_OpenQueryFromFile]
     public void Execute_OpenQueryFromFile()
     {
         var dlg = new OpenFileDialog()
@@ -122,12 +115,13 @@ public class MainWindowViewModel : ClientViewModelBase
             {
                 __AddQueryPageIfPossible(File.ReadAllText(dlg.FileName));
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                //Ignore for first time
+                ShowExceptionMessage(ex);
             }
         }
     }
+    #endregion
 
     public void RemoveServer(ServerViewModel server)
     {
@@ -140,8 +134,8 @@ public class MainWindowViewModel : ClientViewModelBase
         }
         if (SelectedServer == null)
         {
-            QueryPages = new ObservableCollection<ServerQueryPageViewModel>();
-            OnPropertyChanged(nameof(QueryPages));
+            TabItems = new(TabItems.Where(q => q is SettingsTabViewModel));
+            OnPropertyChanged(nameof(TabItems));
         }
     }
 
@@ -150,9 +144,16 @@ public class MainWindowViewModel : ClientViewModelBase
     {
         if (SelectedServer == null)
             return;
-        QueryPages = new(SelectedServer?.ServerQueryPages);
-        OnPropertyChanged(nameof(QueryPages));
-        SelectedQueryPage = QueryPages.LastOrDefault();
+        var settingPage = TabItems.FirstOrDefault(q => q is SettingsTabViewModel);
+        TabItems = new(SelectedServer?.ServerQueryPages);
+        if (settingPage != null)
+            TabItems.Add(settingPage);
+        OnPropertyChanged(nameof(TabItems));
+        var lastQueryPage = TabItems.LastOrDefault(x => x is ServerQueryPageViewModel);
+        if (lastQueryPage != null)
+            SelectedTabItem = (ServerQueryPageViewModel)lastQueryPage;
+        else
+            SelectedTabItem = null;
     }
 
     private void __AddQueryPageIfPossible(string queryText)
@@ -163,6 +164,15 @@ public class MainWindowViewModel : ClientViewModelBase
             if (dataBase != null)
                 SelectedServer.AddNewQueryPage(dataBase, queryText);
         }
+    }
+
+    private void __ToggleSettingsPageIfNeeded()
+    {
+        if (!TabItems.Any(q => q is SettingsTabViewModel))
+            TabItems.Add(new SettingsTabViewModel(this) { Header = "Settings" });
+        else
+            CloseSettings();
+        SelectedTabItem = TabItems.LastOrDefault(s => s is SettingsTabViewModel);
     }
 
     private void __InitServers()
@@ -176,10 +186,10 @@ public class MainWindowViewModel : ClientViewModelBase
         if (ServerItems == null)
             ServerItems = new ObservableCollection<ServerViewModel>();
         var newServerViewModel = new ServerViewModel(server, __NewServerViewModel_ErrorOccured, this);
-        if (m_Error)
+        if (m_HasAddServerError)
         {
             newServerViewModel.Dispose();
-            m_Error = false;
+            m_HasAddServerError = false;
             return;
         }
         ServerItems.Add(newServerViewModel);
@@ -188,11 +198,8 @@ public class MainWindowViewModel : ClientViewModelBase
 
     private void __NewServerViewModel_ErrorOccured(object? sender, Exception e)
     {
-        m_Error = true;
-        if (Application.Current.MainWindow is MetroWindow metroWnd)
-        {
-            metroWnd.ShowMessageAsync("Exception occured", e.Message);
-        }
+        m_HasAddServerError = true;
+        ShowExceptionMessage(e);
     }
 
     private void __ExecuteOnDispatcherWithDelay(Action action, TimeSpan delay)
@@ -202,11 +209,6 @@ public class MainWindowViewModel : ClientViewModelBase
             Thread.Sleep(delay);
             Application.Current.Dispatcher.Invoke(action);
         }).Start();
-    }
-
-    private void __GetSettings()
-    {
-        SettingsVm = new SettingsViewModel();
     }
 
     internal void SetSelectedServerIfNeeded(object selectedItem)
@@ -224,5 +226,10 @@ public class MainWindowViewModel : ClientViewModelBase
             if (LastSelectedDatabase != treeItemObject.DatabaseObject.DataBase)
                 LastSelectedDatabase = treeItemObject.DatabaseObject.DataBase;
         }
+    }
+
+    internal void CloseSettings()
+    {
+        TabItems = new(TabItems.Where(x => x is not SettingsTabViewModel));
     }
 }

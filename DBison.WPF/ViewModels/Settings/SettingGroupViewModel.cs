@@ -8,22 +8,13 @@ namespace DBison.WPF.ViewModels
     {
         public SettingGroupViewModel(string groupName, string groupHeader)
         {
-            GroupName = groupName;
+            Name = groupName;
             GroupHeader = groupHeader;
             SettingItems = new ObservableCollection<SettingItemViewModel>();
             SettingItems.CollectionChanged += (sender, e) => OnPropertyChanged(nameof(SettingItems));
-            TabItem = __InitTabItem(groupName);
         }
 
-        #region [TabItem]
-        public TabItem TabItem
-        {
-            get => Get<TabItem>();
-            set => Set(value);
-        }
-        #endregion
-
-        public string GroupName
+        public string Name
         {
             get => Get<string>();
             private set => Set(value);
@@ -41,16 +32,5 @@ namespace DBison.WPF.ViewModels
             private set => Set(value);
         }
 
-        private TabItem __InitTabItem(string groupName)
-            => new TabItem()
-            {
-                Header = groupName,
-                DataContext = this,
-                Content = new ItemsControl
-                {
-                    ItemsSource = SettingItems,
-                    Focusable = false,
-                }
-            };
     }
 }

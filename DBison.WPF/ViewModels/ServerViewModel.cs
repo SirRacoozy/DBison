@@ -83,14 +83,6 @@ public class ServerViewModel : ClientViewModelBase
     }
     #endregion
 
-    #region [SelectedQueryPage]
-    public ServerQueryPageViewModel SelectedQueryPage
-    {
-        get => Get<ServerQueryPageViewModel>();
-        set => Set(value);
-    }
-    #endregion
-
     #region [Header]
     public string Header
     {
@@ -148,14 +140,13 @@ public class ServerViewModel : ClientViewModelBase
     #endregion
 
     #region [RemoveQuery]
-    public void RemoveQuery(ServerQueryPageViewModel queryVm)
+    public void RemoveQuery(TabItemViewModelBase tabItemVm)
     {
-        if (queryVm != null && ServerQueryPages.Contains(queryVm))
+        if (tabItemVm != null && ServerQueryPages.Contains(tabItemVm) && tabItemVm is ServerQueryPageViewModel queryPageVm)
         {
-            ServerQueryPages.Remove(queryVm);
-            queryVm.Dispose();
+            ServerQueryPages.Remove(queryPageVm);
+            tabItemVm.Dispose();
             OnPropertyChanged(nameof(ServerQueryPages));
-            SelectedQueryPage = ServerQueryPages.FirstOrDefault();
             m_MainWindowViewModel.QueryPagesChanged();
         }
     }
@@ -241,10 +232,9 @@ public class ServerViewModel : ClientViewModelBase
 
     private void __AddQueryPage(ServerQueryPageViewModel viewModel, string queryText)
     {
-        if(queryText.IsNotNullOrEmpty())
+        if (queryText.IsNotNullOrEmpty())
             viewModel.QueryText = queryText;
         ServerQueryPages.Add(viewModel);
-        SelectedQueryPage = viewModel;
         m_MainWindowViewModel.QueryPagesChanged();
     }
     #endregion

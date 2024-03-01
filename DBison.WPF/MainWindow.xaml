@@ -15,62 +15,48 @@
                  WindowState="Maximized"
                  x:Name="this">
 
-  <mah:MetroWindow.InputBindings>
-    <KeyBinding Modifiers="Ctrl"
+    <mah:MetroWindow.InputBindings>
+        <KeyBinding Modifiers="Ctrl"
                     Key="T"
                     Command="{Binding [NewQuery]}" />
 
-    <KeyBinding Modifiers="Ctrl"
+        <KeyBinding Modifiers="Ctrl"
                     Key="W"
-                    Command="{Binding SelectedQueryPage.[Close]}" />
+                    Command="{Binding SelectedTabItem.[Close]}" />
 
-    <KeyBinding Modifiers="Ctrl"
+        <KeyBinding Modifiers="Ctrl"
                     Key="S"
-                    Command="{Binding SelectedQueryPage.[SaveQueryAs]}" />
+                    Command="{Binding SelectedTabItem.[SaveQueryAs]}" />
 
-    <KeyBinding Modifiers="Ctrl"
+        <KeyBinding Modifiers="Ctrl"
                     Key="O"
                     Command="{Binding [OpenQueryFromFile]}" />
 
-    <KeyBinding Modifiers="Ctrl"
+        <KeyBinding Modifiers="Ctrl"
                     Key="Q"
-                    Command="{Binding [QuitApplication]}"/>
+                    Command="{Binding [QuitApplication]}" />
 
-  </mah:MetroWindow.InputBindings>
+    </mah:MetroWindow.InputBindings>
 
-  <Window.Resources>
+    <Window.Resources>
 
-    <ResourceDictionary>
-      <local:WidthDividerConverter x:Key="WidthDividerConverter" />
-    </ResourceDictionary>
-  </Window.Resources>
+        <ResourceDictionary>
+            <local:WidthDividerConverter x:Key="WidthDividerConverter" />
+        </ResourceDictionary>
+    </Window.Resources>
 
-  <WindowChrome.WindowChrome>
-    <WindowChrome UseAeroCaptionButtons="False" />
-  </WindowChrome.WindowChrome>
+    <WindowChrome.WindowChrome>
+        <WindowChrome UseAeroCaptionButtons="False" />
+    </WindowChrome.WindowChrome>
 
-  <Border x:Name="MainWindowBorder"
+    <Border x:Name="MainWindowBorder"
             BorderBrush="DarkRed"
             BorderThickness="1">
-    <controls:WindowChromedContent Window="{Binding ElementName=this}">
-      <controls:WindowChromedContent.Content>
-        <views:ServerTabbedPage Grid.Row="1" />
-      </controls:WindowChromedContent.Content>
-    </controls:WindowChromedContent>
-  </Border>
-
-  <mah:MetroWindow.Flyouts>
-    <mah:FlyoutsControl>
-      <mah:Flyout Header="Settings"
-                        IsOpen="{Binding AreSettingsOpen, Mode=TwoWay}"
-                        Width="{Binding ElementName=this, Path=ActualWidth,
-                Converter={StaticResource WidthDividerConverter}, ConverterParameter=2}"
-                        Position="Right">
-        <views:SettingsDialogContent Margin="10"
-                                             DataContext="{Binding SettingsVm, Mode=OneWay}" />
-      </mah:Flyout>
-    </mah:FlyoutsControl>
-  </mah:MetroWindow.Flyouts>
-
+        <controls:WindowChromedContent Window="{Binding ElementName=this}">
+            <controls:WindowChromedContent.Content>
+                <views:ServerTabbedPage Grid.Row="1" />
+            </controls:WindowChromedContent.Content>
+        </controls:WindowChromedContent>
+    </Border>
 </mah:MetroWindow>
   

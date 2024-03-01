@@ -10,7 +10,7 @@ using System.IO;
 using System.Windows.Threading;
 
 namespace DBison.WPF.ViewModels;
-public class ServerQueryPageViewModel : ClientViewModelBase
+public class ServerQueryPageViewModel : TabItemViewModelBase
 {
     ServerViewModel m_ServerViewModel;
     ServerQueryHelper m_ServerQueryHelper;
@@ -19,6 +19,7 @@ public class ServerQueryPageViewModel : ClientViewModelBase
 
     #region Ctor
     public ServerQueryPageViewModel(string name, ServerViewModel serverViewModel, DatabaseObjectBase databaseObject, ServerQueryHelper serverQueryHelper)
+        : base(false)
     {
         DatabaseObject = databaseObject;
         m_ServerViewModel = serverViewModel;
@@ -30,13 +31,6 @@ public class ServerQueryPageViewModel : ClientViewModelBase
 
     #region - properties -
     #region - public properties -
-    #region [Header]
-    public string Header
-    {
-        get => Get<string>();
-        set => Set(value);
-    }
-    #endregion
 
     #region [SelectedQueryText]
     public string SelectedQueryText
@@ -91,7 +85,7 @@ public class ServerQueryPageViewModel : ClientViewModelBase
 
     #region - commands -
     #region [Execute_Close]
-    public void Execute_Close()
+    public override void Execute_Close()
     {
         m_ServerViewModel.RemoveQuery(this);
     }
@@ -258,6 +252,7 @@ public class ServerQueryPageViewModel : ClientViewModelBase
     }
     #endregion
 
+    #region [__CleanTimer]
     private void __CleanTimer()
     {
         __ExecuteOnDispatcher(() =>
@@ -266,6 +261,7 @@ public class ServerQueryPageViewModel : ClientViewModelBase
             m_Stopwatch?.Stop();
         });
     }
+    #endregion
 
     private void __ExecutionTimer_Tick(object? sender, EventArgs e)
     {

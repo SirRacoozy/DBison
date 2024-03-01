@@ -1,5 +1,5 @@
-﻿using DBison.WPF.Controls;
-using DBison.WPF.ViewModels;
+﻿using DBison.WPF.ClientBaseClasses;
+using DBison.WPF.Controls;
 using System.Windows.Controls;
 using System.Windows.Input;
 
@@ -14,7 +14,7 @@ public partial class ServerTabbedPage : UserControlBase
         InitializeComponent();
     }
 
-    private void __TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
+    private void __TextChanged(object sender, TextChangedEventArgs e)
     {
         if (DataContext is MainWindowViewModel mainVm && sender is TextBox t)
             mainVm.FilterText = t.Text;
@@ -26,11 +26,11 @@ public partial class ServerTabbedPage : UserControlBase
             mainVm.SetSelectedServerIfNeeded(tv.TreeView.SelectedItem);
     }
 
-    private void __MouseWheelClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
+    private void __MouseWheelClick(object sender, MouseButtonEventArgs e)
     {
-        if (e.ChangedButton == MouseButton.Middle && sender is Grid grd && grd.DataContext is ServerQueryPageViewModel queryPageVm)
+        if (e.ChangedButton == MouseButton.Middle && sender is Grid grd && grd.DataContext is TabItemViewModelBase tabItemBase)
         {
-            queryPageVm.Execute_Close();
+            tabItemBase.Execute_Close();
         }
     }
 }
