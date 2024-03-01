@@ -83,9 +83,9 @@ public class MainWindowViewModel : ClientViewModelBase
         dialog.ShowDialog();
     }
 
-    public void Execute_OpenSettings()
+    public void Execute_ToggleSettings()
     {
-        __AddSettingsPageIfNeeded();
+        __ToggleSettingsPageIfNeeded();
     }
 
     public void Execute_NewQuery()
@@ -156,10 +156,12 @@ public class MainWindowViewModel : ClientViewModelBase
         }
     }
 
-    private void __AddSettingsPageIfNeeded()
+    private void __ToggleSettingsPageIfNeeded()
     {
         if (!QueryPages.Any(q => q is SettingsTabViewModel))
             QueryPages.Add(new SettingsTabViewModel(this) { Header = "Settings" });
+        else
+            CloseSettings();
         SelectedTabItem = QueryPages.LastOrDefault(s => s is SettingsTabViewModel);
     }
 
