@@ -4,8 +4,10 @@ namespace DBison.WPF.ViewModels
 {
     public class SettingsTabViewModel : TabItemViewModelBase
     {
-        public SettingsTabViewModel() : base(true)
+        private MainWindowViewModel m_MainWindowViewModel;
+        public SettingsTabViewModel(MainWindowViewModel mainWindowViewModel) : base(true)
         {
+            m_MainWindowViewModel = mainWindowViewModel;
         }
 
         public SettingsViewModel SettingsViewModel
@@ -13,6 +15,13 @@ namespace DBison.WPF.ViewModels
             get => Get<SettingsViewModel>();
             set => Set(value);
         }
+
+        #region [Execute_Close]
+        public override void Execute_Close()
+        {
+            m_MainWindowViewModel.CloseSettings();
+        }
+        #endregion
 
     }
 }

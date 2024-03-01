@@ -167,8 +167,9 @@ public class MainWindowViewModel : ClientViewModelBase
 
     private void __AddSettingsPageIfNeeded()
     {
-        if(!QueryPages.Any(q => q is SettingsTabViewModel))
-            QueryPages.Add(new SettingsTabViewModel { SettingsViewModel = SettingsVm, Header = "Settings" });
+        if (!QueryPages.Any(q => q is SettingsTabViewModel))
+            QueryPages.Add(new SettingsTabViewModel(this) { SettingsViewModel = SettingsVm, Header = "Settings" });
+        SelectedTabItem = QueryPages.LastOrDefault(s => s is SettingsTabViewModel);
     }
 
     private void __InitServers()
@@ -230,5 +231,10 @@ public class MainWindowViewModel : ClientViewModelBase
             if (LastSelectedDatabase != treeItemObject.DatabaseObject.DataBase)
                 LastSelectedDatabase = treeItemObject.DatabaseObject.DataBase;
         }
+    }
+
+    internal void CloseSettings()
+    {
+        QueryPages = new(QueryPages.Where(x => x is not SettingsTabViewModel));
     }
 }

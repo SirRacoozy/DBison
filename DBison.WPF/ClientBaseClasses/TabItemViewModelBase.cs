@@ -21,5 +21,9 @@
         }
         #endregion
 
+        #region [Execute_Close]
+        public abstract void Execute_Close();
+        #endregion
+
     }
 }

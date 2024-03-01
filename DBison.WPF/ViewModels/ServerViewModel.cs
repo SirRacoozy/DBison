@@ -140,12 +140,12 @@ public class ServerViewModel : ClientViewModelBase
     #endregion
 
     #region [RemoveQuery]
-    public void RemoveQuery(ServerQueryPageViewModel queryVm)
+    public void RemoveQuery(TabItemViewModelBase tabItemVm)
     {
-        if (queryVm != null && ServerQueryPages.Contains(queryVm))
+        if (tabItemVm != null && ServerQueryPages.Contains(tabItemVm) && tabItemVm is ServerQueryPageViewModel queryPageVm)
         {
-            ServerQueryPages.Remove(queryVm);
-            queryVm.Dispose();
+            ServerQueryPages.Remove(queryPageVm);
+            tabItemVm.Dispose();
             OnPropertyChanged(nameof(ServerQueryPages));
             m_MainWindowViewModel.QueryPagesChanged();
         }
@@ -232,7 +232,7 @@ public class ServerViewModel : ClientViewModelBase
 
     private void __AddQueryPage(ServerQueryPageViewModel viewModel, string queryText)
     {
-        if(queryText.IsNotNullOrEmpty())
+        if (queryText.IsNotNullOrEmpty())
             viewModel.QueryText = queryText;
         ServerQueryPages.Add(viewModel);
         m_MainWindowViewModel.QueryPagesChanged();

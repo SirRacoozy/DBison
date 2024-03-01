@@ -85,7 +85,7 @@ public class ServerQueryPageViewModel : TabItemViewModelBase
 
     #region - commands -
     #region [Execute_Close]
-    public void Execute_Close()
+    public override void Execute_Close()
     {
         m_ServerViewModel.RemoveQuery(this);
     }
