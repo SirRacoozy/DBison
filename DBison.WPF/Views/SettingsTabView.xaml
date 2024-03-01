@@ -139,9 +139,9 @@
           BorderThickness="2">
     <Grid>
       <Grid.ColumnDefinitions>
-        <ColumnDefinition Width="*" />
+        <ColumnDefinition Width="1*" />
         <ColumnDefinition Width="Auto" />
-        <ColumnDefinition Width="*" />
+        <ColumnDefinition Width="5*" />
       </Grid.ColumnDefinitions>
 
       <controls:SettingsTreeView Grid.Column="0" />
