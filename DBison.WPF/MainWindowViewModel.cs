@@ -7,17 +7,19 @@ using DBison.WPF.ViewModels;
 using Microsoft.Win32;
 using System.Collections.ObjectModel;
 using System.IO;
-using System.Windows;
+using System.Windows.Threading;
 
 namespace DBison.WPF;
 public class MainWindowViewModel : ClientViewModelBase
 {
     bool m_HasAddServerError = false;
+    DispatcherTimer m_ExecutionTimer;
     public MainWindowViewModel()
     {
+        __PrepareTimer();
         TabItems = new ObservableCollection<TabItemViewModelBase>();
         __InitServers();
-        __ExecuteOnDispatcherWithDelay(Execute_AddServer, TimeSpan.FromSeconds(1));
+        ExecuteOnDispatcherWithDelay(Execute_AddServer, TimeSpan.FromSeconds(1));
     }
 
     #region - public properties -
@@ -66,11 +68,7 @@ public class MainWindowViewModel : ClientViewModelBase
     public string FilterText
     {
         get => Get<string>();
-        set
-        {
-            Set(value);
-            __Filter();
-        }
+        set => Set(value);
     }
     #endregion
 
@@ -257,28 +255,43 @@ public class MainWindowViewModel : ClientViewModelBase
     }
     #endregion
 
-    #region [__ExecuteOnDispatcherWithDelay]
-    private void __ExecuteOnDispatcherWithDelay(Action action, TimeSpan delay)
+    #region [__PrepareTimer]
+    private void __PrepareTimer()
     {
-        new Task(() =>
+        ExecuteOnDispatcher(() =>
         {
-            Thread.Sleep(delay);
-            Application.Current.Dispatcher.Invoke(action);
-        }).Start();
+            if (m_ExecutionTimer == null)
+            {
+                m_ExecutionTimer = new DispatcherTimer();
+                m_ExecutionTimer.Interval = TimeSpan.FromSeconds(2);
+                m_ExecutionTimer.Tick += __ExecutionTimer_Tick;
+            }
+            m_ExecutionTimer?.Stop();
+            m_ExecutionTimer?.Start();
+        });
+    }
+    #endregion
+
+    #region [__ExecutionTimer_Tick]
+    private void __ExecutionTimer_Tick(object? sender, EventArgs e)
+    {
+        __Filter();
     }
     #endregion
 
     #region [__Filter]
     private void __Filter()
     {
-        if (FilterText.IsNullOrEmpty())
-            return;
+        var textToFilter = FilterText != null ? FilterText.Trim() : string.Empty;
+        var factory = new TaskFactory();
 
-        var textToFilter = FilterText.Trim();
-        foreach (var serverItem in ServerItems)
+        factory.StartNew(() =>
         {
-            serverItem.Filter(textToFilter);
-        }
+            Parallel.ForEachAsync(ServerItems, async (serverItem, ct) =>
+            {
+                serverItem.Filter(textToFilter);
+            });
+        });
     }
     #endregion
 

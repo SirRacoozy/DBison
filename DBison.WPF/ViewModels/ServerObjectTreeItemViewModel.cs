@@ -49,7 +49,7 @@ public class ServerObjectTreeItemViewModel : ClientViewModelBase
     {
         get
         {
-            if (Filter.IsNotNullOrEmpty())
+            if (Filter.IsNotNullOrEmpty() && DatabaseObject.IsMainNode)
                 return true;
             return Get<bool>();
         }
@@ -74,12 +74,26 @@ public class ServerObjectTreeItemViewModel : ClientViewModelBase
             if (DatabaseObject.IsMainNode && value != Filter)
             {
                 Set(value);
-                __LoadSubObjects();
+                if (Filter.IsNotNullOrEmpty())
+                    __LoadSubObjects();
             }
         }
     }
 
     public Visibility CloseVisibility => Visibility.Collapsed;
+
+    [DependsUpon(nameof(Filter))]
+    public Visibility NodeVisibility
+    {
+        get
+        {
+            if (Filter.IsNullOrEmpty())
+                return Visibility.Visible;
+            if (ServerObjects == null || !ServerObjects.Any())
+                return Visibility.Collapsed;
+            return Visibility.Visible;
+        }
+    }
     public ObservableCollection<ServerObjectTreeItemViewModel> ServerObjects
     {
         get => Get<ObservableCollection<ServerObjectTreeItemViewModel>>() ?? new ObservableCollection<ServerObjectTreeItemViewModel>();
@@ -91,6 +105,7 @@ public class ServerObjectTreeItemViewModel : ClientViewModelBase
                 value.CollectionChanged += (object? sender, NotifyCollectionChangedEventArgs e) =>
                 {
                     OnPropertyChanged(nameof(ServerObjects));
+                    OnPropertyChanged(nameof(NodeVisibility));
                 };
             }
         }
@@ -143,7 +158,7 @@ public class ServerObjectTreeItemViewModel : ClientViewModelBase
             }
             catch (Exception ex)
             {
-                m_ServerVm.ExecuteError(ex);
+                m_ServerVm?.ExecuteError(ex);
             }
         });
     }

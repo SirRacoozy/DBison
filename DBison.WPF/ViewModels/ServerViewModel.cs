@@ -165,6 +165,10 @@ public class ServerViewModel : ClientViewModelBase
     #region [Filter]
     public void Filter(string filter)
     {
+        if (filter.Length < 3)
+            filter = string.Empty;
+        if (m_Filter == filter)
+            return;
         m_Filter = filter;
         OnPropertyChanged(nameof(IsExpanded));
         __InitTreeView();
@@ -199,7 +203,6 @@ public class ServerViewModel : ClientViewModelBase
         var treeItems = new ObservableCollection<ServerObjectTreeItemViewModel>(); //Should be the main nodes
 
         var databaseNode = __GetTreeItemViewModel(new DatabaseInfo("Databases", m_Server, null) { IsMainNode = true }, null); //First Main Node
-        databaseNode.IsExpanded = true;
         foreach (var dataBase in m_Server.DatabaseInfos)
         {
             var databaseTreeItemVM = __GetTreeItemViewModel(dataBase, null);
