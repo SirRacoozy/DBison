@@ -1,5 +1,6 @@
 ﻿using DBison.Core.Attributes;
 using DBison.Core.Entities;
+using DBison.Core.Entities.Enums;
 using DBison.Core.Extender;
 using DBison.Core.Helper;
 using DBison.WPF.ClientBaseClasses;
@@ -105,7 +106,28 @@ public class ServerQueryPageViewModel : TabItemViewModelBase
     public void Execute_ExecuteSQL()
     {
         if (DatabaseObject is DatabaseInfo dbInfo)
-            FillDataTable(SelectedQueryText.IsNotNullOrEmpty() ? SelectedQueryText : QueryText, dbInfo);
+        {
+            var sql = SelectedQueryText.IsNotNullEmptyOrWhitespace() ? SelectedQueryText : QueryText;
+            var result = sql.ConvertToSelectStatement();
+
+            switch(result.Item2)
+            {
+                case eDMLOperator.Update:
+                    __ExecuteQuery(sql, dbInfo);
+                    FillDataTable(result.Item1, dbInfo);
+                    break;
+                case eDMLOperator.Delete:
+                    FillDataTable(result.Item1, dbInfo);
+                    __ExecuteQuery(sql, dbInfo);
+                    break;
+                case eDMLOperator.Insert:
+                default:
+                    FillDataTable(result.Item1, dbInfo);
+                    break;
+
+            }
+            
+        }
     }
     #endregion
 
