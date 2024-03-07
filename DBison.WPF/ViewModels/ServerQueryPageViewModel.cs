@@ -190,7 +190,7 @@ public class ServerQueryPageViewModel : TabItemViewModelBase
         {
             new Task(() =>
             {
-                __ExecuteQuery(databaseInfo, singleSql);
+                __ExecuteQuery(singleSql, databaseInfo);
             }).Start();
         }
     }
@@ -207,7 +207,7 @@ public class ServerQueryPageViewModel : TabItemViewModelBase
     #endregion
 
     #region [__ExecuteQuery]
-    private void __ExecuteQuery(DatabaseInfo databaseInfo, string singleSql)
+    private void __ExecuteQuery(string singleSql, DatabaseInfo databaseInfo)
     {
         __PrepareTimer(() =>
         {
