@@ -98,12 +98,48 @@ public static class Settings
         set => SettingsHandler.SetSetting("OpenQueryOnServerAdded", value.ToString());
     }
 
-    [Setting("Database", "Deactivation of DML list", "", typeof(List<string>), isVisible: false)]
-    public static List<string> DeactionDMLList
+    [Setting("Startup", "Enable auto connect", "Enables the auto connect on startup function to a default server", typeof(bool))]
+    [DependsUponSetting(nameof(AutoConnectEnabled))]
+    public static bool AutoConnectEnabled
     {
-        get => SettingsHandler.GetSetting("DeactionDMLList", new List<string>());
-        set => SettingsHandler.SetSetting("DeactionDMLList", JsonConvert.SerializeObject(value));
+        get => SettingsHandler.GetSetting("AutoConnectEnabled", true);
+        set => SettingsHandler.SetSetting("AutoConnectEnabled", value.ToString());
     }
+
+    [Setting("Startup", "Server name", "The server to which the program should automatically connect on startup", typeof(string), false)]
+    [DependsUponSetting(nameof(AutoConnectEnabled))]
+    public static string AutoConnectServerName
+    {
+        get => SettingsHandler.GetSetting("AutoConnectServerName", "localhost");
+        set => SettingsHandler.SetSetting("AutoConnectServerName", value);
+    }
+
+    [Setting("Startup", "Use Integrated Security", "Using integrated security to auto connect on startup", typeof(bool), false)]
+    [DependsUponSetting(nameof(AutoConnectEnabled))]
+
+    public static bool AutoConnectIGS
+    {
+        get => SettingsHandler.GetSetting("AutoConnectIGS", true);
+        set => SettingsHandler.SetSetting("AutoConnectIGS", value.ToString());
+    }
+
+    [Setting("Startup", "Username", "The username to auto connect on startup", typeof(string), false)]
+    [DependsUponSetting(nameof(AutoConnectIGS), true)]
+
+    public static string AutoConnectUsername
+    { 
+        get => SettingsHandler.GetSetting("AutoConnectUsername", string.Empty);
+        set => SettingsHandler.SetSetting("AutoConnectUsername", value);
+    }
+
+    [Setting("Startup", "Password", "The password to auto connect on startup", typeof(string), false)]
+    [DependsUponSetting(nameof(AutoConnectIGS), true)]
+    public static string AutoConnectPassword
+    {
+        get => SettingsHandler.GetSetting("AutoConnectPassword", string.Empty);
+        set => SettingsHandler.SetSetting("AutoConnectPassword", value);
+    }
+
     public static string GetAllSettingsString()
     {
         var props = typeof(Settings).GetProperties();
