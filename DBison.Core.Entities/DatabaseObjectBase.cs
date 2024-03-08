@@ -7,7 +7,11 @@ public abstract class DatabaseObjectBase : IServerDataBaseContext
     {
         Name = name;
         Server = server;
-        DataBase = dataBase;
+
+        if (this is DatabaseInfo databaseInfo) //If we create the databaseinfo object we cant pass it to the constructor, its not instanciated at this moment, so cast it and set it here
+            DataBase = databaseInfo;
+        else
+            DataBase = dataBase;
     }
 
     #region [Name]
