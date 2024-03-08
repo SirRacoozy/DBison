@@ -247,6 +247,7 @@ public class ServerQueryPageViewModel : TabItemViewModelBase
              {
                  ResultLines = dataTable.DefaultView
              }));
+            OnPropertyChanged(nameof(ResultSets));
             __CleanTimer();
             QueryStatisticText = $"Query executed in {m_Stopwatch.Elapsed.ToString(@"m\:ss\.ffff")} minutes - {dataTable.Rows.Count.ToString("N0")} Rows";
         });
