@@ -103,6 +103,14 @@ public class ServerViewModel : ClientViewModelBase
     }
     #endregion
 
+    #region [AllDataBaseFolder]
+    public ObservableCollection<ServerObjectTreeItemViewModel> AllDataBaseFolder
+    {
+        get => Get<ObservableCollection<ServerObjectTreeItemViewModel>>();
+        set => Set(value);
+    }
+    #endregion
+
     #endregion
     #endregion
 
@@ -165,13 +173,21 @@ public class ServerViewModel : ClientViewModelBase
     #region [Filter]
     public void Filter(string filter)
     {
-        if (filter.Length < 3)
-            filter = string.Empty;
-        if (m_Filter == filter)
+        if (m_Filter == filter || AllDataBaseFolder == null)
             return;
         m_Filter = filter;
-        OnPropertyChanged(nameof(IsExpanded));
-        __InitTreeView();
+
+        if (m_Filter.IsNullOrEmpty())
+        {
+            __InitTreeView();
+        }
+        else
+        {
+            foreach (var folder in AllDataBaseFolder)
+            {
+                folder.Filter(filter);
+            }
+        }
     }
     #endregion
 
@@ -201,29 +217,30 @@ public class ServerViewModel : ClientViewModelBase
     private void __InitTreeView()
     {
         var treeItems = new ObservableCollection<ServerObjectTreeItemViewModel>(); //Should be the main nodes
+        AllDataBaseFolder = new ObservableCollection<ServerObjectTreeItemViewModel>();
 
-        var databaseNode = __GetTreeItemViewModel(new DatabaseInfo("Databases", m_Server, null) { IsMainNode = true }, null); //First Main Node
+        var databaseNode = __GetTreeItemViewModel(null, new DatabaseInfo("Databases", m_Server, null) { IsMainNode = true }, null); //First Main Node
         foreach (var dataBase in m_Server.DatabaseInfos)
         {
-            var databaseTreeItemVM = __GetTreeItemViewModel(dataBase, null);
+            var databaseTreeItemVM = __GetTreeItemViewModel(databaseNode, dataBase, null);
             databaseTreeItemVM.DatabaseObject.IsMainNode = true;
 
             if (dataBase is ExtendedDatabaseInfo extendedInfo)
             {
-                var tablesNode = __GetTreeItemViewModel(new DBisonTable("Tables", m_Server, extendedInfo) { IsMainNode = true }, extendedInfo);
-                tablesNode.ServerObjects.Add(__GetTreeItemViewModel(new DBisonTable("Loading....", m_Server, extendedInfo), extendedInfo)); //Needs to be set, to expand and load real objects then
+                var tablesNode = __GetTreeItemViewModel(databaseTreeItemVM, new DBisonTable("Tables", m_Server, extendedInfo) { IsMainNode = true, IsFolder = true }, extendedInfo);
+                tablesNode.ServerObjects.Add(__GetTreeItemViewModel(tablesNode, new DBisonTable("Loading....", m_Server, extendedInfo) { IsPlaceHolder = true }, extendedInfo)); //Needs to be set, to expand and load real objects then
                 databaseTreeItemVM.ServerObjects.Add(tablesNode);
 
-                var viewNode = __GetTreeItemViewModel(new DBisonView("Views", m_Server, extendedInfo) { IsMainNode = true }, extendedInfo);
-                viewNode.ServerObjects.Add(__GetTreeItemViewModel(new DBisonView("Loading....", m_Server, extendedInfo), extendedInfo)); //Needs to be set, to expand and load real objects then
+                var viewNode = __GetTreeItemViewModel(databaseTreeItemVM, new DBisonView("Views", m_Server, extendedInfo) { IsMainNode = true, IsFolder = true }, extendedInfo);
+                viewNode.ServerObjects.Add(__GetTreeItemViewModel(viewNode, new DBisonView("Loading....", m_Server, extendedInfo) { IsPlaceHolder = true }, extendedInfo)); //Needs to be set, to expand and load real objects then
                 databaseTreeItemVM.ServerObjects.Add(viewNode);
 
-                var triggerNode = __GetTreeItemViewModel(new DBisonTrigger("Trigger", m_Server, extendedInfo) { IsMainNode = true }, extendedInfo);
-                triggerNode.ServerObjects.Add(__GetTreeItemViewModel(new DBisonTrigger("Loading....", m_Server, extendedInfo), extendedInfo)); //Needs to be set, to expand and load real objects then
+                var triggerNode = __GetTreeItemViewModel(databaseTreeItemVM, new DBisonTrigger("Trigger", m_Server, extendedInfo) { IsMainNode = true, IsFolder = true }, extendedInfo);
+                triggerNode.ServerObjects.Add(__GetTreeItemViewModel(triggerNode, new DBisonTrigger("Loading....", m_Server, extendedInfo) { IsPlaceHolder = true }, extendedInfo)); //Needs to be set, to expand and load real objects then
                 databaseTreeItemVM.ServerObjects.Add(triggerNode);
 
-                var prodceduresNode = __GetTreeItemViewModel(new DBisonStoredProcedure("Procedures", m_Server, extendedInfo) { IsMainNode = true }, extendedInfo);
-                prodceduresNode.ServerObjects.Add(__GetTreeItemViewModel(new DBisonStoredProcedure("Loading....", m_Server, extendedInfo), extendedInfo)); //Needs to be set, to expand and load real objects then
+                var prodceduresNode = __GetTreeItemViewModel(databaseTreeItemVM, new DBisonStoredProcedure("Procedures", m_Server, extendedInfo) { IsMainNode = true, IsFolder = true }, extendedInfo);
+                prodceduresNode.ServerObjects.Add(__GetTreeItemViewModel(prodceduresNode, new DBisonStoredProcedure("Loading....", m_Server, extendedInfo) { IsPlaceHolder = true }, extendedInfo)); //Needs to be set, to expand and load real objects then
                 databaseTreeItemVM.ServerObjects.Add(prodceduresNode);
             }
 
@@ -237,12 +254,11 @@ public class ServerViewModel : ClientViewModelBase
     #endregion
 
     #region [__GetTreeItemViewModel]
-    private ServerObjectTreeItemViewModel __GetTreeItemViewModel(DatabaseObjectBase databaseObject, ExtendedDatabaseInfo extendedDatabaseRef)
+    private ServerObjectTreeItemViewModel __GetTreeItemViewModel(ServerObjectTreeItemViewModel parent, DatabaseObjectBase databaseObject, ExtendedDatabaseInfo extendedDatabaseRef)
     {
-        var treeItemViewModel = new ServerObjectTreeItemViewModel(databaseObject, m_ServerQueryHelper, extendedDatabaseRef, this)
-        {
-            Filter = m_Filter,
-        };
+        var treeItemViewModel = new ServerObjectTreeItemViewModel(parent, databaseObject, m_ServerQueryHelper, extendedDatabaseRef, this);
+        if (databaseObject.IsFolder)
+            AllDataBaseFolder.Add(treeItemViewModel);
         treeItemViewModel.ServerObjects = new ObservableCollection<ServerObjectTreeItemViewModel>();
         return treeItemViewModel;
     }

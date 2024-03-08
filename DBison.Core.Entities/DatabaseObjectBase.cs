@@ -22,6 +22,8 @@ public abstract class DatabaseObjectBase : IServerDataBaseContext
     #endregion
 
     public bool IsMainNode { get; set; }
+    public bool IsFolder { get; set; }
+    public bool IsPlaceHolder { get; set; }
     public ServerInfo Server { get; private set; }
     public DatabaseInfo DataBase { get; private set; }
 }

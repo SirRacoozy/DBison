@@ -68,7 +68,7 @@ public static class Settings
         set => SettingsHandler.SetSetting("UseSessionStore", value.ToString());
     }
 
-    [Setting("Performance", "Max Backup Count", "Sets the maximum number of backups to keep (default: infinite)",typeof(int))]
+    [Setting("Performance", "Max Backup Count", "Sets the maximum number of backups to keep (default: infinite)", typeof(int))]
     [Range(-1, 100)]
     public static int MaxBackupCount
     {
@@ -76,7 +76,7 @@ public static class Settings
         set => SettingsHandler.SetSetting("MaxBackupCount", value.ToString());
     }
 
-    [Setting("Performance", "Max Log Size", "Sets the max log size at which a warning appears",typeof(double))]
+    [Setting("Performance", "Max Log Size", "Sets the max log size at which a warning appears", typeof(double))]
     [Range(-1.0, 100.0)]
     public static double MaxLogSize
     {
@@ -84,14 +84,14 @@ public static class Settings
         set => SettingsHandler.SetSetting("MaxLogSize", value.ToString());
     }
 
-    [Setting("Database", "Show Extended Database Information", "Enables/Disables a context menu to show extended database information",typeof(bool))]
+    [Setting("Database", "Show Extended Database Information", "Enables/Disables a context menu to show extended database information", typeof(bool))]
     public static bool ShowExtendedDatabaseInformation
     {
         get => SettingsHandler.GetSetting("ShowExtendedDatabaseInformation", false);
         set => SettingsHandler.SetSetting("ShowExtendedDatabaseInformation", value.ToString());
     }
 
-    [Setting("Database", "Open Query On Server Added", "Enables/Disables the opening of a new query tab when a server is added",typeof(bool))]
+    [Setting("Database", "Open Query On Server Added", "Enables/Disables the opening of a new query tab when a server is added", typeof(bool))]
     public static bool OpenQueryOnServerAdded
     {
         get => SettingsHandler.GetSetting("OpenQueryOnServerAdded", true);
@@ -104,6 +104,30 @@ public static class Settings
         get => SettingsHandler.GetSetting("DeactionDMLList", new List<string>());
         set => SettingsHandler.SetSetting("DeactionDMLList", JsonConvert.SerializeObject(value));
     }
+
+    [Setting("Filtering", "Min filter chars", "How many characters should the filtering start with? Useful for huge databases/servers with many objects. Here the search can make sense from 3 characters. E.g. only \"e\" is quite pointless.", typeof(int))]
+    [Range(1, 3)]
+    public static int MinFilterChar
+    {
+        get => SettingsHandler.GetSetting("MinFilterChar", 3);
+        set => SettingsHandler.SetSetting("MinFilterChar", value.ToString());
+    }
+
+    [Setting("Filtering", "Filter Update Rate (seconds)", "How often should the filtering be updated. Every x seconds. Attention, if the filter text is the same, the filtering is not executed again.", typeof(int))]
+    [Range(1, 5)]
+    public static int FilterUpdateRate
+    {
+        get => SettingsHandler.GetSetting("FilterUpdateRate", 2);
+        set => SettingsHandler.SetSetting("FilterUpdateRate", value.ToString());
+    }
+
+    [Setting("Filtering", "Auto expand nodes", "Enables/Disables the automatic expanding of nodes when filtering", typeof(bool))]
+    public static bool AutoExpandNodes
+    {
+        get => SettingsHandler.GetSetting("AutoExpandNodes", true);
+        set => SettingsHandler.SetSetting("AutoExpandNodes", value.ToString());
+    }
+
     public static string GetAllSettingsString()
     {
         var props = typeof(Settings).GetProperties();

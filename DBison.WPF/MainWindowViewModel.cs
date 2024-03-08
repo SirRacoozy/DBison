@@ -1,6 +1,7 @@
 ﻿using DBison.Core.Attributes;
 using DBison.Core.Entities;
 using DBison.Core.Extender;
+using DBison.Core.Utils.SettingsSystem;
 using DBison.WPF.ClientBaseClasses;
 using DBison.WPF.Dialogs;
 using DBison.WPF.ViewModels;
@@ -263,7 +264,7 @@ public class MainWindowViewModel : ClientViewModelBase
             if (m_ExecutionTimer == null)
             {
                 m_ExecutionTimer = new DispatcherTimer();
-                m_ExecutionTimer.Interval = TimeSpan.FromSeconds(2);
+                m_ExecutionTimer.Interval = TimeSpan.FromSeconds(Settings.FilterUpdateRate);
                 m_ExecutionTimer.Tick += __ExecutionTimer_Tick;
             }
             m_ExecutionTimer?.Stop();
@@ -284,6 +285,11 @@ public class MainWindowViewModel : ClientViewModelBase
     {
         var textToFilter = FilterText != null ? FilterText.Trim() : string.Empty;
         var factory = new TaskFactory();
+
+        var minFilterChars = Settings.MinFilterChar;
+
+        if (textToFilter.Length < minFilterChars)
+            textToFilter = string.Empty;
 
         factory.StartNew(() =>
         {
