@@ -50,8 +50,8 @@
     </WindowChrome.WindowChrome>
 
     <Border x:Name="MainWindowBorder"
+            BorderBrush="DarkRed"
             BorderThickness="1">
-            <!--BorderBrush="DarkRed"-->
         <controls:WindowChromedContent Window="{Binding ElementName=this}">
             <controls:WindowChromedContent.Content>
                 <views:ServerTabbedPage Grid.Row="1" />

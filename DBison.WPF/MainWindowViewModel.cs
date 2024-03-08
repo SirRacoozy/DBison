@@ -1,7 +1,6 @@
 ﻿using DBison.Core.Attributes;
 using DBison.Core.Entities;
 using DBison.Core.Extender;
-using DBison.Core.Utils.SettingsSystem;
 using DBison.WPF.ClientBaseClasses;
 using DBison.WPF.Dialogs;
 using DBison.WPF.ViewModels;
@@ -14,20 +13,11 @@ namespace DBison.WPF;
 public class MainWindowViewModel : ClientViewModelBase
 {
     bool m_HasAddServerError = false;
-    private bool m_SkipErrorOnAutoConnect = true;
     public MainWindowViewModel()
     {
         TabItems = new ObservableCollection<TabItemViewModelBase>();
         __InitServers();
-
-        if(Settings.AutoConnectEnabled)
-        {
-            __AutoConnect();
-        }
-        else
-        {
-            __ExecuteOnDispatcherWithDelay(Execute_AddServer, TimeSpan.FromSeconds(0));
-        }
+        __ExecuteOnDispatcherWithDelay(Execute_AddServer, TimeSpan.FromSeconds(1));
     }
 
     #region [ServerItems]
@@ -166,22 +156,6 @@ public class MainWindowViewModel : ClientViewModelBase
             SelectedTabItem = null;
     }
 
-    private void __AutoConnect()
-    {
-        var ServerInfo = new ServerInfo(Settings.AutoConnectServerName)
-        {
-            UseIntegratedSecurity = Settings.AutoConnectIGS
-        };
-
-        if(!ServerInfo.UseIntegratedSecurity)
-        {
-            ServerInfo.Username = Settings.AutoConnectUsername;
-            ServerInfo.Password = Settings.AutoConnectPassword;
-        }
-
-        __AddServer(ServerInfo);
-    }
-
     private void __AddQueryPageIfPossible(string queryText)
     {
         if (SelectedServer != null && SelectedServer.DatabaseObject is ServerInfo serverInfo)
@@ -225,12 +199,7 @@ public class MainWindowViewModel : ClientViewModelBase
     private void __NewServerViewModel_ErrorOccured(object? sender, Exception e)
     {
         m_HasAddServerError = true;
-        if(Settings.AutoConnectEnabled)
-            __ExecuteOnDispatcherWithDelay(Execute_AddServer, TimeSpan.FromSeconds(1));
-
-        if(m_SkipErrorOnAutoConnect)
-            ShowExceptionMessage(e);
-        m_SkipErrorOnAutoConnect = false;
+        ShowExceptionMessage(e);
     }
 
     private void __ExecuteOnDispatcherWithDelay(Action action, TimeSpan delay)
