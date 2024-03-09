@@ -5,7 +5,6 @@ using DBison.Core.Utils.SettingsSystem;
 using DBison.WPF.ClientBaseClasses;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
-using System.Windows;
 using System.Windows.Media;
 
 namespace DBison.WPF.ViewModels;
@@ -55,7 +54,7 @@ public class ServerViewModel : ClientViewModelBase
     #region [DatabaseObject]
     public ServerInfo DatabaseObject
     {
-        get => Get<ServerInfo>() ?? new ServerInfo("LOCALHOST");
+        get => Get<ServerInfo>();
         set => Set(value);
     }
     #endregion
@@ -183,13 +182,16 @@ public class ServerViewModel : ClientViewModelBase
 
         if (m_Filter.IsNullOrEmpty())
         {
-            __InitTreeView();
+            foreach (var folder in AllDataBaseFolder)
+            {
+                folder.Clear();
+            }
         }
         else
         {
             foreach (var folder in AllDataBaseFolder)
             {
-                folder.Filter(filter);
+                folder.Filter();
             }
         }
     }
@@ -220,8 +222,7 @@ public class ServerViewModel : ClientViewModelBase
     #region [__InitTreeView]
     private void __InitTreeView()
     {
-        ServerNode = new ServerObjectTreeItemViewModel(null, m_Server, m_ServerQueryHelper, null, this);
-        ServerNode.MainWindowViewModel = m_MainWindowViewModel;
+        ServerNode = new ServerObjectTreeItemViewModel(null, m_Server, m_ServerQueryHelper, null, this, m_MainWindowViewModel);
         var treeItems = new ObservableCollection<ServerObjectTreeItemViewModel>(); //Should be the main nodes
         AllDataBaseFolder = new ObservableCollection<ServerObjectTreeItemViewModel>();
 
@@ -263,8 +264,7 @@ public class ServerViewModel : ClientViewModelBase
     #region [__GetTreeItemViewModel]
     private ServerObjectTreeItemViewModel __GetTreeItemViewModel(ServerObjectTreeItemViewModel parent, DatabaseObjectBase databaseObject, ExtendedDatabaseInfo extendedDatabaseRef)
     {
-        var treeItemViewModel = new ServerObjectTreeItemViewModel(parent, databaseObject, m_ServerQueryHelper, extendedDatabaseRef, this);
-        treeItemViewModel.MainWindowViewModel = m_MainWindowViewModel;
+        var treeItemViewModel = new ServerObjectTreeItemViewModel(parent, databaseObject, m_ServerQueryHelper, extendedDatabaseRef, this, m_MainWindowViewModel);
         if (databaseObject.IsFolder)
             AllDataBaseFolder.Add(treeItemViewModel);
         treeItemViewModel.ServerObjects = new ObservableCollection<ServerObjectTreeItemViewModel>();

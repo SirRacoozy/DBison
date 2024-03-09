@@ -26,4 +26,9 @@ public abstract class DatabaseObjectBase : IServerDataBaseContext
     public bool IsPlaceHolder { get; set; }
     public ServerInfo Server { get; private set; }
     public DatabaseInfo DataBase { get; private set; }
+
+    public DatabaseObjectBase Clone()
+    {
+        return this.MemberwiseClone() as DatabaseObjectBase;
+    }
 }
