@@ -172,6 +172,31 @@ public class ServerQueryHelper
         }
     }
 
+    public eDataBaseState GetDataBaseState(DatabaseInfo databaseInfo)
+    {
+        try
+        {
+            if (databaseInfo == null || databaseInfo.Name.IsNullOrEmpty())
+                return eDataBaseState.OFFLINE;
+
+            var sql = $"SELECT state isOnline FROM sys.databases WHERE name = '{databaseInfo.Name}' ";
+            using var access = new DataConnection(new DatabaseInfo("master", m_Server, null));
+            var reader = access.GetReader(sql);
+            if (reader != null && reader.HasRows)
+            {
+                while (reader.Read())
+                {
+                    return (eDataBaseState)Convert.ToInt32(reader[0]);
+                }
+            }
+            return eDataBaseState.OFFLINE;
+        }
+        catch (Exception)
+        {
+            return eDataBaseState.OFFLINE;
+        }
+    }
+
     public void Cancel()
     {
         IgnoreNextException = true;

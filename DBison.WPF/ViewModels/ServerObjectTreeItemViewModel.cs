@@ -146,6 +146,17 @@ public class ServerObjectTreeItemViewModel : ClientViewModelBase
     }
     #endregion
 
+    #region [RefreshState]
+    internal void RefreshState()
+    {
+        if (DatabaseObject.DataBase.DataBaseState == eDataBaseState.ONLINE)
+            m_ServerVm.RefreshDataBase(this);
+        else
+            ExecuteOnDispatcher(() => ServerObjects.Clear());
+        OnPropertyChanged(nameof(DatabaseObject));
+    }
+    #endregion
+
     public void Execute_NewQuery()
     {
         m_ServerVm.AddNewQueryPage(this, string.Empty);
@@ -265,5 +276,4 @@ public class ServerObjectTreeItemViewModel : ClientViewModelBase
             }
         }));
     }
-
 }

@@ -200,6 +200,20 @@ public class ServerViewModel : ClientViewModelBase
     }
     #endregion
 
+    #region [GetDataBaseState]
+    public eDataBaseState GetDataBaseState(DatabaseInfo databaseInfo)
+    {
+        return m_ServerQueryHelper.GetDataBaseState(databaseInfo);
+    }
+    #endregion
+
+    #region [RefreshDataBase]
+    internal void RefreshDataBase(ServerObjectTreeItemViewModel serverObjectTreeItemViewModel)
+    {
+        __SetDataBaseNodes(serverObjectTreeItemViewModel.DatabaseObject.DataBase, serverObjectTreeItemViewModel);
+    }
+    #endregion
+
     #endregion
 
     #region - private methods -
@@ -241,25 +255,7 @@ public class ServerViewModel : ClientViewModelBase
 
             if (dataBase.DataBaseState != eDataBaseState.ONLINE)
                 continue;
-
-            if (dataBase is ExtendedDatabaseInfo extendedInfo)
-            {
-                var tablesNode = __GetTreeItemViewModel(databaseTreeItemVM, new DBisonTable("Tables", m_Server, extendedInfo) { IsMainNode = true, IsFolder = true }, extendedInfo);
-                tablesNode.ServerObjects.Add(__GetTreeItemViewModel(tablesNode, new DBisonTable("Loading....", m_Server, extendedInfo) { IsPlaceHolder = true }, extendedInfo)); //Needs to be set, to expand and load real objects then
-                databaseTreeItemVM.ServerObjects.Add(tablesNode);
-
-                var viewNode = __GetTreeItemViewModel(databaseTreeItemVM, new DBisonView("Views", m_Server, extendedInfo) { IsMainNode = true, IsFolder = true }, extendedInfo);
-                viewNode.ServerObjects.Add(__GetTreeItemViewModel(viewNode, new DBisonView("Loading....", m_Server, extendedInfo) { IsPlaceHolder = true }, extendedInfo)); //Needs to be set, to expand and load real objects then
-                databaseTreeItemVM.ServerObjects.Add(viewNode);
-
-                var triggerNode = __GetTreeItemViewModel(databaseTreeItemVM, new DBisonTrigger("Trigger", m_Server, extendedInfo) { IsMainNode = true, IsFolder = true }, extendedInfo);
-                triggerNode.ServerObjects.Add(__GetTreeItemViewModel(triggerNode, new DBisonTrigger("Loading....", m_Server, extendedInfo) { IsPlaceHolder = true }, extendedInfo)); //Needs to be set, to expand and load real objects then
-                databaseTreeItemVM.ServerObjects.Add(triggerNode);
-
-                var prodceduresNode = __GetTreeItemViewModel(databaseTreeItemVM, new DBisonStoredProcedure("Procedures", m_Server, extendedInfo) { IsMainNode = true, IsFolder = true }, extendedInfo);
-                prodceduresNode.ServerObjects.Add(__GetTreeItemViewModel(prodceduresNode, new DBisonStoredProcedure("Loading....", m_Server, extendedInfo) { IsPlaceHolder = true }, extendedInfo)); //Needs to be set, to expand and load real objects then
-                databaseTreeItemVM.ServerObjects.Add(prodceduresNode);
-            }
+            __SetDataBaseNodes(dataBase, databaseTreeItemVM);
 
         }
 
@@ -305,6 +301,30 @@ public class ServerViewModel : ClientViewModelBase
     private void __CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
     {
         OnPropertyChanged(nameof(ServerQueryPages));
+    }
+    #endregion
+
+    #region [__SetDataBaseNodes]
+    private void __SetDataBaseNodes(DatabaseInfo dataBase, ServerObjectTreeItemViewModel databaseTreeItemVM)
+    {
+        if (dataBase is ExtendedDatabaseInfo extendedInfo)
+        {
+            var tablesNode = __GetTreeItemViewModel(databaseTreeItemVM, new DBisonTable("Tables", m_Server, extendedInfo) { IsMainNode = true, IsFolder = true }, extendedInfo);
+            tablesNode.ServerObjects.Add(__GetTreeItemViewModel(tablesNode, new DBisonTable("Loading....", m_Server, extendedInfo) { IsPlaceHolder = true }, extendedInfo)); //Needs to be set, to expand and load real objects then
+            databaseTreeItemVM.ServerObjects.Add(tablesNode);
+
+            var viewNode = __GetTreeItemViewModel(databaseTreeItemVM, new DBisonView("Views", m_Server, extendedInfo) { IsMainNode = true, IsFolder = true }, extendedInfo);
+            viewNode.ServerObjects.Add(__GetTreeItemViewModel(viewNode, new DBisonView("Loading....", m_Server, extendedInfo) { IsPlaceHolder = true }, extendedInfo)); //Needs to be set, to expand and load real objects then
+            databaseTreeItemVM.ServerObjects.Add(viewNode);
+
+            var triggerNode = __GetTreeItemViewModel(databaseTreeItemVM, new DBisonTrigger("Trigger", m_Server, extendedInfo) { IsMainNode = true, IsFolder = true }, extendedInfo);
+            triggerNode.ServerObjects.Add(__GetTreeItemViewModel(triggerNode, new DBisonTrigger("Loading....", m_Server, extendedInfo) { IsPlaceHolder = true }, extendedInfo)); //Needs to be set, to expand and load real objects then
+            databaseTreeItemVM.ServerObjects.Add(triggerNode);
+
+            var prodceduresNode = __GetTreeItemViewModel(databaseTreeItemVM, new DBisonStoredProcedure("Procedures", m_Server, extendedInfo) { IsMainNode = true, IsFolder = true }, extendedInfo);
+            prodceduresNode.ServerObjects.Add(__GetTreeItemViewModel(prodceduresNode, new DBisonStoredProcedure("Loading....", m_Server, extendedInfo) { IsPlaceHolder = true }, extendedInfo)); //Needs to be set, to expand and load real objects then
+            databaseTreeItemVM.ServerObjects.Add(prodceduresNode);
+        }
     }
     #endregion
 
