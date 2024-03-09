@@ -251,7 +251,7 @@ public class ViewModelBase : INotifyPropertyChanged, IDisposable
             {
                 foreach (var dependsUponObj in dependendObjects)
                 {
-                    if (dependsUponObj.Value.DependendObjects != null && dependsUponObj.Value.DependendObjects.Any())
+                    if (dependsUponObj.Value.DependendObjects.IsNotEmpty())
                     {
                         if (m_Properties.ContainsKey(dependsUponObj.Key))
                         {

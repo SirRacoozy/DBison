@@ -1,6 +1,7 @@
 ﻿using DBison.Core.Attributes;
 using DBison.Core.Entities;
 using DBison.Core.Extender;
+using DBison.Core.Utils.SettingsSystem;
 using DBison.WPF.ClientBaseClasses;
 using DBison.WPF.Dialogs;
 using DBison.WPF.ViewModels;
@@ -13,11 +14,25 @@ namespace DBison.WPF;
 public class MainWindowViewModel : ClientViewModelBase
 {
     bool m_HasAddServerError = false;
+    bool m_WasAutoConnectError = true;
     public MainWindowViewModel()
     {
+        m_WasAutoConnectError = Settings.AutoConnectEnabled;
         TabItems = new ObservableCollection<TabItemViewModelBase>();
         __InitServers();
-        __ExecuteOnDispatcherWithDelay(Execute_AddServer, TimeSpan.FromSeconds(1));
+        if (Settings.AutoConnectEnabled)
+        {
+            __AddServer(new ServerInfo(Settings.AutoConnectServerName)
+            {
+                Username = Settings.AutoConnectUsername,
+                Password = Settings.AutoConnectPassword,
+                UseIntegratedSecurity = Settings.AutoConnectIGS,
+            });
+        }
+        else
+        {
+            __ExecuteOnDispatcherWithDelay(Execute_AddServer, TimeSpan.FromSeconds(1));
+        }
     }
 
     #region [ServerItems]
@@ -192,6 +207,8 @@ public class MainWindowViewModel : ClientViewModelBase
             m_HasAddServerError = false;
             return;
         }
+        if (Settings.AutoConnectEnabled)
+            m_WasAutoConnectError = false;
         ServerItems.Add(newServerViewModel);
         SelectedServer = newServerViewModel;
     }
@@ -199,7 +216,15 @@ public class MainWindowViewModel : ClientViewModelBase
     private void __NewServerViewModel_ErrorOccured(object? sender, Exception e)
     {
         m_HasAddServerError = true;
-        ShowExceptionMessage(e);
+        if (m_WasAutoConnectError)
+        {
+            m_WasAutoConnectError = false;
+            __ExecuteOnDispatcherWithDelay(Execute_AddServer, TimeSpan.FromSeconds(1));
+        }
+        else
+        {
+            ShowExceptionMessage(e);
+        }
     }
 
     private void __ExecuteOnDispatcherWithDelay(Action action, TimeSpan delay)

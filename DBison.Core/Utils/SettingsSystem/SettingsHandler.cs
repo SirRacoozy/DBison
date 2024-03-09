@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 using System.Configuration;
 
 namespace DBison.Core.Utils.SettingsSystem;
-internal static class SettingsHandler
+public static class SettingsHandler
 {
     private readonly static Configuration? m_Config;
     static SettingsHandler()
@@ -62,7 +62,7 @@ internal static class SettingsHandler
                 m_Config.AppSettings.Settings[key].Value = value;
             m_Config.Save(ConfigurationSaveMode.Modified);
             ConfigurationManager.RefreshSection(m_Config.AppSettings.SectionInformation.Name);
-            SettingChanged(null, new(key));
+            SettingChanged?.Invoke(null, new(key));
             return true;
         }
         catch (Exception)

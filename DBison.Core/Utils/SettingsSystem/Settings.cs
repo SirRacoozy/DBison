@@ -99,7 +99,6 @@ public static class Settings
     }
 
     [Setting("Startup", "Enable auto connect", "Enables the auto connect on startup function to a default server", typeof(bool))]
-    [DependsUponSetting(nameof(AutoConnectEnabled))]
     public static bool AutoConnectEnabled
     {
         get => SettingsHandler.GetSetting("AutoConnectEnabled", true);
@@ -110,13 +109,12 @@ public static class Settings
     [DependsUponSetting(nameof(AutoConnectEnabled))]
     public static string AutoConnectServerName
     {
-        get => SettingsHandler.GetSetting("AutoConnectServerName", "localhost");
+        get => SettingsHandler.GetSetting("AutoConnectServerName", "LOCALHOST");
         set => SettingsHandler.SetSetting("AutoConnectServerName", value);
     }
 
     [Setting("Startup", "Use Integrated Security", "Using integrated security to auto connect on startup", typeof(bool), false)]
     [DependsUponSetting(nameof(AutoConnectEnabled))]
-
     public static bool AutoConnectIGS
     {
         get => SettingsHandler.GetSetting("AutoConnectIGS", true);
@@ -124,8 +122,8 @@ public static class Settings
     }
 
     [Setting("Startup", "Username", "The username to auto connect on startup", typeof(string), false)]
+    [DependsUponSetting(nameof(AutoConnectEnabled))]
     [DependsUponSetting(nameof(AutoConnectIGS), true)]
-
     public static string AutoConnectUsername
     {
         get => SettingsHandler.GetSetting("AutoConnectUsername", string.Empty);
@@ -133,6 +131,7 @@ public static class Settings
     }
 
     [Setting("Startup", "Password", "The password to auto connect on startup", typeof(string), false)]
+    [DependsUponSetting(nameof(AutoConnectEnabled))]
     [DependsUponSetting(nameof(AutoConnectIGS), true)]
     public static string AutoConnectPassword
     {
