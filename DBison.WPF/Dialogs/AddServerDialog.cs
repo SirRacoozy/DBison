@@ -23,8 +23,8 @@ public class AddServerDialog
 
         window.Content = new Border()
         {
-            BorderBrush = Brushes.DarkRed,
-            BorderThickness = new Thickness(1),
+            BorderBrush = Brushes.White,
+            BorderThickness = new Thickness(.5),
             Child = new WindowChromedContent()
             {
                 Content = new AddServerDialogContent()

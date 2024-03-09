@@ -98,13 +98,47 @@ public static class Settings
         set => SettingsHandler.SetSetting("OpenQueryOnServerAdded", value.ToString());
     }
 
-    [Setting("Database", "Deactivation of DML list", "", typeof(List<string>), isVisible: false)]
-    public static List<string> DeactionDMLList
+    [Setting("Startup", "Enable auto connect", "Enables the auto connect on startup function to a default server", typeof(bool))]
+    public static bool AutoConnectEnabled
     {
-        get => SettingsHandler.GetSetting("DeactionDMLList", new List<string>());
-        set => SettingsHandler.SetSetting("DeactionDMLList", JsonConvert.SerializeObject(value));
+        get => SettingsHandler.GetSetting("AutoConnectEnabled", true);
+        set => SettingsHandler.SetSetting("AutoConnectEnabled", value.ToString());
     }
 
+    [Setting("Startup", "Server name", "The server to which the program should automatically connect on startup", typeof(string))]
+    [DependsUponSetting(nameof(AutoConnectEnabled))]
+    public static string AutoConnectServerName
+    {
+        get => SettingsHandler.GetSetting("AutoConnectServerName", "LOCALHOST");
+        set => SettingsHandler.SetSetting("AutoConnectServerName", value);
+    }
+
+    [Setting("Startup", "Use Integrated Security", "Using integrated security to auto connect on startup", typeof(bool))]
+    [DependsUponSetting(nameof(AutoConnectEnabled))]
+    public static bool AutoConnectIGS
+    {
+        get => SettingsHandler.GetSetting("AutoConnectIGS", true);
+        set => SettingsHandler.SetSetting("AutoConnectIGS", value.ToString());
+    }
+
+    [Setting("Startup", "Username", "The username to auto connect on startup", typeof(string))]
+    [DependsUponSetting(nameof(AutoConnectEnabled))]
+    [DependsUponSetting(nameof(AutoConnectIGS), true)]
+    public static string AutoConnectUsername
+    {
+        get => SettingsHandler.GetSetting("AutoConnectUsername", string.Empty);
+        set => SettingsHandler.SetSetting("AutoConnectUsername", value);
+    }
+
+    [Setting("Startup", "Password", "The password to auto connect on startup", typeof(string))]
+    [DependsUponSetting(nameof(AutoConnectEnabled))]
+    [DependsUponSetting(nameof(AutoConnectIGS), true)]
+    public static string AutoConnectPassword
+    {
+        get => SettingsHandler.GetSetting("AutoConnectPassword", string.Empty);
+        set => SettingsHandler.SetSetting("AutoConnectPassword", value);
+    }
+  
     [Setting("Filtering", "Min filter chars", "How many characters should the filtering start with? Useful for huge databases/servers with many objects. Here the search can make sense from 3 characters. E.g. only \"e\" is quite pointless.", typeof(int))]
     [Range(1, 3)]
     public static int MinFilterChar

@@ -14,15 +14,29 @@ namespace DBison.WPF;
 public class MainWindowViewModel : ClientViewModelBase
 {
     bool m_HasAddServerError = false;
+    bool m_WasAutoConnectError = true;
     DispatcherTimer m_ExecutionTimer;
     public MainWindowViewModel()
     {
         __PrepareTimer();
+        m_WasAutoConnectError = Settings.AutoConnectEnabled;
         TabItems = new ObservableCollection<TabItemViewModelBase>();
         __InitServers();
-        ExecuteOnDispatcherWithDelay(Execute_AddServer, TimeSpan.FromSeconds(1));
+        if (Settings.AutoConnectEnabled)
+        {
+            __AddServer(new ServerInfo(Settings.AutoConnectServerName)
+            {
+                Username = Settings.AutoConnectUsername,
+                Password = Settings.AutoConnectPassword,
+                UseIntegratedSecurity = Settings.AutoConnectIGS,
+            });
+        }
+        else
+        {
+            __ExecuteOnDispatcherWithDelay(Execute_AddServer, TimeSpan.FromSeconds(1));
+        }
     }
-
+        
     #region - public properties -
 
     #region [ServerItems]
@@ -243,6 +257,8 @@ public class MainWindowViewModel : ClientViewModelBase
             m_HasAddServerError = false;
             return;
         }
+        if (Settings.AutoConnectEnabled)
+            m_WasAutoConnectError = false;
         ServerItems.Add(newServerViewModel);
         SelectedServer = newServerViewModel;
     }
@@ -252,7 +268,15 @@ public class MainWindowViewModel : ClientViewModelBase
     private void __NewServerViewModel_ErrorOccured(object? sender, Exception e)
     {
         m_HasAddServerError = true;
-        ShowExceptionMessage(e);
+        if (m_WasAutoConnectError)
+        {
+            m_WasAutoConnectError = false;
+            __ExecuteOnDispatcherWithDelay(Execute_AddServer, TimeSpan.FromSeconds(1));
+        }
+        else
+        {
+            ShowExceptionMessage(e);
+        }
     }
     #endregion
 
