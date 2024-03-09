@@ -33,10 +33,10 @@ public class MainWindowViewModel : ClientViewModelBase
         }
         else
         {
-            __ExecuteOnDispatcherWithDelay(Execute_AddServer, TimeSpan.FromSeconds(1));
+            ExecuteOnDispatcherWithDelay(Execute_AddServer, TimeSpan.FromSeconds(1));
         }
     }
-        
+
     #region - public properties -
 
     #region [ServerItems]
@@ -271,7 +271,7 @@ public class MainWindowViewModel : ClientViewModelBase
         if (m_WasAutoConnectError)
         {
             m_WasAutoConnectError = false;
-            __ExecuteOnDispatcherWithDelay(Execute_AddServer, TimeSpan.FromSeconds(1));
+            ExecuteOnDispatcherWithDelay(Execute_AddServer, TimeSpan.FromSeconds(1));
         }
         else
         {
