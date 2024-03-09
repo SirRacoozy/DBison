@@ -50,7 +50,7 @@
                                                 <Setter Property="ContentTemplate">
                                                     <Setter.Value>
                                                         <DataTemplate>
-                                                            <CheckBox IsChecked="{Binding Value, Mode=TwoWay}"
+                                                            <mah:ToggleSwitch IsOn="{Binding Value, Mode=TwoWay}"
                                                                       DataContext="{Binding DataContext, ElementName=this}" />
                                                         </DataTemplate>
                                                     </Setter.Value>
