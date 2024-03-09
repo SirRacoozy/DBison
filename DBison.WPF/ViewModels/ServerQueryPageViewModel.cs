@@ -96,7 +96,7 @@ public class ServerQueryPageViewModel : TabItemViewModelBase
     [DependsUpon(nameof(IsLoading))]
     public bool CanExecute_ExecuteSQL()
     {
-        if (IsLoading)
+        if (IsLoading || DatabaseObject.DataBase.DataBaseState != eDataBaseState.ONLINE)
             return false;
         return (SelectedQueryText != null && SelectedQueryText.Trim().IsNotNullOrEmpty()) || (QueryText != null && QueryText.Trim().IsNotNullOrEmpty());
     }
