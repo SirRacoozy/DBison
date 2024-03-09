@@ -142,6 +142,6 @@ public class SettingItemViewModel : ClientViewModelBase
 
         //Outcommented Code is the full evaluation
         //TODO MM: Update is visible flags on Settings. In this case startup parameter would be always invisible. But it depends here on the other values
-        SettingVisibility = isShown /*&& SettingAttribute.IsVisible*/ ? Visibility.Visible : Visibility.Collapsed;
+        SettingVisibility = isShown && SettingAttribute.IsVisible ? Visibility.Visible : Visibility.Collapsed;
     }
 }
