@@ -184,7 +184,7 @@ public class ServerQueryPageViewModel : TabItemViewModelBase
         }
         var sqls = sql.Split(";").Where(s => s.IsNotNullOrEmpty()).Take(1); //First simple way to separate sqls. search another way with regex
 
-        if (sqls.Any())
+        if (sqls.IsNotEmpty())
             IsLoading = true;
 
         foreach (var singleSql in sqls)
