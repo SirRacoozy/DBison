@@ -18,9 +18,11 @@ public class ServerObjectTreeItemViewModel : ClientViewModelBase
 {
     readonly ServerQueryHelper m_ServerQueryHelper;
     readonly ServerViewModel m_ServerVm;
+    readonly MainWindowViewModel m_MainWindowViewModel;
     private string m_Filter;
     public ServerObjectTreeItemViewModel(ServerObjectTreeItemViewModel parent, DatabaseObjectBase databaseObject, ServerQueryHelper serverQueryHelper, ExtendedDatabaseInfo extendedDatabaseRef, ServerViewModel serverVm)
     {
+        ServerObjects = new ObservableCollection<ServerObjectTreeItemViewModel>();
         Parent = parent;
         SelectedBackGround = Brushes.Gray;
         DatabaseObject = databaseObject;
@@ -28,6 +30,12 @@ public class ServerObjectTreeItemViewModel : ClientViewModelBase
         ExtendedDatabaseRef = extendedDatabaseRef;
         m_ServerVm = serverVm;
         __SetContextMenu();
+    }
+
+    public MainWindowViewModel MainWindowViewModel
+    {
+        get => Get<MainWindowViewModel>();
+        set => Set(value);
     }
 
     public ServerObjectTreeItemViewModel Parent
@@ -60,18 +68,14 @@ public class ServerObjectTreeItemViewModel : ClientViewModelBase
         set
         {
             Set(value);
-            if (value && ServerObjects.All(o => o.DatabaseObject.IsPlaceHolder))
+            if (value && ServerObjects.IsNotEmpty() && ServerObjects.All(o => o.DatabaseObject != null && o.DatabaseObject.IsPlaceHolder))
                 __LoadSubObjects();
             if (Parent != null)
                 Parent.IsExpanded = true;
-            //else
-            //{
-
-            //}
         }
     }
 
-    public Visibility CloseVisibility => Visibility.Collapsed;
+    public Visibility CloseVisibility => DatabaseObject != null && DatabaseObject is ServerInfo ? Visibility.Visible : Visibility.Collapsed;
 
     public ObservableCollection<ServerObjectTreeItemViewModel> ServerObjects
     {
@@ -129,6 +133,13 @@ public class ServerObjectTreeItemViewModel : ClientViewModelBase
     {
         m_ServerVm.AddTableDataPage(this);
     }
+
+    #region [Execute_Close]
+    public void Execute_Close()
+    {
+        MainWindowViewModel.RemoveServer(m_ServerVm);
+    }
+    #endregion
 
     public override void OnCanExecuteChanged(string commandName)
     {

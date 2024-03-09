@@ -18,6 +18,7 @@ public class MainWindowViewModel : ClientViewModelBase
     DispatcherTimer m_ExecutionTimer;
     public MainWindowViewModel()
     {
+        ServerTreeItems = new ObservableCollection<ServerObjectTreeItemViewModel>();
         __PrepareTimer();
         m_WasAutoConnectError = Settings.AutoConnectEnabled;
         TabItems = new ObservableCollection<TabItemViewModelBase>();
@@ -43,6 +44,14 @@ public class MainWindowViewModel : ClientViewModelBase
     public ObservableCollection<ServerViewModel> ServerItems
     {
         get => Get<ObservableCollection<ServerViewModel>>();
+        set => Set(value);
+    }
+    #endregion
+
+    #region [ServerTreeItems]
+    public ObservableCollection<ServerObjectTreeItemViewModel> ServerTreeItems
+    {
+        get => Get<ObservableCollection<ServerObjectTreeItemViewModel>>();
         set => Set(value);
     }
     #endregion
@@ -152,6 +161,7 @@ public class MainWindowViewModel : ClientViewModelBase
     {
         if (server != null && ServerItems.Contains(server))
         {
+            ServerTreeItems.Remove(server.ServerNode);
             ServerItems.Remove(server);
             server.Dispose();
             OnPropertyChanged(nameof(ServerItems));
@@ -162,6 +172,7 @@ public class MainWindowViewModel : ClientViewModelBase
             TabItems = new(TabItems.Where(q => q is SettingsTabViewModel));
             OnPropertyChanged(nameof(TabItems));
         }
+        OnPropertyChanged(nameof(ServerTreeItems));
     }
     #endregion
 
@@ -260,6 +271,8 @@ public class MainWindowViewModel : ClientViewModelBase
         if (Settings.AutoConnectEnabled)
             m_WasAutoConnectError = false;
         ServerItems.Add(newServerViewModel);
+        ServerTreeItems.Add(newServerViewModel.ServerNode);
+        OnPropertyChanged(nameof(ServerTreeItems));
         SelectedServer = newServerViewModel;
     }
     #endregion

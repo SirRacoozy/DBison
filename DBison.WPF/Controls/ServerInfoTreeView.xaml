@@ -9,7 +9,7 @@
                        Margin="5">
     <Grid>
         <TreeView Background="Transparent"
-                  ItemsSource="{Binding ServerItems, Mode=TwoWay}"
+                  ItemsSource="{Binding ServerTreeItems, Mode=TwoWay}"
                   x:Name="ThisTreeView">
             <TreeView.Resources>
                 <Style TargetType="TreeViewItem">
