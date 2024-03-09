@@ -20,7 +20,7 @@ public class ServerQueryHelper
         __LoadDataBases();
     }
 
-    public void LoadTables(DatabaseInfo databaseInfo)
+    public void LoadTables(DatabaseInfo databaseInfo, string filter)
     {
         try
         {
@@ -28,9 +28,12 @@ public class ServerQueryHelper
                 return;
             if (databaseInfo is ExtendedDatabaseInfo extendedDatabase)
             {
+                extendedDatabase.Tables.Clear();
                 var sql = "SELECT name, type  FROM sys.all_objects " +
-              "WHERE type IN ('U') AND is_ms_shipped != 1 " +
-              "ORDER BY name ASC";
+              "WHERE type IN ('U') AND is_ms_shipped != 1 ";
+                if (filter.IsNotNullOrEmpty())
+                    sql += $" AND name LIKE '%{filter}%'";
+                sql += " ORDER BY name ASC";
                 using var access = new DataConnection(databaseInfo);
                 var reader = access.GetReader(sql);
                 if (reader != null && reader.HasRows)
@@ -48,7 +51,7 @@ public class ServerQueryHelper
         }
     }
 
-    public void LoadViews(DatabaseInfo databaseInfo)
+    public void LoadViews(DatabaseInfo databaseInfo, string filter)
     {
         try
         {
@@ -56,9 +59,12 @@ public class ServerQueryHelper
                 return;
             if (databaseInfo is ExtendedDatabaseInfo extendedDatabase)
             {
+                extendedDatabase.Views.Clear();
                 var sql = "SELECT name, type  FROM sys.all_objects " +
-              "WHERE type IN ('V') AND is_ms_shipped != 1 " +
-              "ORDER BY name ASC";
+              "WHERE type IN ('V') AND is_ms_shipped != 1 ";
+                if (filter.IsNotNullOrEmpty())
+                    sql += $" AND name LIKE '%{filter}%'";
+                sql += " ORDER BY name ASC";
                 using var access = new DataConnection(databaseInfo);
                 var reader = access.GetReader(sql);
                 if (reader != null && reader.HasRows)
@@ -76,7 +82,7 @@ public class ServerQueryHelper
         }
     }
 
-    public void LoadTrigger(DatabaseInfo databaseInfo)
+    public void LoadTrigger(DatabaseInfo databaseInfo, string filter)
     {
         try
         {
@@ -84,9 +90,12 @@ public class ServerQueryHelper
                 return;
             if (databaseInfo is ExtendedDatabaseInfo extendedDatabase)
             {
+                extendedDatabase.Triggers.Clear();
                 var sql = "SELECT name, type  FROM sys.all_objects " +
-              "WHERE type IN ('TR') AND is_ms_shipped != 1 " +
-              "ORDER BY name ASC";
+              "WHERE type IN ('TR') AND is_ms_shipped != 1 ";
+                if (filter.IsNotNullOrEmpty())
+                    sql += $" AND name LIKE '%{filter}%'";
+                sql += " ORDER BY name ASC";
                 using var access = new DataConnection(databaseInfo);
                 var reader = access.GetReader(sql);
                 if (reader != null && reader.HasRows)
@@ -104,7 +113,7 @@ public class ServerQueryHelper
         }
     }
 
-    public void LoadProcedures(DatabaseInfo databaseInfo)
+    public void LoadProcedures(DatabaseInfo databaseInfo, string filter)
     {
         try
         {
@@ -112,9 +121,12 @@ public class ServerQueryHelper
                 return;
             if (databaseInfo is ExtendedDatabaseInfo extendedDatabase)
             {
+                extendedDatabase.Procedures.Clear();
                 var sql = "SELECT name, type  FROM sys.all_objects " +
-              "WHERE type IN ('P') AND is_ms_shipped != 1 " +
-              "ORDER BY name ASC";
+              "WHERE type IN ('P') AND is_ms_shipped != 1 ";
+                if (filter.IsNotNullOrEmpty())
+                    sql += $" AND name LIKE '%{filter}%'";
+                sql += " ORDER BY name ASC";
                 using var access = new DataConnection(databaseInfo);
                 var reader = access.GetReader(sql);
                 if (reader != null && reader.HasRows)

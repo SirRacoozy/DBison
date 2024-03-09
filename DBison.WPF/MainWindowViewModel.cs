@@ -8,15 +8,17 @@ using DBison.WPF.ViewModels;
 using Microsoft.Win32;
 using System.Collections.ObjectModel;
 using System.IO;
-using System.Windows;
+using System.Windows.Threading;
 
 namespace DBison.WPF;
 public class MainWindowViewModel : ClientViewModelBase
 {
     bool m_HasAddServerError = false;
     bool m_WasAutoConnectError = true;
+    DispatcherTimer m_ExecutionTimer;
     public MainWindowViewModel()
     {
+        __PrepareTimer();
         m_WasAutoConnectError = Settings.AutoConnectEnabled;
         TabItems = new ObservableCollection<TabItemViewModelBase>();
         __InitServers();
@@ -34,6 +36,8 @@ public class MainWindowViewModel : ClientViewModelBase
             __ExecuteOnDispatcherWithDelay(Execute_AddServer, TimeSpan.FromSeconds(1));
         }
     }
+        
+    #region - public properties -
 
     #region [ServerItems]
     public ObservableCollection<ServerViewModel> ServerItems
@@ -79,12 +83,13 @@ public class MainWindowViewModel : ClientViewModelBase
     public string FilterText
     {
         get => Get<string>();
-        set
-        {
-            Set(value);
-        }
+        set => Set(value);
     }
     #endregion
+
+    #endregion
+
+    #region - commands -
 
     #region [Execute_QuitApplication]
     public void Execute_QuitApplication()
@@ -138,6 +143,11 @@ public class MainWindowViewModel : ClientViewModelBase
     }
     #endregion
 
+    #endregion
+
+    #region - public methods
+
+    #region [RemoveServer]
     public void RemoveServer(ServerViewModel server)
     {
         if (server != null && ServerItems.Contains(server))
@@ -153,7 +163,9 @@ public class MainWindowViewModel : ClientViewModelBase
             OnPropertyChanged(nameof(TabItems));
         }
     }
+    #endregion
 
+    #region [QueryPagesChanged]
     [DependsUpon(nameof(SelectedServer))]
     public void QueryPagesChanged()
     {
@@ -170,72 +182,9 @@ public class MainWindowViewModel : ClientViewModelBase
         else
             SelectedTabItem = null;
     }
+    #endregion
 
-    private void __AddQueryPageIfPossible(string queryText)
-    {
-        if (SelectedServer != null && SelectedServer.DatabaseObject is ServerInfo serverInfo)
-        {
-            var dataBase = LastSelectedDatabase ?? serverInfo.DatabaseInfos.FirstOrDefault();
-            if (dataBase != null)
-                SelectedServer.AddNewQueryPage(dataBase, queryText);
-        }
-    }
-
-    private void __ToggleSettingsPageIfNeeded()
-    {
-        if (!TabItems.Any(q => q is SettingsTabViewModel))
-            TabItems.Add(new SettingsTabViewModel(this) { Header = "Settings" });
-        else
-            CloseSettings();
-        SelectedTabItem = TabItems.LastOrDefault(s => s is SettingsTabViewModel);
-    }
-
-    private void __InitServers()
-    {
-        ServerItems = new ObservableCollection<ServerViewModel>();
-        SelectedServer = ServerItems.FirstOrDefault();
-    }
-
-    private void __AddServer(ServerInfo server)
-    {
-        if (ServerItems == null)
-            ServerItems = new ObservableCollection<ServerViewModel>();
-        var newServerViewModel = new ServerViewModel(server, __NewServerViewModel_ErrorOccured, this);
-        if (m_HasAddServerError)
-        {
-            newServerViewModel.Dispose();
-            m_HasAddServerError = false;
-            return;
-        }
-        if (Settings.AutoConnectEnabled)
-            m_WasAutoConnectError = false;
-        ServerItems.Add(newServerViewModel);
-        SelectedServer = newServerViewModel;
-    }
-
-    private void __NewServerViewModel_ErrorOccured(object? sender, Exception e)
-    {
-        m_HasAddServerError = true;
-        if (m_WasAutoConnectError)
-        {
-            m_WasAutoConnectError = false;
-            __ExecuteOnDispatcherWithDelay(Execute_AddServer, TimeSpan.FromSeconds(1));
-        }
-        else
-        {
-            ShowExceptionMessage(e);
-        }
-    }
-
-    private void __ExecuteOnDispatcherWithDelay(Action action, TimeSpan delay)
-    {
-        new Task(() =>
-        {
-            Thread.Sleep(delay);
-            Application.Current.Dispatcher.Invoke(action);
-        }).Start();
-    }
-
+    #region [SetSelectedServerIfNeeded]
     internal void SetSelectedServerIfNeeded(object selectedItem)
     {
         if (selectedItem is ServerViewModel serverViewModel)
@@ -252,9 +201,130 @@ public class MainWindowViewModel : ClientViewModelBase
                 LastSelectedDatabase = treeItemObject.DatabaseObject.DataBase;
         }
     }
+    #endregion
 
+    #region [CloseSettings]
     internal void CloseSettings()
     {
         TabItems = new(TabItems.Where(x => x is not SettingsTabViewModel));
     }
+    #endregion
+
+    #endregion
+
+    #region - private methods -
+
+    #region [__AddQueryPageIfPossible]
+    private void __AddQueryPageIfPossible(string queryText)
+    {
+        if (SelectedServer != null && SelectedServer.DatabaseObject is ServerInfo serverInfo)
+        {
+            var dataBase = LastSelectedDatabase ?? serverInfo.DatabaseInfos.FirstOrDefault();
+            if (dataBase != null)
+                SelectedServer.AddNewQueryPage(dataBase, queryText);
+        }
+    }
+    #endregion
+
+    #region [__ToggleSettingsPageIfNeeded]
+    private void __ToggleSettingsPageIfNeeded()
+    {
+        if (!TabItems.Any(q => q is SettingsTabViewModel))
+            TabItems.Add(new SettingsTabViewModel(this) { Header = "Settings" });
+        else
+            CloseSettings();
+        SelectedTabItem = TabItems.LastOrDefault(s => s is SettingsTabViewModel);
+    }
+    #endregion
+
+    #region [__InitServers]
+    private void __InitServers()
+    {
+        ServerItems = new ObservableCollection<ServerViewModel>();
+        SelectedServer = ServerItems.FirstOrDefault();
+    }
+    #endregion
+
+    #region [__AddServer]
+    private void __AddServer(ServerInfo server)
+    {
+        if (ServerItems == null)
+            ServerItems = new ObservableCollection<ServerViewModel>();
+        var newServerViewModel = new ServerViewModel(server, __NewServerViewModel_ErrorOccured, this);
+        if (m_HasAddServerError)
+        {
+            newServerViewModel.Dispose();
+            m_HasAddServerError = false;
+            return;
+        }
+        if (Settings.AutoConnectEnabled)
+            m_WasAutoConnectError = false;
+        ServerItems.Add(newServerViewModel);
+        SelectedServer = newServerViewModel;
+    }
+    #endregion
+
+    #region [__NewServerViewModel_ErrorOccured]
+    private void __NewServerViewModel_ErrorOccured(object? sender, Exception e)
+    {
+        m_HasAddServerError = true;
+        if (m_WasAutoConnectError)
+        {
+            m_WasAutoConnectError = false;
+            __ExecuteOnDispatcherWithDelay(Execute_AddServer, TimeSpan.FromSeconds(1));
+        }
+        else
+        {
+            ShowExceptionMessage(e);
+        }
+    }
+    #endregion
+
+    #region [__PrepareTimer]
+    private void __PrepareTimer()
+    {
+        ExecuteOnDispatcher(() =>
+        {
+            if (m_ExecutionTimer == null)
+            {
+                m_ExecutionTimer = new DispatcherTimer();
+                m_ExecutionTimer.Interval = TimeSpan.FromSeconds(Settings.FilterUpdateRate);
+                m_ExecutionTimer.Tick += __ExecutionTimer_Tick;
+            }
+            m_ExecutionTimer?.Stop();
+            m_ExecutionTimer?.Start();
+        });
+    }
+    #endregion
+
+    #region [__ExecutionTimer_Tick]
+    private void __ExecutionTimer_Tick(object? sender, EventArgs e)
+    {
+        __Filter();
+    }
+    #endregion
+
+    #region [__Filter]
+    private void __Filter()
+    {
+        var textToFilter = FilterText != null ? FilterText.Trim() : string.Empty;
+        var factory = new TaskFactory();
+
+        var minFilterChars = Settings.MinFilterChar;
+
+        if (textToFilter.Length < minFilterChars)
+            textToFilter = string.Empty;
+
+        factory.StartNew(() =>
+        {
+            Parallel.ForEachAsync(ServerItems, async (serverItem, ct) =>
+            {
+                serverItem.Filter(textToFilter);
+            });
+        });
+    }
+    #endregion
+
+    #endregion
+
 }

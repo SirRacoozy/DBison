@@ -200,13 +200,6 @@ public class ServerQueryPageViewModel : TabItemViewModelBase
 
     #region - private methods -
 
-    #region [__ExecuteOnDispatcher]
-    private void __ExecuteOnDispatcher(Action actionToExecute)
-    {
-        _ = System.Windows.Application.Current.Dispatcher.BeginInvoke(actionToExecute);
-    }
-    #endregion
-
     #region [__ExecuteQuery]
     private void __ExecuteQuery(DatabaseInfo databaseInfo, string singleSql)
     {
@@ -214,14 +207,14 @@ public class ServerQueryPageViewModel : TabItemViewModelBase
         {
             var dataTable = m_ServerQueryHelper.FillDataTable(databaseInfo, singleSql.ToStringValue(), __Error);
 
-            __ExecuteOnDispatcher(() => IsLoading = false);
+            ExecuteOnDispatcher(() => IsLoading = false);
 
             if (dataTable == null)
             {
                 __CleanTimer();
                 return;
             }
-            __ExecuteOnDispatcher(() =>
+            ExecuteOnDispatcher(() =>
              ResultSets.Add(new ResultSetViewModel()
              {
                  ResultLines = dataTable.DefaultView
@@ -236,7 +229,7 @@ public class ServerQueryPageViewModel : TabItemViewModelBase
     #region [__PrepareTimer]
     private void __PrepareTimer(Action onTimerPrepared)
     {
-        __ExecuteOnDispatcher(() =>
+        ExecuteOnDispatcher(() =>
         {
             if (m_ExecutionTimer == null)
             {
@@ -256,7 +249,7 @@ public class ServerQueryPageViewModel : TabItemViewModelBase
     #region [__CleanTimer]
     private void __CleanTimer()
     {
-        __ExecuteOnDispatcher(() =>
+        ExecuteOnDispatcher(() =>
         {
             m_ExecutionTimer?.Stop();
             m_Stopwatch?.Stop();
@@ -264,20 +257,23 @@ public class ServerQueryPageViewModel : TabItemViewModelBase
     }
     #endregion
 
+    #region [__ExecutionTimer_Tick]
     private void __ExecutionTimer_Tick(object? sender, EventArgs e)
     {
-        __ExecuteOnDispatcher(() =>
+        ExecuteOnDispatcher(() =>
         {
             QueryStatisticText = $"Executing - " + m_Stopwatch.Elapsed.ToString(@"mm\:ss\.ffff");
         });
     }
+    #endregion
 
-
+    #region [__Error]
     private void __Error(Exception ex)
     {
         QueryStatisticText = $"ERROR occured";
         m_ServerViewModel.ExecuteError(ex);
     }
+    #endregion
     #endregion
 
     protected override void Dispose(bool disposing)
