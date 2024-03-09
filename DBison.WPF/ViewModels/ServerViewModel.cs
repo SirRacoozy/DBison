@@ -131,6 +131,9 @@ public class ServerViewModel : ClientViewModelBase
         => __AddQueryPage(databaseObject, databaseObject.Name, queryText);
     public void AddNewQueryPage(ServerObjectTreeItemViewModel serverObjectTreeItemViewModel, string queryText)
     {
+        if (DatabaseObject.DataBase == null || DatabaseObject.DataBase.DataBaseState != eDataBaseState.ONLINE)
+            return;
+
         var databaseObjectName = DatabaseObject.Name;
         __AddQueryPage(serverObjectTreeItemViewModel?.DatabaseObject, databaseObjectName, queryText);
     }
@@ -232,6 +235,12 @@ public class ServerViewModel : ClientViewModelBase
         {
             var databaseTreeItemVM = __GetTreeItemViewModel(databaseNode, dataBase, null);
             databaseTreeItemVM.DatabaseObject.IsMainNode = true;
+            databaseTreeItemVM.DatabaseObject.IsRealDataBaseNode = true;
+
+            databaseNode.ServerObjects.Add(databaseTreeItemVM);
+
+            if (dataBase.DataBaseState != eDataBaseState.ONLINE)
+                continue;
 
             if (dataBase is ExtendedDatabaseInfo extendedInfo)
             {
@@ -252,7 +261,6 @@ public class ServerViewModel : ClientViewModelBase
                 databaseTreeItemVM.ServerObjects.Add(prodceduresNode);
             }
 
-            databaseNode.ServerObjects.Add(databaseTreeItemVM);
         }
 
         treeItems.Add(databaseNode); //Add main nodes
@@ -275,6 +283,9 @@ public class ServerViewModel : ClientViewModelBase
     #region [__AddQueryPage]
     private void __AddQueryPage(DatabaseObjectBase databaseObject, string databaseObjectName, string queryText)
     {
+        if (databaseObject.DataBase.DataBaseState != eDataBaseState.ONLINE)
+            return;
+
         if (databaseObjectName.IsNullOrEmpty())
             databaseObjectName = databaseObject.Name;
         var viewModel = new ServerQueryPageViewModel($"Query {ServerQueryPages.Count + 1} - {databaseObjectName}.{databaseObjectName}", this, databaseObject, m_ServerQueryHelper);

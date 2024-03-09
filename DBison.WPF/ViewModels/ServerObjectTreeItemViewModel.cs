@@ -32,6 +32,8 @@ public class ServerObjectTreeItemViewModel : ClientViewModelBase
         __SetContextMenu();
     }
 
+    public Visibility StateVisibility => DatabaseObject is DatabaseInfo && DatabaseObject.IsRealDataBaseNode ? Visibility.Visible : Visibility.Collapsed;
+
     public ServerObjectTreeItemViewModel Parent
     {
         get => Get<ServerObjectTreeItemViewModel>();
@@ -248,7 +250,7 @@ public class ServerObjectTreeItemViewModel : ClientViewModelBase
 
     private void __SetContextMenu()
     {
-        if (DatabaseObject == null || DatabaseObject.IsMainNode)
+        if (DatabaseObject == null || DatabaseObject.IsMainNode || DatabaseObject.DataBase?.DataBaseState != eDataBaseState.ONLINE)
             return;
         System.Windows.Application.Current.Dispatcher.Invoke(new Action(() =>
         {
