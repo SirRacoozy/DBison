@@ -1,9 +1,9 @@
 ﻿using System.Net;
 
 namespace DBison.Core.Entities;
-public class ServerInfo
+public class ServerInfo : DatabaseObjectBase
 {
-    public ServerInfo(string serverName)
+    public ServerInfo(string serverName) : base(serverName, null, null)
     {
         Name = serverName;
     }

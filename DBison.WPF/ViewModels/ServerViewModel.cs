@@ -39,10 +39,6 @@ public class ServerViewModel : ClientViewModelBase
     }
     #endregion
 
-    #region [CloseVisibility]
-    public Visibility CloseVisibility => Visibility.Visible;
-    #endregion
-
     #region [IsExpanded]
     public bool IsExpanded
     {
@@ -60,6 +56,14 @@ public class ServerViewModel : ClientViewModelBase
     public ServerInfo DatabaseObject
     {
         get => Get<ServerInfo>() ?? new ServerInfo("LOCALHOST");
+        set => Set(value);
+    }
+    #endregion
+
+    #region [ServerNode]
+    public ServerObjectTreeItemViewModel ServerNode
+    {
+        get => Get<ServerObjectTreeItemViewModel>();
         set => Set(value);
     }
     #endregion
@@ -216,10 +220,13 @@ public class ServerViewModel : ClientViewModelBase
     #region [__InitTreeView]
     private void __InitTreeView()
     {
+        ServerNode = new ServerObjectTreeItemViewModel(null, m_Server, m_ServerQueryHelper, null, this);
+        ServerNode.MainWindowViewModel = m_MainWindowViewModel;
         var treeItems = new ObservableCollection<ServerObjectTreeItemViewModel>(); //Should be the main nodes
         AllDataBaseFolder = new ObservableCollection<ServerObjectTreeItemViewModel>();
 
-        var databaseNode = __GetTreeItemViewModel(null, new DatabaseInfo("Databases", m_Server, null) { IsMainNode = true }, null); //First Main Node
+        var databaseNode = __GetTreeItemViewModel(ServerNode, new DatabaseInfo("Databases", m_Server, null) { IsMainNode = true }, null); //First Main Node
+        ServerNode.ServerObjects.Add(databaseNode);
         foreach (var dataBase in m_Server.DatabaseInfos)
         {
             var databaseTreeItemVM = __GetTreeItemViewModel(databaseNode, dataBase, null);
@@ -257,6 +264,7 @@ public class ServerViewModel : ClientViewModelBase
     private ServerObjectTreeItemViewModel __GetTreeItemViewModel(ServerObjectTreeItemViewModel parent, DatabaseObjectBase databaseObject, ExtendedDatabaseInfo extendedDatabaseRef)
     {
         var treeItemViewModel = new ServerObjectTreeItemViewModel(parent, databaseObject, m_ServerQueryHelper, extendedDatabaseRef, this);
+        treeItemViewModel.MainWindowViewModel = m_MainWindowViewModel;
         if (databaseObject.IsFolder)
             AllDataBaseFolder.Add(treeItemViewModel);
         treeItemViewModel.ServerObjects = new ObservableCollection<ServerObjectTreeItemViewModel>();
