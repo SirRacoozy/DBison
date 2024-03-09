@@ -31,6 +31,14 @@ namespace DBison.WPF.ClientBaseClasses
         }
         #endregion
 
+        public void ShowMessageAsync(string header, string message)
+        {
+            if (Application.Current.MainWindow is MetroWindow metroWnd)
+            {
+                metroWnd.ShowMessageAsync(header, message);
+            }
+        }
+
         #region [ExecuteOnDispatcherWithDelay]
         public void ExecuteOnDispatcherWithDelay(Action action, TimeSpan delay)
         {

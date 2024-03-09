@@ -1,6 +1,7 @@
 ﻿using DBison.Core.Attributes;
 using DBison.Core.Entities;
 using DBison.Core.Extender;
+using DBison.Core.Utils.SettingsSystem;
 using DBison.WPF.ClientBaseClasses;
 using System.Windows;
 
@@ -14,6 +15,7 @@ public class AddServerDialogViewModel : ClientViewModelBase
     {
         m_Window = window;
         ServerName = Environment.MachineName;
+        IntegratedSecurity = Settings.AutoConnectIGS;
     }
 
     [DependsUpon(nameof(IntegratedSecurity))]

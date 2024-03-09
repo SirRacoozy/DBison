@@ -8,6 +8,7 @@ using DBison.WPF.ViewModels;
 using Microsoft.Win32;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Net.NetworkInformation;
 using System.Windows.Threading;
 
 namespace DBison.WPF;
@@ -23,19 +24,7 @@ public class MainWindowViewModel : ClientViewModelBase
         m_WasAutoConnectError = Settings.AutoConnectEnabled;
         TabItems = new ObservableCollection<TabItemViewModelBase>();
         __InitServers();
-        if (Settings.AutoConnectEnabled)
-        {
-            __AddServer(new ServerInfo(Settings.AutoConnectServerName)
-            {
-                Username = Settings.AutoConnectUsername,
-                Password = Settings.AutoConnectPassword,
-                UseIntegratedSecurity = Settings.AutoConnectIGS,
-            });
-        }
-        else
-        {
-            ExecuteOnDispatcherWithDelay(Execute_AddServer, TimeSpan.FromSeconds(1));
-        }
+        __ConnectToDefaultServer();
     }
 
     #region - public properties -
@@ -225,6 +214,31 @@ public class MainWindowViewModel : ClientViewModelBase
 
     #region - private methods -
 
+    #region [__ConnectToDefaultServer]
+    private void __ConnectToDefaultServer()
+    {
+        new TaskFactory().StartNew(() =>
+        {
+            if (Settings.AutoConnectEnabled)
+            {
+                ExecuteOnDispatcher(() =>
+                {
+                    __AddServer(new ServerInfo(Settings.AutoConnectServerName)
+                    {
+                        Username = Settings.AutoConnectUsername,
+                        Password = Settings.AutoConnectPassword,
+                        UseIntegratedSecurity = Settings.AutoConnectIGS,
+                    });
+                });
+            }
+            else
+            {
+                ExecuteOnDispatcherWithDelay(Execute_AddServer, TimeSpan.FromSeconds(1));
+            }
+        });
+    }
+    #endregion
+
     #region [__AddQueryPageIfPossible]
     private void __AddQueryPageIfPossible(string queryText)
     {
@@ -261,6 +275,13 @@ public class MainWindowViewModel : ClientViewModelBase
     {
         if (ServerItems == null)
             ServerItems = new ObservableCollection<ServerViewModel>();
+
+        if (!__PingServer(server.Name))
+        {
+            ShowMessageAsync($"{server.Name} not available", $"Server {server.Name} is not available or has no MSSQL Instance");
+            return;
+        }
+
         var newServerViewModel = new ServerViewModel(server, __NewServerViewModel_ErrorOccured, this);
         if (m_HasAddServerError)
         {
@@ -335,6 +356,24 @@ public class MainWindowViewModel : ClientViewModelBase
                 serverItem.Filter(textToFilter);
             });
         });
+    }
+    #endregion
+
+    #region [__PingServer]
+    private bool __PingServer(string serverName)
+    {
+        if (serverName.IsNullOrEmpty())
+            return false;
+        var ping = new Ping();
+        try
+        {
+            var pingResult = ping.Send(serverName);
+            return true;
+        }
+        catch (Exception)
+        {
+            return false;
+        }
     }
     #endregion
 
