@@ -73,6 +73,18 @@ public class MainWindowViewModel : ClientViewModelBase
     public DatabaseInfo LastSelectedDatabase
     {
         get => Get<DatabaseInfo>();
+        set
+        {
+            Set(value);
+            __CheckStateIfNeeded();
+        }
+    }
+    #endregion
+
+    #region [LastSelectedTreeItem]
+    public ServerObjectTreeItemViewModel LastSelectedTreeItem
+    {
+        get => Get<ServerObjectTreeItemViewModel>();
         set => Set(value);
     }
     #endregion
@@ -194,6 +206,7 @@ public class MainWindowViewModel : ClientViewModelBase
         }
         else if (selectedItem is ServerObjectTreeItemViewModel treeItemObject)
         {
+            LastSelectedTreeItem = treeItemObject;
             var serverVm = ServerItems.FirstOrDefault(x => x.DatabaseObject == treeItemObject.DatabaseObject.Server);
             if (serverVm != null && SelectedServer != serverVm)
                 SelectedServer = serverVm;
@@ -373,6 +386,21 @@ public class MainWindowViewModel : ClientViewModelBase
         catch (Exception)
         {
             return false;
+        }
+    }
+    #endregion
+
+    #region [__CheckStateIfNeeded]
+    private void __CheckStateIfNeeded()
+    {
+        if (LastSelectedDatabase == null)
+            return;
+
+        var getState = SelectedServer.GetDataBaseState(LastSelectedDatabase);
+        if (LastSelectedDatabase.DataBaseState != getState)
+        {
+            LastSelectedDatabase.DataBaseState = getState;
+            LastSelectedTreeItem.RefreshState();
         }
     }
     #endregion

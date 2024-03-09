@@ -32,6 +32,8 @@ public class ServerObjectTreeItemViewModel : ClientViewModelBase
         __SetContextMenu();
     }
 
+    public Visibility StateVisibility => DatabaseObject is DatabaseInfo && DatabaseObject.IsRealDataBaseNode ? Visibility.Visible : Visibility.Collapsed;
+
     public ServerObjectTreeItemViewModel Parent
     {
         get => Get<ServerObjectTreeItemViewModel>();
@@ -144,6 +146,17 @@ public class ServerObjectTreeItemViewModel : ClientViewModelBase
     }
     #endregion
 
+    #region [RefreshState]
+    internal void RefreshState()
+    {
+        if (DatabaseObject.DataBase.DataBaseState == eDataBaseState.ONLINE)
+            m_ServerVm.RefreshDataBase(this);
+        else
+            ExecuteOnDispatcher(() => ServerObjects.Clear());
+        OnPropertyChanged(nameof(DatabaseObject));
+    }
+    #endregion
+
     public void Execute_NewQuery()
     {
         m_ServerVm.AddNewQueryPage(this, string.Empty);
@@ -248,7 +261,7 @@ public class ServerObjectTreeItemViewModel : ClientViewModelBase
 
     private void __SetContextMenu()
     {
-        if (DatabaseObject == null || DatabaseObject.IsMainNode)
+        if (DatabaseObject == null || DatabaseObject.IsMainNode || DatabaseObject.DataBase?.DataBaseState != eDataBaseState.ONLINE)
             return;
         System.Windows.Application.Current.Dispatcher.Invoke(new Action(() =>
         {
@@ -263,5 +276,4 @@ public class ServerObjectTreeItemViewModel : ClientViewModelBase
             }
         }));
     }
-
 }

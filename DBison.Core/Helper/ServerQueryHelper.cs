@@ -24,7 +24,7 @@ public class ServerQueryHelper
     {
         try
         {
-            if (databaseInfo == null)
+            if (databaseInfo == null || databaseInfo.DataBaseState != eDataBaseState.ONLINE)
                 return;
             if (databaseInfo is ExtendedDatabaseInfo extendedDatabase)
             {
@@ -55,7 +55,7 @@ public class ServerQueryHelper
     {
         try
         {
-            if (databaseInfo == null)
+            if (databaseInfo == null || databaseInfo.DataBaseState != eDataBaseState.ONLINE)
                 return;
             if (databaseInfo is ExtendedDatabaseInfo extendedDatabase)
             {
@@ -86,7 +86,7 @@ public class ServerQueryHelper
     {
         try
         {
-            if (databaseInfo == null)
+            if (databaseInfo == null || databaseInfo.DataBaseState != eDataBaseState.ONLINE)
                 return;
             if (databaseInfo is ExtendedDatabaseInfo extendedDatabase)
             {
@@ -117,7 +117,7 @@ public class ServerQueryHelper
     {
         try
         {
-            if (databaseInfo == null)
+            if (databaseInfo == null || databaseInfo.DataBaseState != eDataBaseState.ONLINE)
                 return;
             if (databaseInfo is ExtendedDatabaseInfo extendedDatabase)
             {
@@ -146,7 +146,7 @@ public class ServerQueryHelper
 
     public DataTable FillDataTable(DatabaseInfo databaseInfo, string sql, Action<Exception> errorCallback)
     {
-        if (sql.IsNullOrEmpty())
+        if (sql.IsNullOrEmpty() || databaseInfo.DataBaseState != eDataBaseState.ONLINE)
             return null;
 
         try
@@ -172,6 +172,31 @@ public class ServerQueryHelper
         }
     }
 
+    public eDataBaseState GetDataBaseState(DatabaseInfo databaseInfo)
+    {
+        try
+        {
+            if (databaseInfo == null || databaseInfo.Name.IsNullOrEmpty())
+                return eDataBaseState.OFFLINE;
+
+            var sql = $"SELECT state isOnline FROM sys.databases WHERE name = '{databaseInfo.Name}' ";
+            using var access = new DataConnection(new DatabaseInfo("master", m_Server, null));
+            var reader = access.GetReader(sql);
+            if (reader != null && reader.HasRows)
+            {
+                while (reader.Read())
+                {
+                    return (eDataBaseState)Convert.ToInt32(reader[0]);
+                }
+            }
+            return eDataBaseState.OFFLINE;
+        }
+        catch (Exception)
+        {
+            return eDataBaseState.OFFLINE;
+        }
+    }
+
     public void Cancel()
     {
         IgnoreNextException = true;
@@ -182,7 +207,8 @@ public class ServerQueryHelper
     {
         if (m_Server == null)
             return;
-        var sql = "SELECT name as dataBaseName, state_desc isOnline FROM sys.databases " +
+
+        var sql = "SELECT name as dataBaseName, state isOnline FROM sys.databases " +
             "WHERE name NOT IN ('master','tempdb','model','msdb')" +
             "ORDER BY name ASC";
         using var access = new DataConnection(new DatabaseInfo("master", m_Server, null));
@@ -193,7 +219,7 @@ public class ServerQueryHelper
             {
                 m_Server.DatabaseInfos.Add(new ExtendedDatabaseInfo(reader[0].ToStringValue(), m_Server, null)
                 {
-
+                    DataBaseState = (eDataBaseState)Convert.ToInt32(reader[1]),
                 });
             }
         }
