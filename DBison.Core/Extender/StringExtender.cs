@@ -68,7 +68,7 @@ public static class StringExtender
 
     private static string __ConvertInsertToSelectStatement(string value)
     {
-        var match = Regex.Match(value, @"INSERT INTO (\w+) ?\((.+)\) VALUES (\(.+\)),+", RegexOptions.IgnoreCase);
+        var match = Regex.Match(value, @"INSERT INTO (\w+)(?: ?\((.+)\))? VALUES (\(.+\))(?:,|$)", RegexOptions.IgnoreCase);
 
         if (!match.Success)
         {
