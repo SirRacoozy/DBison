@@ -104,7 +104,7 @@ public static class StringExtender
     }
     private static string __ConvertUpdateToSelectStatement(string value)
     {
-        var match = Regex.Match(value, @"UPDATE (\w+) SET (.+) WHERE (.+)", RegexOptions.IgnoreCase);
+        var match = Regex.Match(value, @"UPDATE (\w+) SET (.+?)(?: WHERE (.+))?", RegexOptions.IgnoreCase);
 
         if (!match.Success)
         {
@@ -114,6 +114,10 @@ public static class StringExtender
         var table = match.Groups[1].Value;
         var whereClause = match.Groups[3].Value;
 
-        return $"SELECT * FROM {table} WHERE {whereClause}";
+        var sql = $"SELECT * FROM {table}";
+        if (whereClause.IsNotNullOrEmpty())
+            sql += $" WHERE {whereClause}";
+
+        return sql;
     }
 }
