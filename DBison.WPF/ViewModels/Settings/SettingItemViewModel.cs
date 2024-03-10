@@ -1,18 +1,26 @@
 ﻿using DBison.Core.Attributes;
+using DBison.Core.Extender;
 using DBison.WPF.ClientBaseClasses;
 using System.ComponentModel.DataAnnotations;
 using System.Reflection;
+using System.Windows;
 
 namespace DBison.WPF.ViewModels;
 public class SettingItemViewModel : ClientViewModelBase
 {
     private bool m_Loaded = false;
-    public SettingItemViewModel(SettingAttribute settingAttribute, RangeAttribute rangeAttribute, PropertyInfo propertyInfo/* object value*/)
+    public SettingItemViewModel(SettingAttribute settingAttribute, RangeAttribute rangeAttribute, PropertyInfo propertyInfo)
     {
         __Init(settingAttribute, rangeAttribute, propertyInfo);
     }
 
-    public PropertyInfo SettingsProperty
+    public Visibility SettingVisibility
+    {
+        get => Get<Visibility>();
+        set => Set(value);
+    }
+
+    public PropertyInfo SettingsPropertyInfo
     {
         get => Get<PropertyInfo>();
         set => Set(value);
@@ -54,12 +62,12 @@ public class SettingItemViewModel : ClientViewModelBase
         set
         {
             Set(value);
-            if (SettingsProperty != null && m_Loaded)
+            if (SettingsPropertyInfo != null && m_Loaded)
             {
                 if (value.GetType() != SettingType)
-                    SettingsProperty.SetValue(SettingsProperty, Convert.ChangeType(value, SettingType));
+                    SettingsPropertyInfo.SetValue(SettingsPropertyInfo, Convert.ChangeType(value, SettingType));
                 else
-                    SettingsProperty.SetValue(SettingsProperty, value);
+                    SettingsPropertyInfo.SetValue(SettingsPropertyInfo, value);
             }
         }
     }
@@ -78,7 +86,7 @@ public class SettingItemViewModel : ClientViewModelBase
 
     private void __Init(SettingAttribute settingAttribute, RangeAttribute rangeAttribute, PropertyInfo propertyInfo)
     {
-        SettingsProperty = propertyInfo;
+        SettingsPropertyInfo = propertyInfo;
         var value = propertyInfo.GetValue(settingAttribute);
         SettingAttribute = settingAttribute;
         RangeAttribute = rangeAttribute;
@@ -103,4 +111,32 @@ public class SettingItemViewModel : ClientViewModelBase
         m_Loaded = true;
     }
 
+    internal void EvaluateDependencies(IEnumerable<SettingItemViewModel> allSettings)
+    {
+        var dependencies = SettingsPropertyInfo.GetCustomAttributes(typeof(DependsUponSettingAttribute), false);
+
+        var myName = SettingsPropertyInfo.Name;
+        bool isShown = true;
+
+        foreach (var dependencyTempAttribute in dependencies)
+        {
+            if (!isShown)
+            {
+                break;
+            }
+            if (dependencyTempAttribute is DependsUponSettingAttribute settingsAttribute)
+            {
+                var otherSetting = allSettings.FirstOrDefault(s => s.SettingsPropertyInfo.Name.IsEquals(settingsAttribute.DependingSetting));
+                if (otherSetting != null)
+                {
+                    var xBool = Convert.ToBoolean(otherSetting.Value);
+                    if (!settingsAttribute.InverseBoolValue && !xBool)
+                        isShown = false;
+                    else if (settingsAttribute.InverseBoolValue && xBool)
+                        isShown = false;
+                }
+            }
+        }
+        SettingVisibility = isShown && SettingAttribute.IsVisible ? Visibility.Visible : Visibility.Collapsed;
+    }
 }

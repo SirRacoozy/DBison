@@ -1,4 +1,5 @@
 ﻿using DBison.Core.Attributes;
+using DBison.Core.EventArguments;
 using DBison.Core.Extender;
 using DBison.Core.Utils.SettingsSystem;
 using DBison.WPF.ClientBaseClasses;
@@ -13,6 +14,7 @@ namespace DBison.WPF.ViewModels
         public SettingsTabViewModel(MainWindowViewModel mainWindowViewModel) : base(true)
         {
             __ReadAndGenerateSettings();
+            SettingsHandler.SettingChanged += __SettingsHandler_SettingChanged;
             m_MainWindowViewModel = mainWindowViewModel;
         }
 
@@ -45,8 +47,6 @@ namespace DBison.WPF.ViewModels
                 var attributes = property.GetCustomAttributes(typeof(SettingAttribute), false);
                 if (attributes != null && attributes.FirstOrDefault() is SettingAttribute settingAttribute)
                 {
-                    if (!settingAttribute.IsVisible)
-                        continue;
                     RangeAttribute range = null;
                     var rangeAttributes = property.GetCustomAttributes(typeof(RangeAttribute), false);
                     if (rangeAttributes != null && rangeAttributes.FirstOrDefault() is RangeAttribute rangeAttribute)
@@ -55,8 +55,27 @@ namespace DBison.WPF.ViewModels
                     settingsGroup.SettingItems.Add(new SettingItemViewModel(settingAttribute, range, property));
                 }
             }
+
+            __EvaluateAllSettings();
             SelectedSettingsGroup = SettingGroups.FirstOrDefault();
         }
+
+        private void __SettingsHandler_SettingChanged(object? sender, SettingChangedEventArgs e)
+        {
+            SettingsHandler.SettingChanged -= __SettingsHandler_SettingChanged;
+            __EvaluateAllSettings();
+            SettingsHandler.SettingChanged += __SettingsHandler_SettingChanged;
+        }
+
+        private void __EvaluateAllSettings()
+        {
+            var allSettings = SettingGroups.SelectMany(g => g.SettingItems);
+            foreach (var settingItem in allSettings)
+            {
+                settingItem.EvaluateDependencies(allSettings);
+            }
+        }
+
         private SettingGroupViewModel __AddOrGetSettingsGroupIfNeeded(SettingAttribute attribute)
         {
             SettingGroupViewModel settingsGroup;

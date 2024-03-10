@@ -1,7 +1,4 @@
-﻿
-using DBison.Core.Entities.Interfaces;
-
-namespace DBison.Core.Entities;
+﻿namespace DBison.Core.Entities;
 public class DatabaseInfo : DatabaseObjectBase
 {
     public DatabaseInfo(string name, ServerInfo server, DatabaseInfo dataBase) : base(name, server, dataBase)
@@ -9,6 +6,8 @@ public class DatabaseInfo : DatabaseObjectBase
     }
 
     #region - properties -
+
+    public eDataBaseState DataBaseState { get; set; }
 
     #endregion
 

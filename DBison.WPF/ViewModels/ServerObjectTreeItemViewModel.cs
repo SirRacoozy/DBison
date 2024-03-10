@@ -1,7 +1,9 @@
 ﻿using DBison.Core.Attributes;
 using DBison.Core.Entities;
+using DBison.Core.Extender;
 using DBison.Core.Helper;
 using DBison.Core.Utils.Commands;
+using DBison.Core.Utils.SettingsSystem;
 using DBison.WPF.ClientBaseClasses;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
@@ -16,14 +18,26 @@ public class ServerObjectTreeItemViewModel : ClientViewModelBase
 {
     readonly ServerQueryHelper m_ServerQueryHelper;
     readonly ServerViewModel m_ServerVm;
-    public ServerObjectTreeItemViewModel(DatabaseObjectBase databaseObject, ServerQueryHelper serverQueryHelper, ExtendedDatabaseInfo extendedDatabaseRef, ServerViewModel serverVm)
+    readonly MainWindowViewModel m_MainWindowViewModel;
+    public ServerObjectTreeItemViewModel(ServerObjectTreeItemViewModel parent, DatabaseObjectBase databaseObject, ServerQueryHelper serverQueryHelper, ExtendedDatabaseInfo extendedDatabaseRef, ServerViewModel serverVm, MainWindowViewModel mainWindowViewModel)
     {
+        m_MainWindowViewModel = mainWindowViewModel;
+        ServerObjects = new ObservableCollection<ServerObjectTreeItemViewModel>();
+        Parent = parent;
         SelectedBackGround = Brushes.Gray;
         DatabaseObject = databaseObject;
         m_ServerQueryHelper = serverQueryHelper;
         ExtendedDatabaseRef = extendedDatabaseRef;
         m_ServerVm = serverVm;
         __SetContextMenu();
+    }
+
+    public Visibility StateVisibility => DatabaseObject is DatabaseInfo && DatabaseObject.IsRealDataBaseNode ? Visibility.Visible : Visibility.Collapsed;
+
+    public ServerObjectTreeItemViewModel Parent
+    {
+        get => Get<ServerObjectTreeItemViewModel>();
+        private set => Set(value);
     }
 
     public Brush SelectedBackGround
@@ -50,15 +64,18 @@ public class ServerObjectTreeItemViewModel : ClientViewModelBase
         set
         {
             Set(value);
-            if (value && ServerObjects.Count == 1)
+            if (value && ServerObjects.IsNotEmpty() && ServerObjects.All(o => o.DatabaseObject != null && o.DatabaseObject.IsPlaceHolder))
                 __LoadSubObjects();
+            if (Parent != null)
+                Parent.IsExpanded = true;
         }
     }
 
-    public Visibility CloseVisibility => Visibility.Collapsed;
+    public Visibility CloseVisibility => DatabaseObject != null && DatabaseObject is ServerInfo ? Visibility.Visible : Visibility.Collapsed;
+
     public ObservableCollection<ServerObjectTreeItemViewModel> ServerObjects
     {
-        get => Get<ObservableCollection<ServerObjectTreeItemViewModel>>() ?? new ObservableCollection<ServerObjectTreeItemViewModel>();
+        get => Get<ObservableCollection<ServerObjectTreeItemViewModel>>();
         set
         {
             if (value != null)
@@ -75,7 +92,12 @@ public class ServerObjectTreeItemViewModel : ClientViewModelBase
     public ObservableCollection<MenuItem> MenuItems
     {
         get => Get<ObservableCollection<MenuItem>>();
-        set => Set(value);
+        set
+        {
+            Set(value);
+            if (value != null)
+                value.CollectionChanged += (sender, e) => OnPropertyChanged(nameof(MenuItems));
+        }
     }
 
     public bool IsLoading
@@ -97,16 +119,87 @@ public class ServerObjectTreeItemViewModel : ClientViewModelBase
         }
     }
 
+    public void Filter()
+    {
+        __LoadSubObjects();
+    }
+
+    public void Clear()
+    {
+        ExecuteOnDispatcher(() =>
+        {
+            ServerObjects.Clear();
+            OnPropertyChanged(nameof(ServerObjects));
+            IsExpanded = false;
+            var m_Server = m_ServerVm.DatabaseObject;
+            if (Parent.DatabaseObject is ExtendedDatabaseInfo extendedInfo)
+            {
+                var databaseObject = DatabaseObject.Clone();
+                databaseObject.Name = "Loading....";
+                databaseObject.IsPlaceHolder = true;
+                ServerObjects.Add(__GetTreeItemViewModel(Parent, databaseObject, extendedInfo)); //Needs to be set, to expand and load real objects then
+            }
+        });
+    }
+
+    #region [__GetTreeItemViewModel]
+    private ServerObjectTreeItemViewModel __GetTreeItemViewModel(ServerObjectTreeItemViewModel parent, DatabaseObjectBase databaseObject, ExtendedDatabaseInfo extendedDatabaseRef)
+    {
+        var treeItemViewModel = new ServerObjectTreeItemViewModel(parent, databaseObject, m_ServerQueryHelper, extendedDatabaseRef, m_ServerVm, m_MainWindowViewModel);
+        treeItemViewModel.ServerObjects = new ObservableCollection<ServerObjectTreeItemViewModel>();
+        return treeItemViewModel;
+    }
+    #endregion
+
+    #region [RefreshState]
+    internal void RefreshState()
+    {
+        if (DatabaseObject.DataBase.DataBaseState == eDataBaseState.ONLINE)
+            m_ServerVm.RefreshDataBase(this);
+        else
+            ExecuteOnDispatcher(() => ServerObjects.Clear());
+        OnPropertyChanged(nameof(DatabaseObject));
+    }
+    #endregion
+
+    #region [Execute_NewQuery]
     public void Execute_NewQuery()
     {
         m_ServerVm.AddNewQueryPage(this, string.Empty);
     }
+    #endregion
 
+    #region [Execute_ShowTableData]
     public void Execute_ShowTableData()
     {
         m_ServerVm.AddTableDataPage(this);
     }
+    #endregion
 
+    #region [Execute_SwitchState]
+    public void Execute_SwitchState()
+    {
+        try
+        {
+            m_ServerQueryHelper.SwitchDataBaseStatus(DatabaseObject.DataBase);
+            m_MainWindowViewModel.RefreshLastSelectedDataBaseState();
+            __SetContextMenu();
+        }
+        catch (Exception ex)
+        {
+            //---
+        }
+    }
+    #endregion
+
+    #region [Execute_Close]
+    public void Execute_Close()
+    {
+        m_MainWindowViewModel.RemoveServer(m_ServerVm);
+    }
+    #endregion
+
+    #region [OnCanExecuteChanged]
     public override void OnCanExecuteChanged(string commandName)
     {
         GetCommandNames().ForEach(c =>
@@ -119,15 +212,15 @@ public class ServerObjectTreeItemViewModel : ClientViewModelBase
             }
             catch (Exception ex)
             {
-                m_ServerVm.ExecuteError(ex);
+                m_ServerVm?.ExecuteError(ex);
             }
         });
     }
+    #endregion
 
+    #region [__LoadSubObjects]
     private void __LoadSubObjects()
     {
-        if (ServerObjects.Count > 1) //Objects are already loaded on this node
-            return;
         var task = new Task(() =>
         {
             if (ExtendedDatabaseRef == null || !DatabaseObject.IsMainNode || m_ServerVm == null)
@@ -138,29 +231,29 @@ public class ServerObjectTreeItemViewModel : ClientViewModelBase
                 if (DatabaseObject is DBisonTable)
                 {
                     __SetLoading(true);
-                    m_ServerQueryHelper.LoadTables(ExtendedDatabaseRef);
-                    ServerObjects = __GetSubVms(new(ExtendedDatabaseRef.Tables));
+                    m_ServerQueryHelper.LoadTables(ExtendedDatabaseRef, m_MainWindowViewModel.FilterText);
+                    __AddSubVms(new(ExtendedDatabaseRef.Tables));
                     __SetLoading(false);
                 }
                 else if (DatabaseObject is DBisonView)
                 {
                     __SetLoading(true);
-                    m_ServerQueryHelper.LoadViews(ExtendedDatabaseRef);
-                    ServerObjects = __GetSubVms(new(ExtendedDatabaseRef.Views));
+                    m_ServerQueryHelper.LoadViews(ExtendedDatabaseRef, m_MainWindowViewModel.FilterText);
+                    __AddSubVms(new(ExtendedDatabaseRef.Views));
                     __SetLoading(false);
                 }
                 else if (DatabaseObject is DBisonTrigger)
                 {
                     __SetLoading(true);
-                    m_ServerQueryHelper.LoadTrigger(ExtendedDatabaseRef);
-                    ServerObjects = __GetSubVms(new(ExtendedDatabaseRef.Triggers));
+                    m_ServerQueryHelper.LoadTrigger(ExtendedDatabaseRef, m_MainWindowViewModel.FilterText);
+                    __AddSubVms(new(ExtendedDatabaseRef.Triggers));
                     __SetLoading(false);
                 }
                 else if (DatabaseObject is DBisonStoredProcedure)
                 {
                     __SetLoading(true);
-                    m_ServerQueryHelper.LoadProcedures(ExtendedDatabaseRef);
-                    ServerObjects = __GetSubVms(new(ExtendedDatabaseRef.Procedures));
+                    m_ServerQueryHelper.LoadProcedures(ExtendedDatabaseRef, m_MainWindowViewModel.FilterText);
+                    __AddSubVms(new(ExtendedDatabaseRef.Procedures));
                     __SetLoading(false);
                 }
             }
@@ -171,7 +264,9 @@ public class ServerObjectTreeItemViewModel : ClientViewModelBase
         });
         task.Start();
     }
+    #endregion
 
+    #region [__SetLoading]
     private void __SetLoading(bool loading)
     {
         System.Windows.Application.Current.Dispatcher.Invoke(new Action(() =>
@@ -179,22 +274,45 @@ public class ServerObjectTreeItemViewModel : ClientViewModelBase
             IsLoading = loading;
         }));
     }
+    #endregion
 
-    private ObservableCollection<ServerObjectTreeItemViewModel> __GetSubVms(List<DatabaseObjectBase> databaseObjects)
+    #region [__AddSubVms]
+    private void __AddSubVms(List<DatabaseObjectBase> databaseObjects)
     {
-        return new(databaseObjects.Select(o => new ServerObjectTreeItemViewModel(o, m_ServerQueryHelper, ExtendedDatabaseRef, m_ServerVm)));
+        ExecuteOnDispatcher(() =>
+        {
+            ServerObjects.Clear();
+            foreach (var dbObject in databaseObjects)
+            {
+                ServerObjects.Add(new ServerObjectTreeItemViewModel(this, dbObject, m_ServerQueryHelper, ExtendedDatabaseRef, m_ServerVm, m_MainWindowViewModel));
+            }
+            if (Settings.AutoExpandNodes && m_MainWindowViewModel.FilterText.IsNotNullOrEmpty() && ServerObjects.Any())
+                IsExpanded = true;
+        });
     }
+    #endregion
 
+    #region [__SetContextMenu]
     private void __SetContextMenu()
     {
-        if (DatabaseObject.IsMainNode)
+        if (MenuItems == null)
+            MenuItems = new ObservableCollection<MenuItem>();
+        else
+            MenuItems.Clear();
+        if (DatabaseObject.DataBase != null && DatabaseObject.DataBase.DataBaseState != eDataBaseState.ONLINE)
+        {
+            MenuItems.Add(new MenuItem { Header = $"Take [{DatabaseObject.Name}] Online", Command = this["SwitchState"] as ICommand });
             return;
+        }
+        if (DatabaseObject == null || (!DatabaseObject.IsRealDataBaseNode && DatabaseObject.IsMainNode))
+        {
+            return;
+        }
         System.Windows.Application.Current.Dispatcher.Invoke(new Action(() =>
         {
-            MenuItems = new ObservableCollection<MenuItem>();
             if (DatabaseObject is DatabaseInfo)
             {
-                MenuItems.Add(new MenuItem { Header = $"New Query - [{DatabaseObject.Name}]", Command = this["NewQuery"] as ICommand });
+                __AddDataBaseMenuItems();
             }
             else if (DatabaseObject is DBisonTable || DatabaseObject is DBisonView)
             {
@@ -202,5 +320,14 @@ public class ServerObjectTreeItemViewModel : ClientViewModelBase
             }
         }));
     }
+    #endregion
+
+    #region [__AddDataBaseMenuItems]
+    private void __AddDataBaseMenuItems()
+    {
+        MenuItems.Add(new MenuItem { Header = $"New Query - [{DatabaseObject.Name}]", Command = this["NewQuery"] as ICommand });
+        MenuItems.Add(new MenuItem { Header = $"Switch database State [{DatabaseObject.Name}]", Command = this["SwitchState"] as ICommand });
+    }
+    #endregion
 
 }

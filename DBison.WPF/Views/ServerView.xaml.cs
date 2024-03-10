@@ -3,6 +3,7 @@ using DBison.WPF.Converter;
 using DBison.WPF.ViewModels;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 
 namespace DBison.WPF.Views;
 /// <summary>
@@ -13,9 +14,19 @@ public partial class ServerView : UserControlBase
     public ServerView()
     {
         InitializeComponent();
+        Loaded += __Loaded;
     }
 
     #region - private methods -
+
+    #region [__Loaded]
+    private void __Loaded(object sender, RoutedEventArgs e)
+    {
+        QueryTextBox.Focusable = true;
+        Keyboard.Focus(QueryTextBox);
+    }
+    #endregion
+
     #region [__SelectionChanged]
     private void __SelectionChanged(object sender, System.Windows.RoutedEventArgs e)
     {
@@ -38,14 +49,11 @@ public partial class ServerView : UserControlBase
 
     private void __AutoGeneratingColumn(object sender, DataGridAutoGeneratingColumnEventArgs e)
     {
-        // Überprüfen, ob es sich um eine TextColumn handelt
         if (e.PropertyType == typeof(string))
         {
-            // Spalte als DataGridTemplateColumn festlegen
             var templateColumn = new DataGridTemplateColumn();
             templateColumn.Header = e.Column.Header;
 
-            // CellTemplate erstellen
             var cellTemplate = new DataTemplate();
             var textBlockFactory = new FrameworkElementFactory(typeof(TextBlock));
             var textBinding = new System.Windows.Data.Binding(e.PropertyName);
