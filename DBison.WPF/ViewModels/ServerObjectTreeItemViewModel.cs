@@ -92,7 +92,12 @@ public class ServerObjectTreeItemViewModel : ClientViewModelBase
     public ObservableCollection<MenuItem> MenuItems
     {
         get => Get<ObservableCollection<MenuItem>>();
-        set => Set(value);
+        set
+        {
+            Set(value);
+            if (value != null)
+                value.CollectionChanged += (sender, e) => OnPropertyChanged(nameof(MenuItems));
+        }
     }
 
     public bool IsLoading
@@ -157,15 +162,35 @@ public class ServerObjectTreeItemViewModel : ClientViewModelBase
     }
     #endregion
 
+    #region [Execute_NewQuery]
     public void Execute_NewQuery()
     {
         m_ServerVm.AddNewQueryPage(this, string.Empty);
     }
+    #endregion
 
+    #region [Execute_ShowTableData]
     public void Execute_ShowTableData()
     {
         m_ServerVm.AddTableDataPage(this);
     }
+    #endregion
+
+    #region [Execute_SwitchState]
+    public void Execute_SwitchState()
+    {
+        try
+        {
+            m_ServerQueryHelper.SwitchDataBaseStatus(DatabaseObject.DataBase);
+            m_MainWindowViewModel.RefreshLastSelectedDataBaseState();
+            __SetContextMenu();
+        }
+        catch (Exception ex)
+        {
+            //---
+        }
+    }
+    #endregion
 
     #region [Execute_Close]
     public void Execute_Close()
@@ -174,6 +199,7 @@ public class ServerObjectTreeItemViewModel : ClientViewModelBase
     }
     #endregion
 
+    #region [OnCanExecuteChanged]
     public override void OnCanExecuteChanged(string commandName)
     {
         GetCommandNames().ForEach(c =>
@@ -190,7 +216,9 @@ public class ServerObjectTreeItemViewModel : ClientViewModelBase
             }
         });
     }
+    #endregion
 
+    #region [__LoadSubObjects]
     private void __LoadSubObjects()
     {
         var task = new Task(() =>
@@ -236,7 +264,9 @@ public class ServerObjectTreeItemViewModel : ClientViewModelBase
         });
         task.Start();
     }
+    #endregion
 
+    #region [__SetLoading]
     private void __SetLoading(bool loading)
     {
         System.Windows.Application.Current.Dispatcher.Invoke(new Action(() =>
@@ -244,7 +274,9 @@ public class ServerObjectTreeItemViewModel : ClientViewModelBase
             IsLoading = loading;
         }));
     }
+    #endregion
 
+    #region [__AddSubVms]
     private void __AddSubVms(List<DatabaseObjectBase> databaseObjects)
     {
         ExecuteOnDispatcher(() =>
@@ -258,17 +290,29 @@ public class ServerObjectTreeItemViewModel : ClientViewModelBase
                 IsExpanded = true;
         });
     }
+    #endregion
 
+    #region [__SetContextMenu]
     private void __SetContextMenu()
     {
-        if (DatabaseObject == null || DatabaseObject.IsMainNode || DatabaseObject.DataBase?.DataBaseState != eDataBaseState.ONLINE)
+        if (MenuItems == null)
+            MenuItems = new ObservableCollection<MenuItem>();
+        else
+            MenuItems.Clear();
+        if (DatabaseObject.DataBase != null && DatabaseObject.DataBase.DataBaseState != eDataBaseState.ONLINE)
+        {
+            MenuItems.Add(new MenuItem { Header = $"Take [{DatabaseObject.Name}] Online", Command = this["SwitchState"] as ICommand });
             return;
+        }
+        if (DatabaseObject == null || (!DatabaseObject.IsRealDataBaseNode && DatabaseObject.IsMainNode))
+        {
+            return;
+        }
         System.Windows.Application.Current.Dispatcher.Invoke(new Action(() =>
         {
-            MenuItems = new ObservableCollection<MenuItem>();
             if (DatabaseObject is DatabaseInfo)
             {
-                MenuItems.Add(new MenuItem { Header = $"New Query - [{DatabaseObject.Name}]", Command = this["NewQuery"] as ICommand });
+                __AddDataBaseMenuItems();
             }
             else if (DatabaseObject is DBisonTable || DatabaseObject is DBisonView)
             {
@@ -276,4 +320,14 @@ public class ServerObjectTreeItemViewModel : ClientViewModelBase
             }
         }));
     }
+    #endregion
+
+    #region [__AddDataBaseMenuItems]
+    private void __AddDataBaseMenuItems()
+    {
+        MenuItems.Add(new MenuItem { Header = $"New Query - [{DatabaseObject.Name}]", Command = this["NewQuery"] as ICommand });
+        MenuItems.Add(new MenuItem { Header = $"Switch database State [{DatabaseObject.Name}]", Command = this["SwitchState"] as ICommand });
+    }
+    #endregion
+
 }

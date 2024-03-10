@@ -21,6 +21,19 @@ public class DataConnection : IDisposable
         return __GetCommand(sql).ExecuteReader();
     }
 
+
+    public int ExecuteNonQuery(string sql)
+    {
+        __Prepare();
+        return __GetCommand(sql).ExecuteNonQuery();
+    }
+
+    public object ExecuteScalar(string sql)
+    {
+        __Prepare();
+        return __GetCommand(sql).ExecuteScalar();
+    }
+
     public SqlConnection GetConnectionRef() => m_Connection;
 
     public void CloseConnection()

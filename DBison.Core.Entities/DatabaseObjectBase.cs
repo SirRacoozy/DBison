@@ -3,6 +3,7 @@
 namespace DBison.Core.Entities;
 public abstract class DatabaseObjectBase : IServerDataBaseContext
 {
+    #region [DatabaseObjectBase]
     public DatabaseObjectBase(string name, ServerInfo server, DatabaseInfo dataBase)
     {
         Name = name;
@@ -13,23 +14,40 @@ public abstract class DatabaseObjectBase : IServerDataBaseContext
         else
             DataBase = dataBase;
     }
+    #endregion
 
     #region [Name]
-    /// <summary>
-    /// Gets or sets the name.
-    /// </summary>
     public string Name { get; set; } = string.Empty;
     #endregion
 
+    #region [IsMainNode]
     public bool IsMainNode { get; set; }
-    public bool IsFolder { get; set; }
-    public bool IsPlaceHolder { get; set; }
-    public bool IsRealDataBaseNode { get; set; }
-    public ServerInfo Server { get; private set; }
-    public DatabaseInfo DataBase { get; private set; }
+    #endregion
 
+    #region [IsFolder]
+    public bool IsFolder { get; set; }
+    #endregion
+
+    #region [IsPlaceHolder]
+    public bool IsPlaceHolder { get; set; }
+    #endregion
+
+    #region [IsRealDataBaseNode]
+    public bool IsRealDataBaseNode { get; set; }
+    #endregion
+
+    #region [Server]
+    public ServerInfo Server { get; private set; }
+    #endregion
+
+    #region [DataBase]
+    public DatabaseInfo DataBase { get; private set; }
+    #endregion
+
+    #region [Clone]
     public DatabaseObjectBase Clone()
     {
         return this.MemberwiseClone() as DatabaseObjectBase;
     }
+    #endregion
 }
