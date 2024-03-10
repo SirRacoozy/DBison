@@ -1,7 +1,9 @@
 ﻿using DBison.Core.Attributes;
 using DBison.Core.Entities;
+using DBison.Core.Entities.Enums;
 using DBison.Core.Extender;
 using DBison.Core.Helper;
+using DBison.Core.Helper.Sql;
 using DBison.WPF.ClientBaseClasses;
 using Microsoft.Win32;
 using System.Collections.ObjectModel;
@@ -104,9 +106,33 @@ public class ServerQueryPageViewModel : TabItemViewModelBase
     #region [Execute_ExecuteSQL]
     public void Execute_ExecuteSQL()
     {
-        DatabaseInfo dbInfo = DatabaseObject is DatabaseInfo tmpDbInfo ? tmpDbInfo : DatabaseObject.DataBase;
-        if (dbInfo != null)
-            FillDataTable(SelectedQueryText.IsNotNullOrEmpty() ? SelectedQueryText : QueryText, dbInfo);
+       if (DatabaseObject is DatabaseInfo dbInfo)
+       {
+           var sql = SelectedQueryText.IsNotNullEmptyOrWhitespace() ? SelectedQueryText : QueryText;
+           var result = sql.ConvertToSelectStatement();
+
+           switch(result.Item2)
+           {
+               case eDMLOperator.Update:
+                   using (var Access = new DatabaseAccess(dbInfo.Server, dbInfo))
+                       Access.ExecuteCommand(sql);
+                   FillDataTable(result.Item1, dbInfo);
+                   break;
+               case eDMLOperator.Delete:
+                   FillDataTable(result.Item1, dbInfo);
+                   using (var Access = new DatabaseAccess(dbInfo.Server, dbInfo))
+                       Access.ExecuteCommand(sql);
+                   break;
+               case eDMLOperator.Insert:
+                   using (var Access = new DatabaseAccess(dbInfo.Server, dbInfo))
+                       Access.ExecuteCommand(sql);
+                   FillDataTable(result.Item1, dbInfo);
+                   break;
+               default:
+                   FillDataTable(result.Item1, dbInfo);
+                   break;
+           }
+       }
     }
     #endregion
 
@@ -191,7 +217,7 @@ public class ServerQueryPageViewModel : TabItemViewModelBase
         {
             new Task(() =>
             {
-                __ExecuteQuery(databaseInfo, singleSql);
+                __ExecuteQuery(singleSql, databaseInfo);
             }).Start();
         }
     }
@@ -201,7 +227,7 @@ public class ServerQueryPageViewModel : TabItemViewModelBase
     #region - private methods -
 
     #region [__ExecuteQuery]
-    private void __ExecuteQuery(DatabaseInfo databaseInfo, string singleSql)
+    private void __ExecuteQuery(string singleSql, DatabaseInfo databaseInfo)
     {
         __PrepareTimer(() =>
         {
@@ -219,6 +245,7 @@ public class ServerQueryPageViewModel : TabItemViewModelBase
              {
                  ResultLines = dataTable.DefaultView
              }));
+            OnPropertyChanged(nameof(ResultSets));
             __CleanTimer();
             QueryStatisticText = $"Query executed in {m_Stopwatch.Elapsed.ToString(@"m\:ss\.ffff")} minutes - {dataTable.Rows.Count.ToString("N0")} Rows";
         });
