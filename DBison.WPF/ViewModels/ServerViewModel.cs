@@ -131,7 +131,7 @@ public class ServerViewModel : ClientViewModelBase
         => __AddQueryPage(databaseObject, databaseObject.Name, queryText);
     public void AddNewQueryPage(ServerObjectTreeItemViewModel serverObjectTreeItemViewModel, string queryText)
     {
-        if (DatabaseObject.DataBase == null || DatabaseObject.DataBase.DataBaseState != eDataBaseState.ONLINE)
+        if (serverObjectTreeItemViewModel == null || serverObjectTreeItemViewModel.DatabaseObject.DataBase.DataBaseState != eDataBaseState.ONLINE)
             return;
 
         var databaseObjectName = DatabaseObject.Name;
@@ -210,6 +210,7 @@ public class ServerViewModel : ClientViewModelBase
     #region [RefreshDataBase]
     internal void RefreshDataBase(ServerObjectTreeItemViewModel serverObjectTreeItemViewModel)
     {
+        serverObjectTreeItemViewModel.ServerObjects.Clear();
         __SetDataBaseNodes(serverObjectTreeItemViewModel.DatabaseObject.DataBase, serverObjectTreeItemViewModel);
     }
     #endregion

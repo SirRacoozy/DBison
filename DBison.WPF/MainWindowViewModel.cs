@@ -223,6 +223,13 @@ public class MainWindowViewModel : ClientViewModelBase
     }
     #endregion
 
+    #region [RefreshLastSelectedDataBaseState]
+    public void RefreshLastSelectedDataBaseState()
+    {
+        __CheckStateIfNeeded();
+    }
+    #endregion
+
     #endregion
 
     #region - private methods -
@@ -393,7 +400,7 @@ public class MainWindowViewModel : ClientViewModelBase
     #region [__CheckStateIfNeeded]
     private void __CheckStateIfNeeded()
     {
-        if (LastSelectedDatabase == null)
+        if (LastSelectedDatabase == null || !LastSelectedDatabase.IsRealDataBaseNode)
             return;
 
         var getState = SelectedServer.GetDataBaseState(LastSelectedDatabase);
