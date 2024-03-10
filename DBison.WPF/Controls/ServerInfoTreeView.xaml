@@ -11,6 +11,7 @@
     <Grid>
         <TreeView Background="Transparent"
                   ItemsSource="{Binding ServerTreeItems, Mode=TwoWay}"
+                  PreviewMouseRightButtonDown="__PreviewMouseButtonDown"
                   x:Name="ThisTreeView">
             <TreeView.Resources>
                 <Style TargetType="TreeViewItem">
@@ -31,11 +32,13 @@
                                         Visibility="{Binding StateVisibility}">
                             <ContentControl.Style>
                                 <Style TargetType="ContentControl">
-                                    <Setter Property="Content">
+                                    <Setter Property="ContentTemplate">
                                         <Setter.Value>
+                                          <DataTemplate>
                                             <Ellipse Width="10"
                                                      Height="10"
                                                      Fill="Red" />
+                                          </DataTemplate>
                                         </Setter.Value>
                                     </Setter>
 
