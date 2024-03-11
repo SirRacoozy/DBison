@@ -3,6 +3,7 @@ using DBison.Core.Extender;
 using DBison.Core.Helper;
 using DBison.Core.Utils.SettingsSystem;
 using DBison.WPF.ClientBaseClasses;
+using DBison.WPF.HelperObjects;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Windows.Media;
@@ -127,17 +128,16 @@ public class ServerViewModel : ClientViewModelBase
     #endregion
 
     #region [AddNewQueryPage]
-    public void AddNewQueryPage(DatabaseObjectBase databaseObject, string queryText)
-        => __AddQueryPage(databaseObject, databaseObject.Name, queryText);
-    public void AddNewQueryPage(ServerObjectTreeItemViewModel serverObjectTreeItemViewModel, string queryText)
+    internal void AddNewQueryPage(DatabaseInfo dataBase, string queryText)
     {
-        if (serverObjectTreeItemViewModel == null || serverObjectTreeItemViewModel.DatabaseObject.DataBase.DataBaseState != eDataBaseState.ONLINE)
-            return;
-
-        var databaseObjectName = DatabaseObject.Name;
-        __AddQueryPage(serverObjectTreeItemViewModel?.DatabaseObject, databaseObjectName, queryText);
+        __AddQueryPage(new QueryPageCreationReq()
+        {
+            DataBaseObject = dataBase,
+            QueryText = queryText,
+        });
     }
     #endregion
+
 
     #region [AddTableDataPage]
     public void AddTableDataPage(ServerObjectTreeItemViewModel serverObjectTreeItemViewModel)
@@ -147,12 +147,14 @@ public class ServerViewModel : ClientViewModelBase
         if (serverObjectTreeItemViewModel.DatabaseObject is not DBisonTable && serverObjectTreeItemViewModel.DatabaseObject is not DBisonView)
             return;
 
-        var sql = $"SELECT TOP {top} * FROM {serverObjectTreeItemViewModel.DatabaseObject.Name}";
-        var viewModel = new ServerQueryPageViewModel($"Table Data TOP {top} ({DatabaseObject.Name}.{serverObjectTreeItemViewModel.DatabaseObject.Name})", this, serverObjectTreeItemViewModel.DatabaseObject, m_ServerQueryHelper);
-        viewModel.QueryText = sql;
-
-        viewModel.FillDataTable(sql, serverObjectTreeItemViewModel.ExtendedDatabaseRef);
-        __AddQueryPage(viewModel, string.Empty);
+        var req = new QueryPageCreationReq()
+        {
+            Name = $"Table Data TOP {top} ({DatabaseObject.Name}.{serverObjectTreeItemViewModel.DatabaseObject.Name})",
+            QueryText = $"SELECT TOP {top} * FROM {serverObjectTreeItemViewModel.DatabaseObject.Name}",
+            DataBaseObject = serverObjectTreeItemViewModel.DatabaseObject,
+            ExtendedDatabaseRef = serverObjectTreeItemViewModel.ExtendedDatabaseRef,
+        };
+        __AddQueryPage(req);
     }
     #endregion
 
@@ -188,6 +190,7 @@ public class ServerViewModel : ClientViewModelBase
             foreach (var folder in AllDataBaseFolder)
             {
                 folder.Clear();
+                folder.IsExpanded = false;
             }
         }
         else
@@ -278,22 +281,20 @@ public class ServerViewModel : ClientViewModelBase
     #endregion
 
     #region [__AddQueryPage]
-    private void __AddQueryPage(DatabaseObjectBase databaseObject, string databaseObjectName, string queryText)
+    private void __AddQueryPage(QueryPageCreationReq req)
     {
-        if (databaseObject.DataBase.DataBaseState != eDataBaseState.ONLINE)
+        if (req == null || req.DataBaseObject == null || !req.DataBaseObject.DataBase.IsRealDataBaseNode || req.DataBaseObject.DataBase.DataBaseState != eDataBaseState.ONLINE)
             return;
 
-        if (databaseObjectName.IsNullOrEmpty())
-            databaseObjectName = databaseObject.Name;
-        var viewModel = new ServerQueryPageViewModel($"Query {ServerQueryPages.Count + 1} - {databaseObjectName}.{databaseObjectName}", this, databaseObject, m_ServerQueryHelper);
-        __AddQueryPage(viewModel, queryText);
-    }
+        var dataBaseName = req.DataBaseObject.Name;
 
-    private void __AddQueryPage(ServerQueryPageViewModel viewModel, string queryText)
-    {
-        if (queryText.IsNotNullOrEmpty())
-            viewModel.QueryText = queryText;
-        ServerQueryPages.Add(viewModel);
+        req.ServerQueryHelper = m_ServerQueryHelper;
+        req.ServerViewModel = this;
+
+        if (req.Name.IsNullOrEmpty())
+            req.Name = $"Query {ServerQueryPages.Count + 1} - [{ServerNode.TreeItemHeader}].[{dataBaseName}]";
+
+        ServerQueryPages.Add(new ServerQueryPageViewModel(req));
         m_MainWindowViewModel.QueryPagesChanged();
     }
     #endregion

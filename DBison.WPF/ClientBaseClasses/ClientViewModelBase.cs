@@ -1,13 +1,33 @@
 ﻿using DBison.Core.Baseclasses;
 using DBison.Core.Utils.Commands;
+using DBison.Core.Utils.SettingsSystem;
 using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
 using System.Windows;
+using System.Windows.Media;
 
 namespace DBison.WPF.ClientBaseClasses
 {
     public class ClientViewModelBase : ViewModelBase
     {
+        public ClientViewModelBase()
+        {
+            ForeGround = Settings.UseDarkMode ? Brushes.White : Brushes.Black;
+            SettingsHandler.SettingChanged += (sender, e) =>
+            {
+                if (e.ChangedSettingName == nameof(Settings.UseDarkMode))
+                    ForeGround = Settings.UseDarkMode ? Brushes.White : Brushes.Black;
+            };
+        }
+
+        #region [ForeGround]
+        public Brush ForeGround
+        {
+            get => Get<Brush>();
+            set => Set(value);
+        }
+        #endregion
+
         #region - public methods -
         #region [OnCanExecuteChanged]
         public override void OnCanExecuteChanged(string commandName)

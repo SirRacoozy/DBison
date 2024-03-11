@@ -1,4 +1,5 @@
 ﻿using ControlzEx.Theming;
+using DBison.Core.Utils.SettingsSystem;
 using System.Data;
 using System.Windows;
 using System.Windows.Controls;
@@ -13,7 +14,8 @@ public partial class App : Application
     protected override void OnStartup(StartupEventArgs e)
     {
         base.OnStartup(e);
-        _ = ThemeManager.Current.ChangeTheme(this, "Dark.Purple");
+        var baseTheme = Settings.UseDarkMode ? "Dark" : "Light";
+        _ = ThemeManager.Current.ChangeTheme(this, $"{baseTheme}.Purple");
     }
 
 
