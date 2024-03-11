@@ -139,7 +139,7 @@ public static class Settings
     }
 
     [Setting("Filtering", "Min filter chars", "How many characters should the filtering start with? Useful for huge databases/servers with many objects. Here the search can make sense from 3 characters. E.g. only \"e\" is quite pointless.", typeof(int))]
-    [Range(1, 3)]
+    [Range(1, 10)]
     public static int MinFilterChar
     {
         get => SettingsHandler.GetSetting("MinFilterChar", 3);
