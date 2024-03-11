@@ -5,12 +5,6 @@ public class DatabaseInfo : DatabaseObjectBase
     {
     }
 
-    #region - properties -
-
-    public eDataBaseState DataBaseState { get; set; }
-
-    #endregion
-
     #region - methods -
 
     #region - override -

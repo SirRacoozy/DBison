@@ -67,7 +67,7 @@ public class ServerObjectTreeItemViewModel : ClientViewModelBase
             if (value && ServerObjects.IsNotEmpty() && ServerObjects.All(o => o.DatabaseObject != null && o.DatabaseObject.IsPlaceHolder))
                 __LoadSubObjects();
             if (Parent != null)
-                Parent.IsExpanded = true;
+                Parent.IsExpanded = value;
         }
     }
 

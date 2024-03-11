@@ -155,7 +155,6 @@ public class ServerViewModel : ClientViewModelBase
             ExtendedDatabaseRef = serverObjectTreeItemViewModel.ExtendedDatabaseRef,
         };
         __AddQueryPage(req);
-        //viewModel.FillDataTable(sql, );
     }
     #endregion
 
@@ -191,6 +190,7 @@ public class ServerViewModel : ClientViewModelBase
             foreach (var folder in AllDataBaseFolder)
             {
                 folder.Clear();
+                folder.IsExpanded = false;
             }
         }
         else

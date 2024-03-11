@@ -207,8 +207,7 @@
 
     <GridSplitter ResizeDirection="Columns"
                   Grid.Column="1"
-                  Width="5"
-                  Background="White" />
+                  Width="5"/>
 
     <controls:TabControlBase ItemsSource="{Binding TabItems, Mode=OneWay}"
                              SelectedIndex="0"

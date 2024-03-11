@@ -388,10 +388,10 @@ public class MainWindowViewModel : ClientViewModelBase
 
         factory.StartNew(() =>
         {
-            Parallel.ForEachAsync(ServerItems, async (serverItem, ct) =>
+            foreach (var serverItem in ServerItems)
             {
                 serverItem.Filter(textToFilter);
-            });
+            }
         });
     }
     #endregion

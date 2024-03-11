@@ -44,6 +44,11 @@ public abstract class DatabaseObjectBase : IServerDataBaseContext
     public DatabaseInfo DataBase { get; private set; }
     #endregion
 
+    #region - properties -
+    public eDataBaseState DataBaseState { get; set; }
+
+    #endregion
+
     #region [Clone]
     public DatabaseObjectBase Clone()
     {
