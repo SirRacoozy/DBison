@@ -35,6 +35,10 @@
         <KeyBinding Modifiers="Ctrl"
                     Key="Q"
                     Command="{Binding [QuitApplication]}" />
+      
+        <KeyBinding Modifiers="Ctrl"
+                    Key="R"
+                    Command="{Binding [RestartApplication]}" />
 
     </mah:MetroWindow.InputBindings>
 

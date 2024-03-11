@@ -1,4 +1,5 @@
-﻿using DBison.Core.Attributes;
+﻿using ControlzEx.Theming;
+using DBison.Core.Attributes;
 using DBison.Core.Entities;
 using DBison.Core.Extender;
 using DBison.Core.Utils.SettingsSystem;
@@ -7,8 +8,11 @@ using DBison.WPF.Dialogs;
 using DBison.WPF.ViewModels;
 using Microsoft.Win32;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.IO;
 using System.Net.NetworkInformation;
+using System.Reflection;
+using System.Windows;
 using System.Windows.Threading;
 
 namespace DBison.WPF;
@@ -17,6 +21,8 @@ public class MainWindowViewModel : ClientViewModelBase
     bool m_HasAddServerError = false;
     bool m_WasAutoConnectError = true;
     DispatcherTimer m_ExecutionTimer;
+
+    #region [Ctor]
     public MainWindowViewModel()
     {
         ServerTreeItems = new ObservableCollection<ServerObjectTreeItemViewModel>();
@@ -25,7 +31,9 @@ public class MainWindowViewModel : ClientViewModelBase
         TabItems = new ObservableCollection<TabItemViewModelBase>();
         __InitServers();
         __ConnectToDefaultServer();
+        __HandleSettingsChanged();
     }
+    #endregion
 
     #region - public properties -
 
@@ -105,6 +113,15 @@ public class MainWindowViewModel : ClientViewModelBase
     public void Execute_QuitApplication()
     {
         Environment.Exit(0);
+    }
+    #endregion
+
+    #region [Execute_RestartApplication]
+    public void Execute_RestartApplication()
+    {
+        string assemblyPath = Path.ChangeExtension(Assembly.GetEntryAssembly().Location, "exe");
+        Process.Start(assemblyPath);
+        Application.Current.Shutdown();
     }
     #endregion
 
@@ -408,6 +425,28 @@ public class MainWindowViewModel : ClientViewModelBase
         {
             LastSelectedDatabase.DataBaseState = getState;
             LastSelectedTreeItem.RefreshState();
+        }
+    }
+    #endregion
+
+    #region [__HandleSettingsChanged]
+    private void __HandleSettingsChanged()
+    {
+        SettingsHandler.SettingChanged += __SettingsHandler_SettingChanged;
+    }
+    #endregion
+
+    #region [__SettingsHandler_SettingChanged]
+    private void __SettingsHandler_SettingChanged(object? sender, Core.EventArguments.SettingChangedEventArgs e)
+    {
+        if (e.ChangedSettingName == nameof(Settings.UseDarkMode))
+        {
+            var baseTheme = Settings.UseDarkMode ? "Dark" : "Light";
+            _ = ThemeManager.Current.ChangeTheme(Application.Current, $"{baseTheme}.Purple");
+        }
+        else if (e.ChangedSettingName == nameof(Settings.FilterUpdateRate))
+        {
+            m_ExecutionTimer.Interval = TimeSpan.FromSeconds(Settings.FilterUpdateRate);
         }
     }
     #endregion

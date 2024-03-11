@@ -23,13 +23,6 @@
         </Style.Resources>
       </Style>
 
-      <Style TargetType="{x:Type MenuItem}">
-        <Setter Property="HorizontalContentAlignment"
-                Value="Center" />
-        <Setter Property="VerticalContentAlignment"
-                Value="Center" />
-      </Style>
-
       <Style TargetType="{x:Type controls:DBisonTextBox}">
         <Setter Property="Foreground"
                 Value="#BDBDBD" />

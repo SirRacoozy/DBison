@@ -93,6 +93,7 @@ public class ServerQueryPageViewModel : TabItemViewModelBase
     }
     #endregion
 
+    #region [CanExecute_ExecuteSQL]
     [DependsUpon(nameof(QueryText))]
     [DependsUpon(nameof(SelectedQueryText))]
     [DependsUpon(nameof(IsLoading))]
@@ -102,11 +103,12 @@ public class ServerQueryPageViewModel : TabItemViewModelBase
             return false;
         return (SelectedQueryText != null && SelectedQueryText.Trim().IsNotNullOrEmpty()) || (QueryText != null && QueryText.Trim().IsNotNullOrEmpty());
     }
+    #endregion
 
     #region [Execute_ExecuteSQL]
     public void Execute_ExecuteSQL()
     {
-       if (DatabaseObject is DatabaseInfo dbInfo)
+       if (DatabaseObject.DataBase is DatabaseInfo dbInfo)
        {
            var sql = SelectedQueryText.IsNotNullEmptyOrWhitespace() ? SelectedQueryText : QueryText;
            var result = sql.ConvertToSelectStatement();
@@ -136,12 +138,14 @@ public class ServerQueryPageViewModel : TabItemViewModelBase
     }
     #endregion
 
+    #region [CanExecute_ClearResult]
     [DependsUpon(nameof(IsLoading))]
     [DependsUpon(nameof(ResultSets))]
     public bool CanExecute_ClearResult()
     {
         return !IsLoading && ResultSets.Any(r => r.ResultLines.Count != 0);
     }
+    #endregion
 
     #region [Execute_ClearResult]
     public void Execute_ClearResult()

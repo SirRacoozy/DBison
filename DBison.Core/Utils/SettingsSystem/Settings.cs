@@ -1,5 +1,4 @@
 ﻿using DBison.Core.Attributes;
-using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
 
@@ -18,7 +17,7 @@ public static class Settings
     [Setting("Visual", "Use Dark Mode", "Activates or deactivates the dark mode", typeof(bool))]
     public static bool UseDarkMode
     {
-        get => SettingsHandler.GetSetting("UseDarkMode", false);
+        get => SettingsHandler.GetSetting("UseDarkMode", true);
         set => SettingsHandler.SetSetting("UseDarkMode", value.ToString());
     }
 
@@ -138,7 +137,7 @@ public static class Settings
         get => SettingsHandler.GetSetting("AutoConnectPassword", string.Empty);
         set => SettingsHandler.SetSetting("AutoConnectPassword", value);
     }
-  
+
     [Setting("Filtering", "Min filter chars", "How many characters should the filtering start with? Useful for huge databases/servers with many objects. Here the search can make sense from 3 characters. E.g. only \"e\" is quite pointless.", typeof(int))]
     [Range(1, 3)]
     public static int MinFilterChar
