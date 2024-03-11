@@ -165,7 +165,7 @@ public class ServerObjectTreeItemViewModel : ClientViewModelBase
     #region [Execute_NewQuery]
     public void Execute_NewQuery()
     {
-        m_ServerVm.AddNewQueryPage(this, string.Empty);
+        m_ServerVm.AddNewQueryPage(DatabaseObject.DataBase, string.Empty);
     }
     #endregion
 

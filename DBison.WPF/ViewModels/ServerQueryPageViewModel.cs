@@ -5,6 +5,7 @@ using DBison.Core.Extender;
 using DBison.Core.Helper;
 using DBison.Core.Helper.Sql;
 using DBison.WPF.ClientBaseClasses;
+using DBison.WPF.HelperObjects;
 using Microsoft.Win32;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
@@ -20,14 +21,19 @@ public class ServerQueryPageViewModel : TabItemViewModelBase
     Stopwatch m_Stopwatch = new Stopwatch();
 
     #region Ctor
-    public ServerQueryPageViewModel(string name, ServerViewModel serverViewModel, DatabaseObjectBase databaseObject, ServerQueryHelper serverQueryHelper)
+    public ServerQueryPageViewModel(QueryPageCreationReq req /*string name, ServerViewModel serverViewModel, DatabaseObjectBase databaseObject, ServerQueryHelper serverQueryHelper*/)
         : base(false)
     {
-        DatabaseObject = databaseObject;
-        m_ServerViewModel = serverViewModel;
-        Header = name;
+        DatabaseObject = req.DataBaseObject;
+        m_ServerViewModel = req.ServerViewModel;
+        Header = req.Name;
         ResultSets = new ObservableCollection<ResultSetViewModel>();
-        m_ServerQueryHelper = serverQueryHelper;
+        m_ServerQueryHelper = req.ServerQueryHelper;
+        if(req.QueryText.IsNotNullOrEmpty())
+        {
+            QueryText = req.QueryText;
+            FillDataTable(QueryText, DatabaseObject.DataBase);
+        }
     }
     #endregion
 
@@ -108,33 +114,33 @@ public class ServerQueryPageViewModel : TabItemViewModelBase
     #region [Execute_ExecuteSQL]
     public void Execute_ExecuteSQL()
     {
-       if (DatabaseObject.DataBase is DatabaseInfo dbInfo)
-       {
-           var sql = SelectedQueryText.IsNotNullEmptyOrWhitespace() ? SelectedQueryText : QueryText;
-           var result = sql.ConvertToSelectStatement();
+        if (DatabaseObject.DataBase is DatabaseInfo dbInfo)
+        {
+            var sql = SelectedQueryText.IsNotNullEmptyOrWhitespace() ? SelectedQueryText : QueryText;
+            var result = sql.ConvertToSelectStatement();
 
-           switch(result.Item2)
-           {
-               case eDMLOperator.Update:
-                   using (var Access = new DatabaseAccess(dbInfo.Server, dbInfo))
-                       Access.ExecuteCommand(sql);
-                   FillDataTable(result.Item1, dbInfo);
-                   break;
-               case eDMLOperator.Delete:
-                   FillDataTable(result.Item1, dbInfo);
-                   using (var Access = new DatabaseAccess(dbInfo.Server, dbInfo))
-                       Access.ExecuteCommand(sql);
-                   break;
-               case eDMLOperator.Insert:
-                   using (var Access = new DatabaseAccess(dbInfo.Server, dbInfo))
-                       Access.ExecuteCommand(sql);
-                   FillDataTable(result.Item1, dbInfo);
-                   break;
-               default:
-                   FillDataTable(result.Item1, dbInfo);
-                   break;
-           }
-       }
+            switch (result.Item2)
+            {
+                case eDMLOperator.Update:
+                    using (var Access = new DatabaseAccess(dbInfo.Server, dbInfo))
+                        Access.ExecuteCommand(sql);
+                    FillDataTable(result.Item1, dbInfo);
+                    break;
+                case eDMLOperator.Delete:
+                    FillDataTable(result.Item1, dbInfo);
+                    using (var Access = new DatabaseAccess(dbInfo.Server, dbInfo))
+                        Access.ExecuteCommand(sql);
+                    break;
+                case eDMLOperator.Insert:
+                    using (var Access = new DatabaseAccess(dbInfo.Server, dbInfo))
+                        Access.ExecuteCommand(sql);
+                    FillDataTable(result.Item1, dbInfo);
+                    break;
+                default:
+                    FillDataTable(result.Item1, dbInfo);
+                    break;
+            }
+        }
     }
     #endregion
 
