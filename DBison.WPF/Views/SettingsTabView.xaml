@@ -6,154 +6,155 @@
              xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
              xmlns:system="clr-namespace:System;assembly=netstandard">
 
-    <UserControl.Resources>
-        <Style TargetType="ItemsControl">
-            <Setter Property="ItemTemplate">
-                <Setter.Value>
-                    <DataTemplate>
-                        <Grid Margin="0 0 0 10"
-                              Visibility="{Binding SettingVisibility, Mode=TwoWay}">
+  <UserControl.Resources>
+    <Style TargetType="ItemsControl">
+      <Setter Property="ItemTemplate">
+        <Setter.Value>
+          <DataTemplate>
+            <Grid Margin="0 0 0 10"
+                  Visibility="{Binding SettingVisibility, Mode=TwoWay}">
 
-                            <Grid.Resources>
-                                <Style TargetType="TextBlock">
-                                    <Setter Property="FontSize"
-                                            Value="16" />
-                                </Style>
-                            </Grid.Resources>
+              <Grid.Resources>
+                <Style TargetType="TextBlock">
+                  <Setter Property="FontSize"
+                          Value="16" />
+                </Style>
+              </Grid.Resources>
 
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="1*" />
-                                <ColumnDefinition Width="1*" />
-                            </Grid.ColumnDefinitions>
-                            <TextBlock Text="{Binding Name}"
-                                       ToolTip="{Binding Tooltip}"
-                                       Grid.Column="0"
-                                       Height="20" />
-
-                            <ContentControl Grid.Column="2"
-                                            Margin="5 0 0 0"
-                                            Width="200"
-                                            HorizontalAlignment="Left"
-                                            x:Name="this">
-                                <ContentControl.Style>
-                                    <Style TargetType="ContentControl">
-                                        <Setter Property="Content">
-                                            <Setter.Value>
-                                                <TextBlock Text="NOT IMPLEMENTED TYPE" />
-                                            </Setter.Value>
-                                        </Setter>
-
-                                        <Style.Triggers>
-                                            <!--Boolean-->
-                                            <DataTrigger Binding="{Binding SettingType, Mode=TwoWay}"
-                                                         Value="{x:Type system:Boolean}">
-                                                <Setter Property="ContentTemplate">
-                                                    <Setter.Value>
-                                                        <DataTemplate>
-                                                            <mah:ToggleSwitch IsOn="{Binding Value, Mode=TwoWay}"
-                                                                      DataContext="{Binding DataContext, ElementName=this}" />
-                                                        </DataTemplate>
-                                                    </Setter.Value>
-                                                </Setter>
-                                            </DataTrigger>
-                                            <!--String-->
-                                            <DataTrigger Binding="{Binding SettingType, Mode=TwoWay}"
-                                                         Value="{x:Type system:String}">
-                                                <Setter Property="ContentTemplate">
-                                                    <Setter.Value>
-                                                        <DataTemplate>
-                                                            <TextBox Text="{Binding Value, Mode=TwoWay}"
-                                                                     DataContext="{Binding DataContext, ElementName=this}" />
-                                                        </DataTemplate>
-                                                    </Setter.Value>
-                                                </Setter>
-                                            </DataTrigger>
-                                            <!--Int32-->
-                                            <DataTrigger Binding="{Binding SettingType, Mode=TwoWay}"
-                                                         Value="{x:Type system:Int32}">
-                                                <Setter Property="ContentTemplate">
-                                                    <Setter.Value>
-                                                        <DataTemplate>
-                                                            <mah:NumericUpDown Value="{Binding Value, Mode=TwoWay}"
-                                                                               Minimum="{Binding Minimum, Mode=OneWay}"
-                                                                               Maximum="{Binding Maximum, Mode=OneWay}"
-                                                                               DataContext="{Binding DataContext, ElementName=this}" />
-                                                        </DataTemplate>
-                                                    </Setter.Value>
-                                                </Setter>
-                                            </DataTrigger>
-                                            <!--UInt32-->
-                                            <DataTrigger Binding="{Binding SettingType, Mode=TwoWay}"
-                                                         Value="{x:Type system:UInt32}">
-                                                <Setter Property="ContentTemplate">
-                                                    <Setter.Value>
-                                                        <DataTemplate>
-                                                            <mah:NumericUpDown Value="{Binding Value, Mode=TwoWay}"
-                                                                               Minimum="{Binding Minimum, Mode=OneWay}"
-                                                                               Maximum="{Binding Maximum, Mode=OneWay}"
-                                                                               DataContext="{Binding DataContext, ElementName=this}" />
-                                                        </DataTemplate>
-                                                    </Setter.Value>
-                                                </Setter>
-                                            </DataTrigger>
-                                            <!--Double-->
-                                            <DataTrigger Binding="{Binding SettingType, Mode=TwoWay}"
-                                                         Value="{x:Type system:Double}">
-                                                <Setter Property="ContentTemplate">
-                                                    <Setter.Value>
-                                                        <DataTemplate>
-                                                            <mah:NumericUpDown Value="{Binding Value, Mode=TwoWay}"
-                                                                               Minimum="{Binding Minimum, Mode=OneWay}"
-                                                                               Maximum="{Binding Maximum, Mode=OneWay}"
-                                                                               DataContext="{Binding DataContext, ElementName=this}" />
-                                                        </DataTemplate>
-                                                    </Setter.Value>
-                                                </Setter>
-                                            </DataTrigger>
-                                            <!--DateTime-->
-                                            <DataTrigger Binding="{Binding SettingType, Mode=TwoWay}"
-                                                         Value="{x:Type system:DateTime}">
-                                                <Setter Property="ContentTemplate">
-                                                    <Setter.Value>
-                                                        <DataTemplate>
-                                                            <mah:DateTimePicker SelectedDateTime="{Binding Value, Mode=TwoWay}"
-                                                                                DataContext="{Binding DataContext, ElementName=this}" />
-                                                        </DataTemplate>
-                                                    </Setter.Value>
-                                                </Setter>
-                                            </DataTrigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </ContentControl.Style>
-                            </ContentControl>
-
-                        </Grid>
-                    </DataTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-    </UserControl.Resources>
-
-    <Border CornerRadius="10"
-            BorderBrush="#00747C"
-            BorderThickness="2">
-        <Grid>
-            <Grid.ColumnDefinitions>
+              <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="1*" />
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="5*" />
-            </Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*" />
+              </Grid.ColumnDefinitions>
+              <TextBlock Text="{Binding Name}"
+                         ToolTip="{Binding Tooltip}"
+                         Grid.Column="0"
+                         Height="20"
+                         Foreground="{Binding ForeGround}" />
 
-            <controls:SettingsTreeView Grid.Column="0" />
+              <ContentControl Grid.Column="2"
+                              Margin="5 0 0 0"
+                              Width="200"
+                              HorizontalAlignment="Left"
+                              x:Name="this">
+                <ContentControl.Style>
+                  <Style TargetType="ContentControl">
+                    <Setter Property="Content">
+                      <Setter.Value>
+                        <TextBlock Text="NOT IMPLEMENTED TYPE" />
+                      </Setter.Value>
+                    </Setter>
 
-            <GridSplitter Grid.Column="1"
-                          ResizeDirection="Columns"
-                          Width="5" />
+                    <Style.Triggers>
+                      <!--Boolean-->
+                      <DataTrigger Binding="{Binding SettingType, Mode=TwoWay}"
+                                   Value="{x:Type system:Boolean}">
+                        <Setter Property="ContentTemplate">
+                          <Setter.Value>
+                            <DataTemplate>
+                              <mah:ToggleSwitch IsOn="{Binding Value, Mode=TwoWay}"
+                                                DataContext="{Binding DataContext, ElementName=this}" />
+                            </DataTemplate>
+                          </Setter.Value>
+                        </Setter>
+                      </DataTrigger>
+                      <!--String-->
+                      <DataTrigger Binding="{Binding SettingType, Mode=TwoWay}"
+                                   Value="{x:Type system:String}">
+                        <Setter Property="ContentTemplate">
+                          <Setter.Value>
+                            <DataTemplate>
+                              <TextBox Text="{Binding Value, Mode=TwoWay}"
+                                       DataContext="{Binding DataContext, ElementName=this}" />
+                            </DataTemplate>
+                          </Setter.Value>
+                        </Setter>
+                      </DataTrigger>
+                      <!--Int32-->
+                      <DataTrigger Binding="{Binding SettingType, Mode=TwoWay}"
+                                   Value="{x:Type system:Int32}">
+                        <Setter Property="ContentTemplate">
+                          <Setter.Value>
+                            <DataTemplate>
+                              <mah:NumericUpDown Value="{Binding Value, Mode=TwoWay}"
+                                                 Minimum="{Binding Minimum, Mode=OneWay}"
+                                                 Maximum="{Binding Maximum, Mode=OneWay}"
+                                                 DataContext="{Binding DataContext, ElementName=this}" />
+                            </DataTemplate>
+                          </Setter.Value>
+                        </Setter>
+                      </DataTrigger>
+                      <!--UInt32-->
+                      <DataTrigger Binding="{Binding SettingType, Mode=TwoWay}"
+                                   Value="{x:Type system:UInt32}">
+                        <Setter Property="ContentTemplate">
+                          <Setter.Value>
+                            <DataTemplate>
+                              <mah:NumericUpDown Value="{Binding Value, Mode=TwoWay}"
+                                                 Minimum="{Binding Minimum, Mode=OneWay}"
+                                                 Maximum="{Binding Maximum, Mode=OneWay}"
+                                                 DataContext="{Binding DataContext, ElementName=this}" />
+                            </DataTemplate>
+                          </Setter.Value>
+                        </Setter>
+                      </DataTrigger>
+                      <!--Double-->
+                      <DataTrigger Binding="{Binding SettingType, Mode=TwoWay}"
+                                   Value="{x:Type system:Double}">
+                        <Setter Property="ContentTemplate">
+                          <Setter.Value>
+                            <DataTemplate>
+                              <mah:NumericUpDown Value="{Binding Value, Mode=TwoWay}"
+                                                 Minimum="{Binding Minimum, Mode=OneWay}"
+                                                 Maximum="{Binding Maximum, Mode=OneWay}"
+                                                 DataContext="{Binding DataContext, ElementName=this}" />
+                            </DataTemplate>
+                          </Setter.Value>
+                        </Setter>
+                      </DataTrigger>
+                      <!--DateTime-->
+                      <DataTrigger Binding="{Binding SettingType, Mode=TwoWay}"
+                                   Value="{x:Type system:DateTime}">
+                        <Setter Property="ContentTemplate">
+                          <Setter.Value>
+                            <DataTemplate>
+                              <mah:DateTimePicker SelectedDateTime="{Binding Value, Mode=TwoWay}"
+                                                  DataContext="{Binding DataContext, ElementName=this}" />
+                            </DataTemplate>
+                          </Setter.Value>
+                        </Setter>
+                      </DataTrigger>
+                    </Style.Triggers>
+                  </Style>
+                </ContentControl.Style>
+              </ContentControl>
 
-            <ItemsControl Grid.Column="2"
-                          ItemsSource="{Binding SelectedSettingsGroup.SettingItems}"
-                          Margin="10" />
+            </Grid>
+          </DataTemplate>
+        </Setter.Value>
+      </Setter>
+    </Style>
+  </UserControl.Resources>
 
-        </Grid>
-    </Border>
+  <Border CornerRadius="10"
+          BorderBrush="#00747C"
+          BorderThickness="2">
+    <Grid>
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="1*" />
+        <ColumnDefinition Width="Auto" />
+        <ColumnDefinition Width="5*" />
+      </Grid.ColumnDefinitions>
+
+      <controls:SettingsTreeView Grid.Column="0" />
+
+      <GridSplitter Grid.Column="1"
+                    ResizeDirection="Columns"
+                    Width="5" />
+
+      <ItemsControl Grid.Column="2"
+                    ItemsSource="{Binding SelectedSettingsGroup.SettingItems}"
+                    Margin="10" />
+
+    </Grid>
+  </Border>
 </UserControl>

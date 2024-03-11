@@ -1,8 +1,11 @@
-﻿using System.Text;
+﻿using DBison.Core.Entities.Enums;
+using System.Text;
+using System.Text.RegularExpressions;
 
 namespace DBison.Core.Extender;
 public static class StringExtender
 {
+    private const StringSplitOptions m_STRINGSPLITTING_NO_EMPTY_TRIM = StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries;
     public static string ToStringValue(this object rawValue)
     {
         if (rawValue == null)
@@ -43,5 +46,74 @@ public static class StringExtender
     public static bool IsNotNullEmptyOrWhitespace(this string value)
     {
         return !IsNullEmptyOrWhitespace(value);
+    }
+
+    public static (string, eDMLOperator) ConvertToSelectStatement(this string value)
+    {
+        if (value.IsNullEmptyOrWhitespace())
+            return (string.Empty, eDMLOperator.None);
+
+        if (value.StartsWith("select", StringComparison.InvariantCultureIgnoreCase))
+            return (value, eDMLOperator.None);
+        else if (value.StartsWith("delete", StringComparison.InvariantCultureIgnoreCase))
+            return (__ConvertDeleteToSelectStatement(value), eDMLOperator.Delete);
+        else if (value.StartsWith("update", StringComparison.InvariantCultureIgnoreCase))
+            return (__ConvertUpdateToSelectStatement(value), eDMLOperator.Update);
+        else if (value.StartsWith("insert", StringComparison.InvariantCultureIgnoreCase))
+            return (__ConvertInsertToSelectStatement(value), eDMLOperator.Insert);
+
+        return (string.Empty, eDMLOperator.None);
+
+    }
+
+    private static string __ConvertInsertToSelectStatement(string value)
+    {
+        var match = Regex.Match(value, @"INSERT INTO (\w+) ?\((.+)\) VALUES (\(.+\)),+", RegexOptions.IgnoreCase);
+
+        if (!match.Success)
+        {
+            throw new ArgumentException("Invalid SQL insert statement.");
+        }
+
+        var table = match.Groups[1].Value;
+        var columns = match.Groups[2].Value.Split(',').Select(x => x.Trim()).ToArray();
+        var valuesGroups = match.Groups[3].Value.Split(new[] { "),(" }, StringSplitOptions.None)
+            .Select(x => x.Trim(' ', '(', ')').Split(',').Select(v => v.Trim()).ToArray()).ToArray();
+
+        var selectStatements = valuesGroups.Select(values =>
+        {
+            var whereClause = string.Join(" AND ", columns.Zip(values, (c, v) => $"{c} = {v}"));
+            return $"SELECT * FROM {table} WHERE {whereClause}";
+        });
+
+        return string.Join("; ", selectStatements);
+    }
+    private static string __ConvertDeleteToSelectStatement(string value)
+    {
+        var match = Regex.Match(value, @"DELETE FROM (\w+) WHERE (.+)", RegexOptions.IgnoreCase);
+
+        if (!match.Success)
+        {
+            throw new ArgumentException("Invalid SQL delete statement.");
+        }
+
+        var table = match.Groups[1].Value;
+        var whereClause = match.Groups[2].Value;
+
+        return $"SELECT * FROM {table} WHERE {whereClause}";
+    }
+    private static string __ConvertUpdateToSelectStatement(string value)
+    {
+        var match = Regex.Match(value, @"UPDATE (\w+) SET (.+) WHERE (.+)", RegexOptions.IgnoreCase);
+
+        if (!match.Success)
+        {
+            throw new ArgumentException("Invalid SQL update statement.");
+        }
+
+        var table = match.Groups[1].Value;
+        var whereClause = match.Groups[3].Value;
+
+        return $"SELECT * FROM {table} WHERE {whereClause}";
     }
 }

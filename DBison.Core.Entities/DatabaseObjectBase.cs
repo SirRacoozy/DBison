@@ -11,6 +11,8 @@ public abstract class DatabaseObjectBase : IServerDataBaseContext
 
         if (this is DatabaseInfo databaseInfo) //If we create the databaseinfo object we cant pass it to the constructor, its not instanciated at this moment, so cast it and set it here
             DataBase = databaseInfo;
+        else if (this is ServerInfo serverInfo) //If we create the databaseinfo object we cant pass it to the constructor, its not instanciated at this moment, so cast it and set it here
+            Server = serverInfo;
         else
             DataBase = dataBase;
     }
@@ -42,6 +44,11 @@ public abstract class DatabaseObjectBase : IServerDataBaseContext
 
     #region [DataBase]
     public DatabaseInfo DataBase { get; private set; }
+    #endregion
+
+    #region - properties -
+    public eDataBaseState DataBaseState { get; set; }
+
     #endregion
 
     #region [Clone]
