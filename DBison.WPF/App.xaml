@@ -16,20 +16,6 @@
         <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Themes/Light.Blue.xaml" />
       </ResourceDictionary.MergedDictionaries>
 
-      <Style TargetType="Control">
-        <Style.Triggers>
-          <Trigger Property="{x:Static settingssystem:Settings.UseDarkMode}"
-                   Value="True">
-            <Setter Property="Foreground"
-                    Value="White" />
-          </Trigger>
-          <Trigger Property="{x:Static settingssystem:Settings.UseDarkMode}"
-                   Value="False">
-            <Setter Property="Foreground"
-                    Value="Black" />
-          </Trigger>
-        </Style.Triggers>
-      </Style>
 
       <Style TargetType="Button">
         <Style.Resources>
