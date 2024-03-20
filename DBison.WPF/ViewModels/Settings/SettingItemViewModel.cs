@@ -1,4 +1,5 @@
 ﻿using DBison.Core.Attributes;
+using DBison.Core.Entities.Enums;
 using DBison.Core.Extender;
 using DBison.Core.Utils.Commands;
 using DBison.WPF.ClientBaseClasses;
@@ -6,7 +7,6 @@ using System.ComponentModel.DataAnnotations;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Forms;
-using System.Windows.Input;
 
 namespace DBison.WPF.ViewModels;
 public class SettingItemViewModel : ClientViewModelBase
@@ -16,7 +16,7 @@ public class SettingItemViewModel : ClientViewModelBase
     public SettingItemViewModel(SettingAttribute settingAttribute, RangeAttribute rangeAttribute, PropertyInfo propertyInfo)
     {
         __Init(settingAttribute, rangeAttribute, propertyInfo);
-    }    
+    }
 
     public Visibility SettingVisibility
     {
@@ -88,6 +88,12 @@ public class SettingItemViewModel : ClientViewModelBase
         set => Set(value);
     }
 
+    public eStringStyleVariation StringStyleVariation
+    {
+        get => Get<eStringStyleVariation>();
+        set => Set(value);
+    }
+
     public void Execute_OpenFolderDialog()
     {
         __OpenFolderDialog();
@@ -102,6 +108,7 @@ public class SettingItemViewModel : ClientViewModelBase
         SettingType = SettingAttribute.Type;
         Name = SettingAttribute.Header;
         Tooltip = SettingAttribute.ToolTip;
+        StringStyleVariation = SettingAttribute.StringStyleVariation;
         if (SettingType == typeof(uint) || SettingType == typeof(int))
             Value = Convert.ToDouble(value);
         else

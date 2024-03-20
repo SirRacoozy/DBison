@@ -1,4 +1,5 @@
 ﻿using DBison.Core.Attributes;
+using DBison.Core.Entities.Enums;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
 
@@ -161,7 +162,7 @@ public static class Settings
         set => SettingsHandler.SetSetting("AutoExpandNodes", value.ToString());
     }
 
-    [Setting("Plugins", "Plugin path", "The path to the directory containing the plugins that should be loaded", typeof(Uri))]
+    [Setting("Plugins", "Plugin path", "The path to the directory containing the plugins that should be loaded", typeof(string), stringStyleVariation: eStringStyleVariation.Path)]
     public static string PluginPath
     {
         get => SettingsHandler.GetSetting("PluginPath", string.Empty);
