@@ -16,14 +16,7 @@ public class SettingItemViewModel : ClientViewModelBase
     public SettingItemViewModel(SettingAttribute settingAttribute, RangeAttribute rangeAttribute, PropertyInfo propertyInfo)
     {
         __Init(settingAttribute, rangeAttribute, propertyInfo);
-    }
-
-    public ICommand OpenFolderDialog
-    {
-        get => m_OpenFolderDialog ?? (m_OpenFolderDialog = new(__OpenFolderDialog));
-    }
-
-    
+    }    
 
     public Visibility SettingVisibility
     {
@@ -95,6 +88,11 @@ public class SettingItemViewModel : ClientViewModelBase
         set => Set(value);
     }
 
+    public void Execute_OpenFolderDialog()
+    {
+        __OpenFolderDialog();
+    }
+
     private void __Init(SettingAttribute settingAttribute, RangeAttribute rangeAttribute, PropertyInfo propertyInfo)
     {
         SettingsPropertyInfo = propertyInfo;
@@ -122,7 +120,7 @@ public class SettingItemViewModel : ClientViewModelBase
         m_Loaded = true;
     }
 
-    private void __OpenFolderDialog(object _)
+    private void __OpenFolderDialog()
     {
         using FolderBrowserDialog dialog = new();
         dialog.AddToRecent = false;
