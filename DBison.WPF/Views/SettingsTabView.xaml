@@ -5,7 +5,8 @@
              xmlns:controls="clr-namespace:DBison.WPF.Controls"
              xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
              xmlns:system="clr-namespace:System;assembly=netstandard"
-             xmlns:enums="clr-namespace:DBison.Core.Entities.Enums;assembly=DBison.Core.Entities">
+             xmlns:enums="clr-namespace:DBison.Core.Entities.Enums;assembly=DBison.Core.Entities"
+             xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks">
 
     <UserControl.Resources>
         <Style TargetType="ItemsControl">
@@ -24,7 +25,7 @@
 
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="1*" />
-                                <ColumnDefinition Width="1*" />
+                                <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
                             <TextBlock Text="{Binding Name}"
                                        ToolTip="{Binding Tooltip}"
@@ -34,7 +35,7 @@
 
                             <ContentControl Grid.Column="2"
                                             Margin="5 0 0 0"
-                                            Width="200"
+                                            MinWidth="200"
                                             HorizontalAlignment="Left"
                                             x:Name="this">
                                 <ContentControl.Style>
@@ -64,7 +65,7 @@
                                                 <Setter Property="ContentTemplate">
                                                     <Setter.Value>
                                                         <DataTemplate>
-                                                            <ContentControl>
+                                                            <ContentControl DataContext="{Binding DataContext, ElementName=this}">
                                                                 <ContentControl.Style>
                                                                     <Style TargetType="ContentControl">
                                                                         <Setter Property="Content">
@@ -73,35 +74,48 @@
                                                                             </Setter.Value>
                                                                         </Setter>
                                                                         <Style.Triggers>
-                                                                            <DataTrigger Binding="{Binding DataContext.StringStyleVariation}"
+                                                                            <DataTrigger Binding="{Binding StringStyleVariation}"
                                                                                          Value="{x:Static enums:eStringStyleVariation.Default}">
                                                                                 <Setter Property="ContentTemplate">
                                                                                     <Setter.Value>
                                                                                         <DataTemplate>
-                                                                                            <TextBox Text="{Binding Value, Mode=TwoWay}" />
+                                                                                            <TextBox DataContext="{Binding DataContext, ElementName=this}"
+                                                                                                     Text="{Binding Value, Mode=TwoWay}" />
                                                                                         </DataTemplate>
                                                                                     </Setter.Value>
                                                                                 </Setter>
                                                                             </DataTrigger>
-                                                                            <DataTrigger Binding="{Binding DataContext.StringStyleVariation}"
+                                                                            <DataTrigger Binding="{Binding StringStyleVariation}"
                                                                                          Value="{x:Static enums:eStringStyleVariation.Path}">
                                                                                 <Setter Property="ContentTemplate">
                                                                                     <Setter.Value>
                                                                                         <DataTemplate>
-                                                                                            <TextBox Text="{Binding Value, Mode=TwoWay}"
-                                                                                                     mah:TextBoxHelper.ClearTextButton="True"
-                                                                                                     mah:TextBoxHelper.ButtonCommand="{Binding DataContext.[OpenFolderDialog]}"
-                                                                                                     mah:TextBoxHelper.ButtonContent="FolderDialog" />
+                                                                                            <Grid DataContext="{Binding DataContext, ElementName=this}">
+                                                                                                <Grid.ColumnDefinitions>
+                                                                                                    <ColumnDefinition Width="Auto" />
+                                                                                                    <ColumnDefinition Width="*" />
+                                                                                                </Grid.ColumnDefinitions>
+                                                                                                <Button Command="{Binding [OpenFolderDialog]}"
+                                                                                                        Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}"
+                                                                                                        Grid.Column="0">
+                                                                                                    <iconPacks:PackIconFontAwesome Kind="FolderOpenRegular" />
+                                                                                                </Button>
+                                                                                                <TextBlock Text="{Binding Value}"
+                                                                                                           Grid.Column="1"
+                                                                                                           VerticalAlignment="Center"
+                                                                                                           Foreground="{Binding ForeGround}" />
+                                                                                            </Grid>
                                                                                         </DataTemplate>
                                                                                     </Setter.Value>
                                                                                 </Setter>
                                                                             </DataTrigger>
-                                                                            <DataTrigger Binding="{Binding DataContext.StringStyleVariation}"
+                                                                            <DataTrigger Binding="{Binding StringStyleVariation}"
                                                                                          Value="{x:Static enums:eStringStyleVariation.Password}">
                                                                                 <Setter Property="ContentTemplate">
                                                                                     <Setter.Value>
                                                                                         <DataTemplate>
-                                                                                            <PasswordBox Password="{Binding Value, Mode=TwoWay}" />
+                                                                                            <PasswordBox DataContext="{Binding DataContext, ElementName=this}"
+                                                                                                         Password="{Binding Value, Mode=TwoWay}" />
                                                                                         </DataTemplate>
                                                                                     </Setter.Value>
                                                                                 </Setter>

@@ -138,10 +138,7 @@ public class SettingItemViewModel : ClientViewModelBase
         dialog.UseDescriptionForTitle = true;
         var result = dialog.ShowDialog();
         if (result == DialogResult.OK)
-        {
             Value = dialog.SelectedPath;
-            OnPropertyChanged(nameof(Value));
-        }
     }
 
     internal void EvaluateDependencies(IEnumerable<SettingItemViewModel> allSettings)
