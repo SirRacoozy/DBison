@@ -138,7 +138,7 @@ public static class Settings
         set => SettingsHandler.SetSetting("AutoConnectPassword", value);
     }
 
-    [Setting("Filtering", "Min filter chars", "How many characters should the filtering start with? Useful for huge databases/servers with many objects. Here the search can make sense from 3 characters. E.g. only \"e\" is quite pointless.", typeof(int))]
+    [Setting("Filtering", "Min filter chars", "How many characters should the filtering start with? Useful for huge databases/servers with many objects. Here the search can make sense from 3 characters. E.g. only \"e\" is quite pointless", typeof(int))]
     [Range(1, 10)]
     public static int MinFilterChar
     {
@@ -146,7 +146,7 @@ public static class Settings
         set => SettingsHandler.SetSetting("MinFilterChar", value.ToString());
     }
 
-    [Setting("Filtering", "Filter Update Rate (seconds)", "How often should the filtering be updated. Every x seconds. Attention, if the filter text is the same, the filtering is not executed again.", typeof(int))]
+    [Setting("Filtering", "Filter Update Rate (seconds)", "How often should the filtering be updated. Every x seconds. Attention, if the filter text is the same, the filtering is not executed again", typeof(int))]
     [Range(1, 5)]
     public static int FilterUpdateRate
     {
@@ -159,6 +159,13 @@ public static class Settings
     {
         get => SettingsHandler.GetSetting("AutoExpandNodes", true);
         set => SettingsHandler.SetSetting("AutoExpandNodes", value.ToString());
+    }
+
+    [Setting("Plugins", "Plugin path", "The path to the directory containing the plugins that should be loaded", typeof(Uri))]
+    public static string PluginPath
+    {
+        get => SettingsHandler.GetSetting("PluginPath", string.Empty);
+        set => SettingsHandler.SetSetting("PluginPath", value ?? string.Empty);
     }
 
     public static string GetAllSettingsString()

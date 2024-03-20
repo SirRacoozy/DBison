@@ -1,18 +1,29 @@
 ﻿using DBison.Core.Attributes;
 using DBison.Core.Extender;
+using DBison.Core.Utils.Commands;
 using DBison.WPF.ClientBaseClasses;
 using System.ComponentModel.DataAnnotations;
 using System.Reflection;
 using System.Windows;
+using System.Windows.Forms;
+using System.Windows.Input;
 
 namespace DBison.WPF.ViewModels;
 public class SettingItemViewModel : ClientViewModelBase
 {
     private bool m_Loaded = false;
+    private RelayCommand m_OpenFolderDialog;
     public SettingItemViewModel(SettingAttribute settingAttribute, RangeAttribute rangeAttribute, PropertyInfo propertyInfo)
     {
         __Init(settingAttribute, rangeAttribute, propertyInfo);
     }
+
+    public ICommand OpenFolderDialog
+    {
+        get => m_OpenFolderDialog ?? (m_OpenFolderDialog = new(__OpenFolderDialog));
+    }
+
+    
 
     public Visibility SettingVisibility
     {
@@ -109,6 +120,23 @@ public class SettingItemViewModel : ClientViewModelBase
             Maximum = double.MaxValue;
         }
         m_Loaded = true;
+    }
+
+    private void __OpenFolderDialog(object _)
+    {
+        using FolderBrowserDialog dialog = new();
+        dialog.AddToRecent = false;
+        dialog.OkRequiresInteraction = true;
+        dialog.Description = "Select the path of the plugins folder";
+        dialog.InitialDirectory = Environment.CurrentDirectory;
+        dialog.ShowNewFolderButton = true;
+        dialog.UseDescriptionForTitle = true;
+        var result = dialog.ShowDialog();
+        if (result == DialogResult.OK)
+        {
+            Value = dialog.SelectedPath;
+            OnPropertyChanged(nameof(Value));
+        }
     }
 
     internal void EvaluateDependencies(IEnumerable<SettingItemViewModel> allSettings)

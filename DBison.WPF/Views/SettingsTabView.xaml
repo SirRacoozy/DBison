@@ -123,6 +123,17 @@
                           </Setter.Value>
                         </Setter>
                       </DataTrigger>
+                      <!--Path-->
+                      <DataTrigger Binding="{Binding SettingType, Mode=TwoWay}"
+                                   Value="{x:Type system:Uri}">
+                        <Setter Property="ContentTemplate">
+                          <Setter.Value>
+                            <DataTemplate>
+                              <TextBox Text="{Binding Value, Mode=TwoWay}" mah:TextBoxHelper.ClearTextButton="True" mah:TextBoxHelper.ButtonCommand="{Binding [OpenFolderDialog]}" mah:TextBoxHelper.ButtonContent="FolderDialog"/>
+                            </DataTemplate>
+                          </Setter.Value>
+                        </Setter>
+                      </DataTrigger>
                     </Style.Triggers>
                   </Style>
                 </ContentControl.Style>
