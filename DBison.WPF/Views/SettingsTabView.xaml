@@ -6,7 +6,8 @@
              xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
              xmlns:system="clr-namespace:System;assembly=netstandard"
              xmlns:enums="clr-namespace:DBison.Core.Entities.Enums;assembly=DBison.Core.Entities"
-             xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks">
+             xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+             xmlns:helperobjects="clr-namespace:DBison.WPF.HelperObjects">
 
     <UserControl.Resources>
         <Style TargetType="ItemsControl">
@@ -115,7 +116,8 @@
                                                                                     <Setter.Value>
                                                                                         <DataTemplate>
                                                                                             <PasswordBox DataContext="{Binding DataContext, ElementName=this}"
-                                                                                                         Password="{Binding Value, Mode=TwoWay}" />
+                                                                                                         helperobjects:PasswordHelper.Attach="True"
+                                                                                                         helperobjects:PasswordHelper.Password="{Binding Value, ElementName=plain, Mode=TwoWay}" />
                                                                                         </DataTemplate>
                                                                                     </Setter.Value>
                                                                                 </Setter>

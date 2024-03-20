@@ -130,7 +130,7 @@ public static class Settings
         set => SettingsHandler.SetSetting("AutoConnectUsername", value);
     }
 
-    [Setting("Startup", "Password", "The password to auto connect on startup", typeof(string))]
+    [Setting("Startup", "Password", "The password to auto connect on startup", typeof(string), stringStyleVariation: eStringStyleVariation.Password)]
     [DependsUponSetting(nameof(AutoConnectEnabled))]
     [DependsUponSetting(nameof(AutoConnectIGS), true)]
     public static string AutoConnectPassword
