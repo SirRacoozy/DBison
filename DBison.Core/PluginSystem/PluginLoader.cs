@@ -8,9 +8,10 @@ namespace DBison.Core.PluginSystem;
 public class PluginLoader
 {
     private readonly string m_Path = Settings.PluginPath;
+    private static PluginLoader m_Instance;
 
     #region - ctor -
-    public PluginLoader()
+    private PluginLoader()
     {
         ArgumentNullException.ThrowIfNull(nameof(m_Path));
         if (!Directory.Exists(m_Path))
@@ -23,6 +24,10 @@ public class PluginLoader
     #endregion
 
     #region - properties -
+
+    #region [Instance]
+    public static PluginLoader Instance => m_Instance ??= new PluginLoader();
+    #endregion
 
     #region [ContextMenuPlugins]
     public List<IContextMenuPlugin> ContextMenuPlugins { get; set; } = new();
