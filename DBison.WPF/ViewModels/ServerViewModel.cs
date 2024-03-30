@@ -272,7 +272,6 @@ public class ServerViewModel : ClientViewModelBase
         {
             var databaseTreeItemVM = __GetTreeItemViewModel(m_DataBaseNode, dataBase, null);
             databaseTreeItemVM.DatabaseObject.IsMainNode = true;
-            databaseTreeItemVM.DatabaseObject.IsRealDataBaseNode = true;
 
             m_DataBaseNode.ServerObjects.Add(databaseTreeItemVM);
 

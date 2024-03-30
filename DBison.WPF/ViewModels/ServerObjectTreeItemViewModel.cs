@@ -33,6 +33,8 @@ public class ServerObjectTreeItemViewModel : ClientViewModelBase
         __SetContextMenu();
     }
 
+    #region - public properties -
+
     public Visibility StateVisibility => DatabaseObject is DatabaseInfo && DatabaseObject.IsRealDataBaseNode ? Visibility.Visible : Visibility.Collapsed;
 
     public ServerObjectTreeItemViewModel Parent
@@ -120,11 +122,18 @@ public class ServerObjectTreeItemViewModel : ClientViewModelBase
         }
     }
 
+    #endregion
+
+    #region - public methods
+
+    #region [Filter]
     public void Filter()
     {
         __LoadSubObjects();
     }
+    #endregion
 
+    #region [Clear]
     public void Clear()
     {
         ExecuteOnDispatcher(() =>
@@ -142,14 +151,6 @@ public class ServerObjectTreeItemViewModel : ClientViewModelBase
             }
         });
     }
-
-    #region [__GetTreeItemViewModel]
-    private ServerObjectTreeItemViewModel __GetTreeItemViewModel(ServerObjectTreeItemViewModel parent, DatabaseObjectBase databaseObject, ExtendedDatabaseInfo extendedDatabaseRef)
-    {
-        var treeItemViewModel = new ServerObjectTreeItemViewModel(parent, databaseObject, m_ServerQueryHelper, extendedDatabaseRef, m_ServerVm, m_MainWindowViewModel);
-        treeItemViewModel.ServerObjects = new ObservableCollection<ServerObjectTreeItemViewModel>();
-        return treeItemViewModel;
-    }
     #endregion
 
     #region [RefreshState]
@@ -162,6 +163,29 @@ public class ServerObjectTreeItemViewModel : ClientViewModelBase
         OnPropertyChanged(nameof(DatabaseObject));
     }
     #endregion
+
+    #region [OnCanExecuteChanged]
+    public override void OnCanExecuteChanged(string commandName)
+    {
+        GetCommandNames().ForEach(c =>
+        {
+            try
+            {
+                var command = Get<RelayCommand>(commandName);
+                if (command != null)
+                    System.Windows.Application.Current.Dispatcher.Invoke(() => command.OnCanExecuteChanged());
+            }
+            catch (Exception ex)
+            {
+                m_ServerVm?.ExecuteError(ex);
+            }
+        });
+    }
+    #endregion
+
+    #endregion
+
+    #region - commands -
 
     #region [Execute_NewQuery]
     public void Execute_NewQuery()
@@ -274,6 +298,33 @@ public class ServerObjectTreeItemViewModel : ClientViewModelBase
     }
     #endregion
 
+    #region [CanExecute_DeleteLogFile]
+    public bool CanExecute_DeleteLogFile() => false;
+    #endregion
+
+    #region [Execute_DeleteLogFile]
+    public void Execute_DeleteLogFile()
+    {
+        try
+        {
+            var dataBase = DatabaseObject.DataBase;
+            if (dataBase is ExtendedDatabaseInfo extendedDbInfo)
+            {
+                m_ServerQueryHelper.DeleteDatabaseFile(dataBase, extendedDbInfo.LogFileLocation);
+                ExecuteWithOfflineDb(dataBase, m_ServerQueryHelper, () =>
+                {
+                    if (File.Exists(extendedDbInfo.LogFileLocation))
+                        File.Delete(extendedDbInfo.LogFileLocation);
+                });
+            }
+        }
+        catch (Exception ex)
+        {
+            ShowExceptionMessage(ex);
+        }
+    }
+    #endregion
+
     #region [Execute_Close]
     public void Execute_Close()
     {
@@ -281,24 +332,45 @@ public class ServerObjectTreeItemViewModel : ClientViewModelBase
     }
     #endregion
 
-    #region [OnCanExecuteChanged]
-    public override void OnCanExecuteChanged(string commandName)
+    #region [CanExecute_CreateBackup]
+    public bool CanExecute_CreateBackup() => false;
+    #endregion
+
+    #region [Execute_CreateBackup]
+    public void Execute_CreateBackup()
     {
-        GetCommandNames().ForEach(c =>
+        try
         {
-            try
-            {
-                var command = Get<RelayCommand>(commandName);
-                if (command != null)
-                    System.Windows.Application.Current.Dispatcher.Invoke(() => command.OnCanExecuteChanged());
-            }
-            catch (Exception ex)
-            {
-                m_ServerVm?.ExecuteError(ex);
-            }
-        });
+
+        }
+        catch (Exception ex)
+        {
+            ShowExceptionMessage(ex);
+        }
     }
     #endregion
+
+    #region [CanExecute_CreateODBC]
+    public bool CanExecute_CreateODBC() => false;
+    #endregion
+
+    #region [Execute_CreateODBC]
+    public void Execute_CreateODBC()
+    {
+        try
+        {
+
+        }
+        catch (Exception ex)
+        {
+            ShowExceptionMessage(ex);
+        }
+    }
+    #endregion
+
+    #endregion
+
+    #region - private methods -
 
     #region [__LoadSubObjects]
     private void __LoadSubObjects()
@@ -381,27 +453,24 @@ public class ServerObjectTreeItemViewModel : ClientViewModelBase
             MenuItems = new ObservableCollection<MenuItem>();
         else
             MenuItems.Clear();
-        if (DatabaseObject.DataBase != null && DatabaseObject.DataBase.DataBaseState != eDataBaseState.ONLINE)
-        {
-            MenuItems.Add(new MenuItem { Header = $"Take [{DatabaseObject.Name}] Online", Command = this["SwitchState"] as ICommand });
-            MenuItems.Add(new MenuItem { Header = $"Delete database [{DatabaseObject.Name}]", Command = this["DeleteDataBase"] as ICommand });
-            return;
-        }
-        if (DatabaseObject == null || (!DatabaseObject.IsRealDataBaseNode && DatabaseObject.IsMainNode))
-        {
-            return;
-        }
+
         System.Windows.Application.Current.Dispatcher.Invoke(new Action(() =>
         {
+            //Menus on server nodes
             if (DatabaseObject is ServerInfo)
             {
                 MenuItems.Add(new MenuItem { Header = $"Refresh Server ", Command = this["RefreshServer"] as ICommand });
             }
-            else if (DatabaseObject is DatabaseInfo)
+            //Menus on database nodes
+            else if (DatabaseObject is DatabaseInfo dbInfo)
             {
-                __AddDataBaseMenuItems();
+                if (dbInfo.IsRealDataBaseNode)
+                    __AddDataBaseMenuItems(dbInfo);
+                else
+                    MenuItems.Add(new MenuItem { Header = $"Refresh", Command = this["RefreshServer"] as ICommand });
             }
-            else if (DatabaseObject is DBisonTable || DatabaseObject is DBisonView)
+            //Menus on table or view nodes
+            else if (!DatabaseObject.IsFolder && (DatabaseObject is DBisonTable || DatabaseObject is DBisonView))
             {
                 MenuItems.Add(new MenuItem { Header = $"Show {DatabaseObject.Name} data", Command = this["ShowTableData"] as ICommand });
             }
@@ -410,19 +479,65 @@ public class ServerObjectTreeItemViewModel : ClientViewModelBase
     #endregion
 
     #region [__AddDataBaseMenuItems]
-    private void __AddDataBaseMenuItems()
+    private void __AddDataBaseMenuItems(DatabaseInfo dbInfo)
     {
         var tmpMenuItems = new List<MenuItem>();
-        tmpMenuItems.Add(new MenuItem { Header = $"New Query - [{DatabaseObject.Name}]", Command = this["NewQuery"] as ICommand });
-        tmpMenuItems.Add(new MenuItem { Header = $"Switch database State [{DatabaseObject.Name}]", Command = this["SwitchState"] as ICommand });
-        tmpMenuItems.Add(new MenuItem { Header = $"Delete Log File", Command = this["DeleteLogFile"] as ICommand });
         tmpMenuItems.Add(new MenuItem { Header = $"Delete database [{DatabaseObject.Name}]", Command = this["DeleteDataBase"] as ICommand });
-        tmpMenuItems.Add(new MenuItem { Header = $"Rename", Command = this["Rename"] as ICommand });
-        tmpMenuItems.Add(new MenuItem { Header = $"Clone", Command = this["Clone"] as ICommand });
-        tmpMenuItems.Add(new MenuItem { Header = $"CreateBackup", Command = this["CreateBackup"] as ICommand });
-        tmpMenuItems.Add(new MenuItem { Header = $"CreateODBC", Command = this["CreateODBC"] as ICommand });
+        if (dbInfo.DataBaseState == eDataBaseState.OFFLINE)
+        {
+            tmpMenuItems.Add(new MenuItem { Header = $"Take [{DatabaseObject.Name}] Online", Command = this["SwitchState"] as ICommand });
+        }
+        else
+        {
+            tmpMenuItems.Add(new MenuItem
+            {
+                Header = $"New Query - [{DatabaseObject.Name}]",
+                Command = this["NewQuery"] as ICommand
+            });
+            tmpMenuItems.Add(new MenuItem
+            {
+                Header = $"Switch database State [{DatabaseObject.Name}]",
+                Command = this["SwitchState"] as ICommand
+            });
+            tmpMenuItems.Add(new MenuItem
+            {
+                Header = $"Delete Log File",
+                Command = this["DeleteLogFile"] as ICommand
+            });
+            tmpMenuItems.Add(new MenuItem
+            {
+                Header = $"Rename",
+                Command = this["Rename"] as ICommand
+            });
+            tmpMenuItems.Add(new MenuItem
+            {
+                Header = $"Clone",
+                Command = this["Clone"] as ICommand
+            });
+            tmpMenuItems.Add(new MenuItem
+            {
+                Header = $"CreateBackup",
+                Command = this["CreateBackup"] as ICommand
+            });
+            tmpMenuItems.Add(new MenuItem
+            {
+                Header = $"CreateODBC",
+                Command = this["CreateODBC"] as ICommand
+            });
+        }
         MenuItems = new(tmpMenuItems.OrderBy(m => m.Header));
     }
+    #endregion
+
+    #region [__GetTreeItemViewModel]
+    private ServerObjectTreeItemViewModel __GetTreeItemViewModel(ServerObjectTreeItemViewModel parent, DatabaseObjectBase databaseObject, ExtendedDatabaseInfo extendedDatabaseRef)
+    {
+        var treeItemViewModel = new ServerObjectTreeItemViewModel(parent, databaseObject, m_ServerQueryHelper, extendedDatabaseRef, m_ServerVm, m_MainWindowViewModel);
+        treeItemViewModel.ServerObjects = new ObservableCollection<ServerObjectTreeItemViewModel>();
+        return treeItemViewModel;
+    }
+    #endregion
+
     #endregion
 
 }

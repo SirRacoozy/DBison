@@ -281,6 +281,16 @@ CREATE DATABASE [{newName}]
         access.ExecuteNonQuery(sql);
     }
 
+    public void DeleteDatabaseFile(DatabaseInfo databaseInfo, string fileName)
+    {
+        //Does not work, stupid topic
+        var sql = @$"USE master;
+ALTER DATABASE [{databaseInfo.Name}]
+REMOVE FILE [{fileName}];";
+        using var access = new DataConnection(__GetMasterDataBaseInfo());
+        access.ExecuteNonQuery(sql);
+    }
+
     #region [__LoadDataBases]
     private void __LoadDataBases()
     {
@@ -316,6 +326,7 @@ ORDER BY sysDb.name ASC";
                     DataFileSize = reader[3].ToLongValue(),
                     LogFileLocation = reader[4].ToStringValue(),
                     LogFileSize = reader[5].ToLongValue(),
+                    IsRealDataBaseNode = true,
                 });
             }
         }

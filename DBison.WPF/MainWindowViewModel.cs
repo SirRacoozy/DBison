@@ -334,6 +334,8 @@ public class MainWindowViewModel : ClientViewModelBase
         ServerTreeItems.Add(newServerViewModel.ServerNode);
         OnPropertyChanged(nameof(ServerTreeItems));
         SelectedServer = newServerViewModel;
+        if (Settings.OpenQueryOnServerAdded)
+            __AddQueryPageIfPossible(string.Empty);
     }
     #endregion
 
