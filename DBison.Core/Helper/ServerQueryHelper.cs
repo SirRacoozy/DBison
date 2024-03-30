@@ -221,14 +221,7 @@ public class ServerQueryHelper
     {
         if (databaseInfo == null || databaseInfo.Name.IsNullOrEmpty())
             return;
-
-        var masterRef = __GetMasterDataBaseInfo();
-
-        __KillAllConnections(databaseInfo);
-        string newState = databaseInfo.DataBaseState == eDataBaseState.ONLINE ? "OFFLINE" : "ONLINE";
-        string sql = @$"USE master; ALTER DATABASE [{databaseInfo.Name}] SET {newState} WITH ROLLBACK IMMEDIATE;";
-        using var access = new DataConnection(masterRef);
-        access.ExecuteNonQuery(sql);
+        __SetDatabaseState(databaseInfo, databaseInfo.DataBaseState == eDataBaseState.ONLINE ? eDataBaseState.OFFLINE : eDataBaseState.ONLINE);
     }
     #endregion
 
@@ -240,15 +233,76 @@ public class ServerQueryHelper
     }
     #endregion
 
+    #region [CloneDataBase]
+    public void CloneDataBase(DatabaseInfo dataBase, string newName, string dataFileName, string logFileName)
+    {
+        if (dataBase == null || newName.IsNullOrEmpty())
+            return;
+
+        var sql = $@"USE [master];
+CREATE DATABASE [{newName}]
+    ON (FILENAME = '{dataFileName}'),
+       (FILENAME = '{logFileName}')
+    FOR ATTACH;";
+
+
+        using var access = new DataConnection(__GetMasterDataBaseInfo());
+        access.ExecuteNonQuery(sql);
+    }
+    #endregion
+
+    #region [TakeDataBaseOffline]
+    public void TakeDataBaseOffline(DatabaseInfo databaseInfo)
+    {
+        __SetDatabaseState(databaseInfo, eDataBaseState.OFFLINE);
+    }
+    #endregion
+
+    #region [TakeDataBaseOnline]
+    public void TakeDataBaseOnline(DatabaseInfo databaseInfo)
+    {
+        __SetDatabaseState(databaseInfo, eDataBaseState.ONLINE);
+    }
+    #endregion
+
+    public void DeleteDataBase(DatabaseInfo databaseInfo)
+    {
+        __SetDatabaseState(databaseInfo, eDataBaseState.OFFLINE);
+        var sql = "USE [master] \n";
+        sql += $" DROP DATABASE [{databaseInfo.Name}]";
+        using var access = new DataConnection(__GetMasterDataBaseInfo());
+        access.ExecuteNonQuery(sql);
+    }
+
+    public void RenameDataBase(DatabaseInfo databaseInfo, string newName)
+    {
+        var sql = $@"USE [MASTER] ALTER DATABASE [{databaseInfo.Name}] MODIFY NAME = [{newName}] ;";
+        using var access = new DataConnection(__GetMasterDataBaseInfo());
+        access.ExecuteNonQuery(sql);
+    }
+
     #region [__LoadDataBases]
     private void __LoadDataBases()
     {
         if (m_Server == null)
             return;
 
-        var sql = "SELECT name as dataBaseName, state isOnline FROM sys.databases " +
-            "WHERE name NOT IN ('master','tempdb','model','msdb')" +
-            "ORDER BY name ASC";
+        var sql = @"SELECT 
+sysDb.name AS dataBaseName, 
+sysDb.state isOnline,
+dataF.physical_name AS dataFileLocation,
+dataF.size AS dataFileSize,
+logF.physical_name AS logLocation,
+logF.size AS logFileSize
+FROM sys.databases sysDb
+LEFT JOIN sys.master_files dataF
+ON sysDb.database_id = dataF.database_id AND dataF.type_desc = 'ROWS'
+LEFT JOIN sys.master_files logF
+ON sysDb.database_id = logF.database_id AND logF.type_desc = 'LOG'
+WHERE sysDb.name NOT IN ('master','tempdb','model','msdb')
+ORDER BY sysDb.name ASC";
+
+        m_Server.DatabaseInfos.Clear();
         using var access = new DataConnection(new DatabaseInfo("master", m_Server, null));
         var reader = access.GetReader(sql);
         if (reader != null && reader.HasRows)
@@ -258,6 +312,10 @@ public class ServerQueryHelper
                 m_Server.DatabaseInfos.Add(new ExtendedDatabaseInfo(reader[0].ToStringValue(), m_Server, null)
                 {
                     DataBaseState = (eDataBaseState)Convert.ToInt32(reader[1]),
+                    DataFileLocation = reader[2].ToStringValue(),
+                    DataFileSize = reader[3].ToLongValue(),
+                    LogFileLocation = reader[4].ToStringValue(),
+                    LogFileSize = reader[5].ToLongValue(),
                 });
             }
         }
@@ -268,6 +326,31 @@ public class ServerQueryHelper
     private DatabaseInfo __GetMasterDataBaseInfo()
     {
         return new DatabaseInfo("master", m_Server, null);
+    }
+    #endregion
+
+    #region [__SetDatabaseState]
+    private void __SetDatabaseState(DatabaseInfo databaseInfo, eDataBaseState newState)
+    {
+        string newStateString;
+        if (newState == eDataBaseState.ONLINE)
+        {
+            newStateString = "ONLINE";
+        }
+        else if (newState == eDataBaseState.OFFLINE)
+        {
+            __KillAllConnections(databaseInfo);
+            newStateString = "OFFLINE";
+        }
+        else
+        {
+            return;
+        }
+        var masterRef = __GetMasterDataBaseInfo();
+        string sql = @$"USE master; ALTER DATABASE [{databaseInfo.Name}] SET {newStateString} WITH ROLLBACK IMMEDIATE;";
+        var access = new DataConnection(masterRef);
+        access.ExecuteNonQuery(sql);
+        access.Dispose();
     }
     #endregion
 

@@ -16,6 +16,7 @@ public class ServerViewModel : ClientViewModelBase
     MainWindowViewModel m_MainWindowViewModel;
     private string m_Filter;
     private ServerInfo m_Server;
+    private ServerObjectTreeItemViewModel m_DataBaseNode;
 
     #region [Ctor]
     public ServerViewModel(ServerInfo server, Action<object?, Exception> onError, MainWindowViewModel mainWindowViewModel)
@@ -24,6 +25,8 @@ public class ServerViewModel : ClientViewModelBase
         m_MainWindowViewModel = mainWindowViewModel;
         SelectedBackGround = Brushes.Gray;
         m_OnError = onError;
+        DatabaseObject = m_Server;
+        m_ServerQueryHelper = new ServerQueryHelper(m_Server);
         __InitServer();
     }
     #endregion
@@ -214,7 +217,15 @@ public class ServerViewModel : ClientViewModelBase
     internal void RefreshDataBase(ServerObjectTreeItemViewModel serverObjectTreeItemViewModel)
     {
         serverObjectTreeItemViewModel.ServerObjects.Clear();
-        __SetDataBaseNodes(serverObjectTreeItemViewModel.DatabaseObject.DataBase, serverObjectTreeItemViewModel);
+        __SetDataBaseObjects(serverObjectTreeItemViewModel.DatabaseObject.DataBase, serverObjectTreeItemViewModel);
+    }
+    #endregion
+
+    #region [RefreshServer]
+    internal void RefreshServer()
+    {
+        m_ServerQueryHelper.LoadServerObjects();
+        __SetDatabaseNodes();
     }
     #endregion
 
@@ -227,9 +238,7 @@ public class ServerViewModel : ClientViewModelBase
     {
         try
         {
-            m_ServerQueryHelper = new ServerQueryHelper(m_Server);
             m_ServerQueryHelper.LoadServerObjects();
-            DatabaseObject = m_Server;
             m_Filter = string.Empty; //Ensure no filtering
             __InitTreeView();
         }
@@ -247,25 +256,32 @@ public class ServerViewModel : ClientViewModelBase
         var treeItems = new ObservableCollection<ServerObjectTreeItemViewModel>(); //Should be the main nodes
         AllDataBaseFolder = new ObservableCollection<ServerObjectTreeItemViewModel>();
 
-        var databaseNode = __GetTreeItemViewModel(ServerNode, new DatabaseInfo("Databases", m_Server, null) { IsMainNode = true }, null); //First Main Node
-        ServerNode.ServerObjects.Add(databaseNode);
+        m_DataBaseNode = __GetTreeItemViewModel(ServerNode, new DatabaseInfo("Databases", m_Server, null) { IsMainNode = true }, null); //First Main Node
+        ServerNode.ServerObjects.Add(m_DataBaseNode);
+        __SetDatabaseNodes();
+
+        treeItems.Add(m_DataBaseNode); //Add main nodes
+
+        ServerObjects = treeItems;
+    }
+
+    private void __SetDatabaseNodes()
+    {
+        m_DataBaseNode.ServerObjects.Clear();
         foreach (var dataBase in m_Server.DatabaseInfos)
         {
-            var databaseTreeItemVM = __GetTreeItemViewModel(databaseNode, dataBase, null);
+            var databaseTreeItemVM = __GetTreeItemViewModel(m_DataBaseNode, dataBase, null);
             databaseTreeItemVM.DatabaseObject.IsMainNode = true;
             databaseTreeItemVM.DatabaseObject.IsRealDataBaseNode = true;
 
-            databaseNode.ServerObjects.Add(databaseTreeItemVM);
+            m_DataBaseNode.ServerObjects.Add(databaseTreeItemVM);
 
             if (dataBase.DataBaseState != eDataBaseState.ONLINE)
                 continue;
-            __SetDataBaseNodes(dataBase, databaseTreeItemVM);
+            __SetDataBaseObjects(dataBase, databaseTreeItemVM);
 
         }
-
-        treeItems.Add(databaseNode); //Add main nodes
-
-        ServerObjects = treeItems;
+        OnPropertyChanged(nameof(ServerObjects));
     }
     #endregion
 
@@ -307,7 +323,7 @@ public class ServerViewModel : ClientViewModelBase
     #endregion
 
     #region [__SetDataBaseNodes]
-    private void __SetDataBaseNodes(DatabaseInfo dataBase, ServerObjectTreeItemViewModel databaseTreeItemVM)
+    private void __SetDataBaseObjects(DatabaseInfo dataBase, ServerObjectTreeItemViewModel databaseTreeItemVM)
     {
         if (dataBase is ExtendedDatabaseInfo extendedInfo)
         {

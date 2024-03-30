@@ -7,6 +7,7 @@ using DBison.Core.Utils.SettingsSystem;
 using DBison.WPF.ClientBaseClasses;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
+using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -187,7 +188,88 @@ public class ServerObjectTreeItemViewModel : ClientViewModelBase
         }
         catch (Exception ex)
         {
-            //---
+            ShowExceptionMessage(ex);
+        }
+    }
+    #endregion
+
+    #region [Execute_Clone]
+    public void Execute_Clone()
+    {
+        try
+        {
+            var newName = GetInput("Choose new name for clone", "Please type a name for the clone", $"{DatabaseObject.DataBase.Name}_Clone");
+            var dataBase = DatabaseObject.DataBase;
+            if (dataBase is ExtendedDatabaseInfo extendedDbInfo)
+            {
+                var newDataFileLocation = @$"{Path.GetDirectoryName(extendedDbInfo.DataFileLocation)}\{newName}.mdf";
+                var newLogFileLocation = @$"{Path.GetDirectoryName(extendedDbInfo.LogFileLocation)}\{newName}.ldf";
+                ExecuteWithOfflineDb(dataBase, m_ServerQueryHelper, () =>
+                {
+                    File.Copy(extendedDbInfo.DataFileLocation, newDataFileLocation, true);
+                    File.Copy(extendedDbInfo.LogFileLocation, newLogFileLocation, true);
+                    m_ServerQueryHelper.CloneDataBase(DatabaseObject.DataBase, newName, newDataFileLocation, newLogFileLocation);
+                });
+                m_ServerVm.RefreshServer();
+            }
+        }
+        catch (Exception ex)
+        {
+            ShowExceptionMessage(ex);
+        }
+    }
+    #endregion
+
+    #region [Execute_DeleteDataBase]
+    public void Execute_DeleteDataBase()
+    {
+        try
+        {
+            var dataBase = DatabaseObject.DataBase;
+            if (dataBase is ExtendedDatabaseInfo extendedDbInfo)
+            {
+                m_ServerQueryHelper.DeleteDataBase(DatabaseObject.DataBase);
+                if (File.Exists(extendedDbInfo.DataFileLocation))
+                    File.Delete(extendedDbInfo.DataFileLocation);
+                if (File.Exists(extendedDbInfo.LogFileLocation))
+                    File.Delete(extendedDbInfo.LogFileLocation);
+                m_ServerVm.RefreshServer();
+            }
+        }
+        catch (Exception ex)
+        {
+            ShowExceptionMessage(ex);
+        }
+    }
+    #endregion
+
+    #region [Execute_RefreshServer]
+    public void Execute_RefreshServer()
+    {
+        try
+        {
+            m_ServerVm.RefreshServer();
+        }
+        catch (Exception ex)
+        {
+            ShowExceptionMessage(ex);
+        }
+    }
+    #endregion
+
+    #region [Execute_Rename]
+    public void Execute_Rename()
+    {
+        try
+        {
+            var newName = GetInput("Choose new name for renaming", "Please type a name for the rename", DatabaseObject.DataBase.Name);
+            var dataBase = DatabaseObject.DataBase;
+            m_ServerQueryHelper.RenameDataBase(dataBase, newName);
+            m_ServerVm.RefreshServer();
+        }
+        catch (Exception ex)
+        {
+            ShowExceptionMessage(ex);
         }
     }
     #endregion
@@ -302,6 +384,7 @@ public class ServerObjectTreeItemViewModel : ClientViewModelBase
         if (DatabaseObject.DataBase != null && DatabaseObject.DataBase.DataBaseState != eDataBaseState.ONLINE)
         {
             MenuItems.Add(new MenuItem { Header = $"Take [{DatabaseObject.Name}] Online", Command = this["SwitchState"] as ICommand });
+            MenuItems.Add(new MenuItem { Header = $"Delete database [{DatabaseObject.Name}]", Command = this["DeleteDataBase"] as ICommand });
             return;
         }
         if (DatabaseObject == null || (!DatabaseObject.IsRealDataBaseNode && DatabaseObject.IsMainNode))
@@ -310,7 +393,11 @@ public class ServerObjectTreeItemViewModel : ClientViewModelBase
         }
         System.Windows.Application.Current.Dispatcher.Invoke(new Action(() =>
         {
-            if (DatabaseObject is DatabaseInfo)
+            if (DatabaseObject is ServerInfo)
+            {
+                MenuItems.Add(new MenuItem { Header = $"Refresh Server ", Command = this["RefreshServer"] as ICommand });
+            }
+            else if (DatabaseObject is DatabaseInfo)
             {
                 __AddDataBaseMenuItems();
             }
@@ -325,8 +412,16 @@ public class ServerObjectTreeItemViewModel : ClientViewModelBase
     #region [__AddDataBaseMenuItems]
     private void __AddDataBaseMenuItems()
     {
-        MenuItems.Add(new MenuItem { Header = $"New Query - [{DatabaseObject.Name}]", Command = this["NewQuery"] as ICommand });
-        MenuItems.Add(new MenuItem { Header = $"Switch database State [{DatabaseObject.Name}]", Command = this["SwitchState"] as ICommand });
+        var tmpMenuItems = new List<MenuItem>();
+        tmpMenuItems.Add(new MenuItem { Header = $"New Query - [{DatabaseObject.Name}]", Command = this["NewQuery"] as ICommand });
+        tmpMenuItems.Add(new MenuItem { Header = $"Switch database State [{DatabaseObject.Name}]", Command = this["SwitchState"] as ICommand });
+        tmpMenuItems.Add(new MenuItem { Header = $"Delete Log File", Command = this["DeleteLogFile"] as ICommand });
+        tmpMenuItems.Add(new MenuItem { Header = $"Delete database [{DatabaseObject.Name}]", Command = this["DeleteDataBase"] as ICommand });
+        tmpMenuItems.Add(new MenuItem { Header = $"Rename", Command = this["Rename"] as ICommand });
+        tmpMenuItems.Add(new MenuItem { Header = $"Clone", Command = this["Clone"] as ICommand });
+        tmpMenuItems.Add(new MenuItem { Header = $"CreateBackup", Command = this["CreateBackup"] as ICommand });
+        tmpMenuItems.Add(new MenuItem { Header = $"CreateODBC", Command = this["CreateODBC"] as ICommand });
+        MenuItems = new(tmpMenuItems.OrderBy(m => m.Header));
     }
     #endregion
 

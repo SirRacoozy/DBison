@@ -1,4 +1,6 @@
 ﻿using DBison.Core.Baseclasses;
+using DBison.Core.Entities;
+using DBison.Core.Helper;
 using DBison.Core.Utils.Commands;
 using DBison.Core.Utils.SettingsSystem;
 using MahApps.Metro.Controls;
@@ -51,6 +53,7 @@ namespace DBison.WPF.ClientBaseClasses
         }
         #endregion
 
+        #region [ShowMessageAsync]
         public void ShowMessageAsync(string header, string message)
         {
             if (Application.Current.MainWindow is MetroWindow metroWnd)
@@ -58,6 +61,7 @@ namespace DBison.WPF.ClientBaseClasses
                 metroWnd.ShowMessageAsync(header, message);
             }
         }
+        #endregion
 
         #region [ExecuteOnDispatcherWithDelay]
         public void ExecuteOnDispatcherWithDelay(Action action, TimeSpan delay)
@@ -74,6 +78,42 @@ namespace DBison.WPF.ClientBaseClasses
         public void ExecuteOnDispatcher(Action actionToExecute)
         {
             _ = Application.Current.Dispatcher.BeginInvoke(actionToExecute);
+        }
+        #endregion
+
+        #region [GetInput]
+        public string GetInput(string title, string message, string defaultInput)
+        {
+            if (Application.Current.MainWindow is MetroWindow metroWnd)
+            {
+                var Settings = new MetroDialogSettings
+                {
+                    DefaultText = defaultInput,
+                };
+                return DialogManager.ShowModalInputExternal(metroWnd, title, message, Settings)?.Trim();
+            }
+            return defaultInput;
+        }
+        #endregion
+
+        #region [ExecuteWithOfflineDb]
+        public void ExecuteWithOfflineDb(DatabaseInfo databaseInfo, ServerQueryHelper queryHelper, Action action)
+        {
+            bool wasDbOnline = databaseInfo.DataBaseState == eDataBaseState.ONLINE;
+            try
+            {
+                queryHelper.TakeDataBaseOffline(databaseInfo);
+                action?.Invoke();
+            }
+            catch (Exception ex)
+            {
+                ShowExceptionMessage(ex);
+            }
+            finally
+            {
+                if (wasDbOnline)
+                    queryHelper.TakeDataBaseOnline(databaseInfo);
+            }
         }
         #endregion
 
