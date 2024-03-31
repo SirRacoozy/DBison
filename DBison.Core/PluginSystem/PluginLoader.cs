@@ -79,10 +79,7 @@ public class PluginLoader
         {
             try
             {
-                if (type.IsInterface ||
-                    (!typeof(ISearchParsingPlugin).IsAssignableFrom(type)
-                    && !typeof(IConnectParsingPlugin).IsAssignableFrom(type)
-                    && !typeof(IContextMenuPlugin).IsAssignableFrom(type)))
+                if (type.IsInterface || !typeof(IPlugin).IsAssignableFrom(type))
                 {
                     continue;
                 }
