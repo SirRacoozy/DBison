@@ -3,6 +3,7 @@ using DBison.Core.Attributes;
 using DBison.Core.Entities;
 using DBison.Core.Extender;
 using DBison.Core.Utils.SettingsSystem;
+using DBison.Plugin.Entities;
 using DBison.WPF.ClientBaseClasses;
 using DBison.WPF.Dialogs;
 using DBison.WPF.ViewModels;
@@ -260,8 +261,9 @@ public class MainWindowViewModel : ClientViewModelBase
             {
                 ExecuteOnDispatcher(() =>
                 {
-                    __AddServer(new ServerInfo(Settings.AutoConnectServerName)
+                    __AddServer(new ConnectInfo()
                     {
+                        ServerName = Settings.AutoConnectServerName,
                         Username = Settings.AutoConnectUsername,
                         Password = Settings.AutoConnectPassword,
                         UseIntegratedSecurity = Settings.AutoConnectIGS,
@@ -308,18 +310,18 @@ public class MainWindowViewModel : ClientViewModelBase
     #endregion
 
     #region [__AddServer]
-    private void __AddServer(ServerInfo server)
+    private void __AddServer(ConnectInfo server)
     {
         if (ServerItems == null)
             ServerItems = new ObservableCollection<ServerViewModel>();
 
-        if (!__PingServer(server.Name))
+        if (!__PingServer(server.ServerName))
         {
-            ShowMessageAsync($"{server.Name} not available", $"Server {server.Name} is not available or has no MSSQL Instance");
+            ShowMessageAsync($"{server.ServerName} not available", $"Server {server.ServerName} is not available or has no MSSQL Instance");
             return;
         }
-
-        var newServerViewModel = new ServerViewModel(server, __NewServerViewModel_ErrorOccured, this);
+        var serverInfo = new ServerInfo(server.ServerName) { UseIntegratedSecurity = server.UseIntegratedSecurity, Username = server.Username, Password = server.Password };
+        var newServerViewModel = new ServerViewModel(serverInfo, __NewServerViewModel_ErrorOccured, this, server.DatabaseName);
         if (m_HasAddServerError)
         {
             newServerViewModel.Dispose();

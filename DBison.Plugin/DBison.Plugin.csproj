@@ -9,11 +9,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Entities\**" />
     <Compile Remove="Helper\**" />
-    <EmbeddedResource Remove="Entities\**" />
     <EmbeddedResource Remove="Helper\**" />
-    <None Remove="Entities\**" />
     <None Remove="Helper\**" />
   </ItemGroup>
 

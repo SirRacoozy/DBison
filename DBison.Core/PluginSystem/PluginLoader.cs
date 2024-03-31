@@ -1,20 +1,23 @@
-﻿using DBison.Plugin;
+﻿using DBison.Core.Utils.SettingsSystem;
+using DBison.Plugin;
 using System.Collections.Concurrent;
-using System.Diagnostics;
+using System.Data;
 using System.Reflection;
-using System.Reflection.Metadata;
 
 namespace DBison.Core.PluginSystem;
 public class PluginLoader
 {
-    #region - ctor -
-    public PluginLoader(string path)
-    {
-        ArgumentNullException.ThrowIfNull(nameof(path));
-        if (!Directory.Exists(path))
-            throw new ArgumentException($"'{nameof(path)}' is not a directory.");
+    private readonly string m_Path = Settings.PluginPath;
+    private static PluginLoader m_Instance;
 
-        var dlls = __GetDllFileNames(path);
+    #region - ctor -
+    private PluginLoader()
+    {
+        ArgumentNullException.ThrowIfNull(nameof(m_Path));
+        if (!Directory.Exists(m_Path))
+            throw new ArgumentException($"'{nameof(m_Path)}' is not a directory.");
+
+        var dlls = __GetDllFileNames();
 
         __LoadPlugins(dlls);
     }
@@ -22,61 +25,79 @@ public class PluginLoader
 
     #region - properties -
 
+    #region [Instance]
+    public static PluginLoader Instance => m_Instance ??= new PluginLoader();
+    #endregion
+
     #region [ContextMenuPlugins]
-    public List<IContextMenuPlugin> ContextMenuPlugins { get; set; } = new List<IContextMenuPlugin>();
+    public List<IContextMenuPlugin> ContextMenuPlugins { get; set; } = new();
     #endregion
 
     #region [SearchParsingPlugins]
-    public List<ISearchParsingPlugin> SearchParsingPlugins { get; set; } = new List<ISearchParsingPlugin>();
+    public List<ISearchParsingPlugin> SearchParsingPlugins { get; set; } = new();
+    #endregion
+
+    #region [ConnectParsingPlugin]
+    public List<IConnectParsingPlugin> ConnectParsingPlugins { get; set; } = new();
     #endregion
 
     #endregion
 
     #region - methods -
 
-
-    #region [__LoadPlugins]
-
-    #endregion
-
     #region [__LoadPlugins]
     private void __LoadPlugins(List<string> files)
     {
         var searchBag = new ConcurrentBag<ISearchParsingPlugin>();
         var commandBag = new ConcurrentBag<IContextMenuPlugin>();
+        var connectBag = new ConcurrentBag<IConnectParsingPlugin>();
 
         _ = Parallel.ForEach(files, (file) =>
         {
             try
             {
-                __LoadPluginsFromAssembly(ref searchBag, ref commandBag, file);
+                __LoadPluginsFromAssembly(ref searchBag, ref commandBag, ref connectBag, file);
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
             }
         });
 
         ContextMenuPlugins.AddRange(commandBag.ToList());
         SearchParsingPlugins.AddRange(searchBag.ToList());
+        ConnectParsingPlugins.AddRange(connectBag.ToList());
     }
 
     #endregion
     #region [__LoadPluginsFromAssembly]
-    private void __LoadPluginsFromAssembly(ref ConcurrentBag<ISearchParsingPlugin> searchBag, ref ConcurrentBag<IContextMenuPlugin> commandBag, string file)
+    private void __LoadPluginsFromAssembly(ref ConcurrentBag<ISearchParsingPlugin> searchBag, ref ConcurrentBag<IContextMenuPlugin> commandBag, ref ConcurrentBag<IConnectParsingPlugin> connectBag, string file)
     {
         var assembly = Assembly.LoadFrom(file);
         var types = assembly.GetTypes();
 
-        foreach(var type in types)
+        foreach (var type in types)
         {
             try
             {
+                if (type.IsInterface || !typeof(IPlugin).IsAssignableFrom(type))
+                {
+                    continue;
+                }
+
                 var instance = Activator.CreateInstance(type);
 
-                if (instance is ISearchParsingPlugin parsingPlugin)
-                    searchBag.Add(parsingPlugin);
-                else if (instance is IContextMenuPlugin menuPlugin)
-                    commandBag.Add(menuPlugin);
+                switch (instance)
+                {
+                    case ISearchParsingPlugin searchPlugin:
+                        searchBag.Add(searchPlugin);
+                        break;
+                    case IConnectParsingPlugin connectPlugin:
+                        connectBag.Add(connectPlugin);
+                        break;
+                    case IContextMenuPlugin contextPlugin:
+                        commandBag.Add(contextPlugin);
+                        break;
+                }
             }
             catch (Exception) { }
         }
@@ -84,11 +105,11 @@ public class PluginLoader
     #endregion
 
     #region [__GetDllFileNames]
-    private List<string> __GetDllFileNames(string path)
+    private List<string> __GetDllFileNames()
     {
         var list = new List<string>();
 
-        var files = Directory.GetFiles(path);
+        var files = Directory.GetFiles(m_Path);
 
         list.AddRange(files.Where(x => x.EndsWith(".dll")));
 
