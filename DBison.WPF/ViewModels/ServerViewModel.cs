@@ -16,6 +16,8 @@ public class ServerViewModel : ClientViewModelBase
     MainWindowViewModel m_MainWindowViewModel;
     private string m_Filter;
     private ServerInfo m_Server;
+    private ServerObjectTreeItemViewModel m_DataBaseNode;
+    private ObservableCollection<ServerObjectTreeItemViewModel> m_OriginalDataBaseNodes;
 
     #region [Ctor]
     public ServerViewModel(ServerInfo server, Action<object?, Exception> onError, MainWindowViewModel mainWindowViewModel, string? filter = null)
@@ -26,8 +28,8 @@ public class ServerViewModel : ClientViewModelBase
         m_OnError = onError;
         __InitServer();
 
-        if(filter.IsNotNullOrEmpty())
-            Filter(filter);
+        if (filter.IsNotNullOrEmpty())
+            mainWindowViewModel.FilterText = filter;
     }
     #endregion
 
@@ -185,10 +187,14 @@ public class ServerViewModel : ClientViewModelBase
     {
         if (m_Filter == filter || AllDataBaseFolder == null)
             return;
+
+        string filterDatabasesPrefix = "d:";
+
         m_Filter = filter;
 
         if (m_Filter.IsNullOrEmpty())
         {
+            m_DataBaseNode.ServerObjects = m_OriginalDataBaseNodes;
             foreach (var folder in AllDataBaseFolder)
             {
                 folder.Clear();
@@ -197,9 +203,21 @@ public class ServerViewModel : ClientViewModelBase
         }
         else
         {
-            foreach (var folder in AllDataBaseFolder)
+            if (m_Filter.StartsWith(filterDatabasesPrefix))
             {
-                folder.Filter();
+                var filterText = m_Filter.Substring(filterDatabasesPrefix.Length);
+                if (filterText.IsNullOrEmpty())
+                    m_DataBaseNode.ServerObjects = m_OriginalDataBaseNodes;
+                else
+                    m_DataBaseNode.ServerObjects = new(m_OriginalDataBaseNodes.Where(so => so.DatabaseObject.Name.Contains(filterText, StringComparison.InvariantCultureIgnoreCase)));
+            }
+            else
+            {
+                m_DataBaseNode.ServerObjects = m_OriginalDataBaseNodes;
+                foreach (var folder in AllDataBaseFolder)
+                {
+                    folder.Filter();
+                }
             }
         }
     }
@@ -249,23 +267,24 @@ public class ServerViewModel : ClientViewModelBase
         var treeItems = new ObservableCollection<ServerObjectTreeItemViewModel>(); //Should be the main nodes
         AllDataBaseFolder = new ObservableCollection<ServerObjectTreeItemViewModel>();
 
-        var databaseNode = __GetTreeItemViewModel(ServerNode, new DatabaseInfo("Databases", m_Server, null) { IsMainNode = true }, null); //First Main Node
-        ServerNode.ServerObjects.Add(databaseNode);
+        m_DataBaseNode = __GetTreeItemViewModel(ServerNode, new DatabaseInfo("Databases", m_Server, null) { IsMainNode = true }, null); //First Main Node
+        ServerNode.ServerObjects.Add(m_DataBaseNode);
         foreach (var dataBase in m_Server.DatabaseInfos)
         {
-            var databaseTreeItemVM = __GetTreeItemViewModel(databaseNode, dataBase, null);
+            var databaseTreeItemVM = __GetTreeItemViewModel(m_DataBaseNode, dataBase, null);
             databaseTreeItemVM.DatabaseObject.IsMainNode = true;
             databaseTreeItemVM.DatabaseObject.IsRealDataBaseNode = true;
 
-            databaseNode.ServerObjects.Add(databaseTreeItemVM);
+            m_DataBaseNode.ServerObjects.Add(databaseTreeItemVM);
 
             if (dataBase.DataBaseState != eDataBaseState.ONLINE)
                 continue;
             __SetDataBaseNodes(dataBase, databaseTreeItemVM);
 
         }
+        m_OriginalDataBaseNodes = new(m_DataBaseNode.ServerObjects);
 
-        treeItems.Add(databaseNode); //Add main nodes
+        treeItems.Add(m_DataBaseNode); //Add main nodes
 
         ServerObjects = treeItems;
     }

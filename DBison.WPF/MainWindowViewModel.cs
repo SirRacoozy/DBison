@@ -321,7 +321,10 @@ public class MainWindowViewModel : ClientViewModelBase
             return;
         }
         var serverInfo = new ServerInfo(server.ServerName) { UseIntegratedSecurity = server.UseIntegratedSecurity, Username = server.Username, Password = server.Password };
-        var newServerViewModel = new ServerViewModel(serverInfo, __NewServerViewModel_ErrorOccured, this, server.DatabaseName);
+
+        var filterText = server.DatabaseName.IsNotNullOrEmpty() ? $"d:{server.DatabaseName}" : string.Empty;
+
+        var newServerViewModel = new ServerViewModel(serverInfo, __NewServerViewModel_ErrorOccured, this, filterText);
         if (m_HasAddServerError)
         {
             newServerViewModel.Dispose();
@@ -385,7 +388,7 @@ public class MainWindowViewModel : ClientViewModelBase
 
         var minFilterChars = Settings.MinFilterChar;
 
-        if (textToFilter.Length < minFilterChars)
+        if (!textToFilter.StartsWith("d:") && textToFilter.Length < minFilterChars)
             textToFilter = string.Empty;
 
         factory.StartNew(() =>
