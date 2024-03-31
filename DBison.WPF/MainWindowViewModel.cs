@@ -224,6 +224,8 @@ public class MainWindowViewModel : ClientViewModelBase
         }
         else if (selectedItem is ServerObjectTreeItemViewModel treeItemObject)
         {
+            if (ServerItems.IsEmpty())
+                return;
             LastSelectedTreeItem = treeItemObject;
             var serverVm = ServerItems.FirstOrDefault(x => x.DatabaseObject == treeItemObject.DatabaseObject.Server);
             if (serverVm != null && SelectedServer != serverVm)
@@ -337,6 +339,8 @@ public class MainWindowViewModel : ClientViewModelBase
         ServerTreeItems.Add(newServerViewModel.ServerNode);
         OnPropertyChanged(nameof(ServerTreeItems));
         SelectedServer = newServerViewModel;
+        if (Settings.OpenQueryOnServerAdded)
+            __AddQueryPageIfPossible(string.Empty);
     }
     #endregion
 
@@ -383,6 +387,8 @@ public class MainWindowViewModel : ClientViewModelBase
     #region [__Filter]
     private void __Filter()
     {
+        if (ServerItems.IsEmpty())
+            return;
         var textToFilter = FilterText != null ? FilterText.Trim() : string.Empty;
         var factory = new TaskFactory();
 
