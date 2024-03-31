@@ -281,6 +281,15 @@ CREATE DATABASE [{newName}]
         access.ExecuteNonQuery(sql);
     }
 
+    public void BackupDataBase(DatabaseInfo dataBase, string backupPath)
+    {
+        var sql = @$"USE [master];
+BACKUP DATABASE [{dataBase.Name}]
+TO DISK = '{backupPath}';";
+        using var access = new DataConnection(__GetMasterDataBaseInfo());
+        access.ExecuteNonQuery(sql);
+    }
+
     public void DeleteDatabaseFile(DatabaseInfo databaseInfo, string fileName)
     {
         //Does not work, stupid topic

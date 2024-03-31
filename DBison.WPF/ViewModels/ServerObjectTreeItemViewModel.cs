@@ -333,7 +333,7 @@ public class ServerObjectTreeItemViewModel : ClientViewModelBase
     #endregion
 
     #region [CanExecute_CreateBackup]
-    public bool CanExecute_CreateBackup() => false;
+    public bool CanExecute_CreateBackup() => true;
     #endregion
 
     #region [Execute_CreateBackup]
@@ -341,7 +341,26 @@ public class ServerObjectTreeItemViewModel : ClientViewModelBase
     {
         try
         {
+            var backupDefaultName = DateTime.Now.ToString("ddMMyyyy HHmmss");
+            var backupName = GetInput("Backup name", "Choose a name for the backup", backupDefaultName);
+            if (backupName.IsNullOrEmpty())
+                backupName = backupDefaultName;
+            var dataBase = DatabaseObject.DataBase;
+            if (dataBase is ExtendedDatabaseInfo extendedDbInfo)
+            {
+                var dataFileDir = Path.GetDirectoryName(extendedDbInfo.DataFileLocation);
+                if (!Directory.Exists(dataFileDir))
+                    Directory.CreateDirectory(dataFileDir);
 
+                var BackupPath = dataFileDir + $@"\backup\[{dataBase.Name}]_BACKUP";
+                if (!Directory.Exists(BackupPath))
+                {
+                    _ = Directory.CreateDirectory(BackupPath);
+                }
+                BackupPath += @$"\{backupName}.bak";
+                m_ServerQueryHelper.BackupDataBase(dataBase, BackupPath);
+                //TODO: Autoclean backup
+            }
         }
         catch (Exception ex)
         {
@@ -516,12 +535,12 @@ public class ServerObjectTreeItemViewModel : ClientViewModelBase
             });
             tmpMenuItems.Add(new MenuItem
             {
-                Header = $"CreateBackup",
+                Header = $"Create Backup",
                 Command = this["CreateBackup"] as ICommand
             });
             tmpMenuItems.Add(new MenuItem
             {
-                Header = $"CreateODBC",
+                Header = $"Create ODBC",
                 Command = this["CreateODBC"] as ICommand
             });
         }
