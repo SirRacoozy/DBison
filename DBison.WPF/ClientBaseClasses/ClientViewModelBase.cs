@@ -16,12 +16,23 @@ namespace DBison.WPF.ClientBaseClasses
             SettingsHandler.SettingChanged += (sender, e) =>
             {
                 if (e.ChangedSettingName == nameof(Settings.UseDarkMode))
+                {
                     ForeGround = Settings.UseDarkMode ? Brushes.White : Brushes.Black;
+                    BackGround = Settings.UseDarkMode ? Brushes.Gray : Brushes.White;
+                }
             };
         }
 
         #region [ForeGround]
         public Brush ForeGround
+        {
+            get => Get<Brush>();
+            set => Set(value);
+        }
+        #endregion
+
+        #region [BackGround]
+        public Brush BackGround
         {
             get => Get<Brush>();
             set => Set(value);

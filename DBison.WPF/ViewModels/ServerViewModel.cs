@@ -27,7 +27,7 @@ public class ServerViewModel : ClientViewModelBase
         __InitServer();
 
         if(filter.IsNotNullOrEmpty())
-            Filter(filter);
+            mainWindowViewModel.FilterText = filter;
     }
     #endregion
 
