@@ -211,7 +211,10 @@ public class ServerViewModel : ClientViewModelBase
                 if (filterText.IsNullOrEmpty())
                     m_DataBaseNode.ServerObjects = m_OriginalDataBaseNodes;
                 else
+                {
                     m_DataBaseNode.ServerObjects = new(m_OriginalDataBaseNodes.Where(so => so.DatabaseObject.Name.Contains(filterText, StringComparison.InvariantCultureIgnoreCase)));
+                    m_DataBaseNode.IsExpanded = true;
+                }
             }
             else
             {
@@ -278,6 +281,8 @@ public class ServerViewModel : ClientViewModelBase
         m_DataBaseNode = __GetTreeItemViewModel(ServerNode, new DatabaseInfo("Databases", m_Server, null) { IsMainNode = true }, null); //First Main Node
         ServerNode.ServerObjects.Add(m_DataBaseNode);
         __SetDatabaseNodes();
+
+        m_OriginalDataBaseNodes = new(m_DataBaseNode.ServerObjects);
 
         treeItems.Add(m_DataBaseNode); //Add main nodes
 
