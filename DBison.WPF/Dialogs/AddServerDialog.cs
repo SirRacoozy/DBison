@@ -1,4 +1,5 @@
 ﻿using DBison.Core.Entities;
+using DBison.Plugin.Entities;
 using DBison.WPF.Controls;
 using DBison.WPF.ViewModels;
 using DBison.WPF.Views;
@@ -10,7 +11,7 @@ using System.Windows.Shell;
 namespace DBison.WPF.Dialogs;
 public class AddServerDialog
 {
-    public event EventHandler<ServerInfo> ServerConnectRequested;
+    public event EventHandler<ConnectInfo> ServerConnectRequested;
     public void ShowDialog()
     {
         var window = new Window();

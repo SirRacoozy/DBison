@@ -65,6 +65,7 @@ public class PluginLoader
 
         ContextMenuPlugins.AddRange(commandBag.ToList());
         SearchParsingPlugins.AddRange(searchBag.ToList());
+        ConnectParsingPlugins.AddRange(connectBag.ToList());
     }
 
     #endregion

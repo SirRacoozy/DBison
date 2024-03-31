@@ -18,13 +18,16 @@ public class ServerViewModel : ClientViewModelBase
     private ServerInfo m_Server;
 
     #region [Ctor]
-    public ServerViewModel(ServerInfo server, Action<object?, Exception> onError, MainWindowViewModel mainWindowViewModel)
+    public ServerViewModel(ServerInfo server, Action<object?, Exception> onError, MainWindowViewModel mainWindowViewModel, string? filter = null)
     {
         m_Server = server;
         m_MainWindowViewModel = mainWindowViewModel;
         SelectedBackGround = Brushes.Gray;
         m_OnError = onError;
         __InitServer();
+
+        if(filter.IsNotNullOrEmpty())
+            Filter(filter);
     }
     #endregion
 
@@ -137,7 +140,6 @@ public class ServerViewModel : ClientViewModelBase
         });
     }
     #endregion
-
 
     #region [AddTableDataPage]
     public void AddTableDataPage(ServerObjectTreeItemViewModel serverObjectTreeItemViewModel)
