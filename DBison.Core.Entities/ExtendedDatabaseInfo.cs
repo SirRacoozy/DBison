@@ -9,5 +9,9 @@ public class ExtendedDatabaseInfo : DatabaseInfo
     public List<DBisonTable> Tables { get; private set; } = [];
     public List<DBisonTrigger> Triggers { get; private set; } = [];
     public List<DBisonView> Views { get; private set; } = [];
+    public string DataFileLocation { get; set; }
+    public long DataFileSize { get; set; }
+    public string LogFileLocation { get; set; }
+    public long LogFileSize { get; set; }
 
 }
