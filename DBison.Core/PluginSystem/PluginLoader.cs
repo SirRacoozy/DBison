@@ -79,6 +79,13 @@ public class PluginLoader
         {
             try
             {
+                if (type.IsInterface ||
+                    (!typeof(ISearchParsingPlugin).IsAssignableFrom(type)
+                    && !typeof(IConnectParsingPlugin).IsAssignableFrom(type)
+                    && !typeof(IContextMenuPlugin).IsAssignableFrom(type)))
+                {
+                    continue;
+                }
 
                 var instance = Activator.CreateInstance(type);
 
