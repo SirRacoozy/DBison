@@ -1,7 +1,8 @@
 ﻿using DBison.Core.Attributes;
-using DBison.Core.Entities;
 using DBison.Core.Extender;
+using DBison.Core.PluginSystem;
 using DBison.Core.Utils.SettingsSystem;
+using DBison.Plugin.Entities;
 using DBison.WPF.ClientBaseClasses;
 using System.Windows;
 
@@ -9,7 +10,7 @@ namespace DBison.WPF.ViewModels;
 public class AddServerDialogViewModel : ClientViewModelBase
 {
     private Window m_Window;
-    public event EventHandler<ServerInfo> OkClicked;
+    public event EventHandler<ConnectInfo> OkClicked;
 
     public AddServerDialogViewModel(Window window)
     {
@@ -67,13 +68,23 @@ public class AddServerDialogViewModel : ClientViewModelBase
 
     public void Execute_Ok()
     {
-        var server = new ServerInfo(ServerName)
+        var pluginLoader = PluginLoader.Instance;
+        var connectPlugin = pluginLoader.ConnectParsingPlugins.FirstOrDefault();
+
+        ConnectInfo? pluginResult = null;
+
+        if (connectPlugin != null)
+            pluginResult = connectPlugin.ParseConnectInput(ServerName);
+
+        var connectInfo = new ConnectInfo()
         {
+            ServerName = ServerName,
+            DatabaseName = string.Empty,
             UseIntegratedSecurity = IntegratedSecurity,
             Username = UserName,
             Password = Password,
         };
-        OkClicked?.Invoke(this, server);
+        OkClicked?.Invoke(this, pluginResult ?? connectInfo);
         m_Window.Close();
     }
 

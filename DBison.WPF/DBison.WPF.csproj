@@ -33,6 +33,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\DBison.Core\DBison.Core.csproj" />
+    <ProjectReference Include="..\DBison.Plugin\DBison.Plugin.csproj" />
   </ItemGroup>
 
   <ItemGroup>

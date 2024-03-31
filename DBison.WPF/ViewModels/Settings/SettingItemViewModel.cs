@@ -1,14 +1,18 @@
 ﻿using DBison.Core.Attributes;
+using DBison.Core.Entities.Enums;
 using DBison.Core.Extender;
+using DBison.Core.Utils.Commands;
 using DBison.WPF.ClientBaseClasses;
 using System.ComponentModel.DataAnnotations;
 using System.Reflection;
 using System.Windows;
+using System.Windows.Forms;
 
 namespace DBison.WPF.ViewModels;
 public class SettingItemViewModel : ClientViewModelBase
 {
     private bool m_Loaded = false;
+    private RelayCommand m_OpenFolderDialog;
     public SettingItemViewModel(SettingAttribute settingAttribute, RangeAttribute rangeAttribute, PropertyInfo propertyInfo)
     {
         __Init(settingAttribute, rangeAttribute, propertyInfo);
@@ -84,6 +88,17 @@ public class SettingItemViewModel : ClientViewModelBase
         set => Set(value);
     }
 
+    public eStringStyleVariation StringStyleVariation
+    {
+        get => Get<eStringStyleVariation>();
+        set => Set(value);
+    }
+
+    public void Execute_OpenFolderDialog()
+    {
+        __OpenFolderDialog();
+    }
+
     private void __Init(SettingAttribute settingAttribute, RangeAttribute rangeAttribute, PropertyInfo propertyInfo)
     {
         SettingsPropertyInfo = propertyInfo;
@@ -93,6 +108,7 @@ public class SettingItemViewModel : ClientViewModelBase
         SettingType = SettingAttribute.Type;
         Name = SettingAttribute.Header;
         Tooltip = SettingAttribute.ToolTip;
+        StringStyleVariation = SettingAttribute.StringStyleVariation;
         if (SettingType == typeof(uint) || SettingType == typeof(int))
             Value = Convert.ToDouble(value);
         else
@@ -109,6 +125,20 @@ public class SettingItemViewModel : ClientViewModelBase
             Maximum = double.MaxValue;
         }
         m_Loaded = true;
+    }
+
+    private void __OpenFolderDialog()
+    {
+        using FolderBrowserDialog dialog = new();
+        dialog.AddToRecent = false;
+        dialog.OkRequiresInteraction = true;
+        dialog.Description = "Select the path of the plugins folder";
+        dialog.InitialDirectory = Environment.CurrentDirectory;
+        dialog.ShowNewFolderButton = true;
+        dialog.UseDescriptionForTitle = true;
+        var result = dialog.ShowDialog();
+        if (result == DialogResult.OK)
+            Value = dialog.SelectedPath;
     }
 
     internal void EvaluateDependencies(IEnumerable<SettingItemViewModel> allSettings)

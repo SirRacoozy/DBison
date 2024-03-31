@@ -1,4 +1,4 @@
-﻿using DBison.Core.Entities;
+﻿using DBison.Plugin.Entities;
 
 namespace DBison.Plugin;
 
@@ -9,5 +9,5 @@ public interface ISearchParsingPlugin : IPlugin
     /// </summary>
     /// <param name="searchInput">The search input.</param>
     /// <returns>Return the database info to which a connection should be opened.</returns>
-    DatabaseInfo? ParseSearchInput(string searchInput);
+    ConnectInfo? ParseSearchInput(string searchInput);
 }
