@@ -114,33 +114,36 @@ public class ServerQueryPageViewModel : TabItemViewModelBase
     #region [Execute_ExecuteSQL]
     public void Execute_ExecuteSQL()
     {
-        if (DatabaseObject.DataBase is DatabaseInfo dbInfo)
-        {
-            var sql = SelectedQueryText.IsNotNullEmptyOrWhitespace() ? SelectedQueryText : QueryText;
-            var result = sql.ConvertToSelectStatement();
+        if (DatabaseObject is DatabaseInfo dbInfo)
+            FillDataTable(SelectedQueryText.IsNotNullOrEmpty() ? SelectedQueryText : QueryText, dbInfo);
 
-            switch (result.Item2)
-            {
-                case eDMLOperator.Update:
-                    using (var Access = new DatabaseAccess(dbInfo.Server, dbInfo))
-                        Access.ExecuteCommand(sql);
-                    FillDataTable(result.Item1, dbInfo);
-                    break;
-                case eDMLOperator.Delete:
-                    FillDataTable(result.Item1, dbInfo);
-                    using (var Access = new DatabaseAccess(dbInfo.Server, dbInfo))
-                        Access.ExecuteCommand(sql);
-                    break;
-                case eDMLOperator.Insert:
-                    using (var Access = new DatabaseAccess(dbInfo.Server, dbInfo))
-                        Access.ExecuteCommand(sql);
-                    FillDataTable(result.Item1, dbInfo);
-                    break;
-                default:
-                    FillDataTable(result.Item1, dbInfo);
-                    break;
-            }
-        }
+        //if (DatabaseObject.DataBase is DatabaseInfo dbInfo)
+        //{
+        //    var sql = SelectedQueryText.IsNotNullEmptyOrWhitespace() ? SelectedQueryText : QueryText;
+        //    var result = sql.ConvertToSelectStatement();
+
+        //    switch (result.Item2)
+        //    {
+        //        case eDMLOperator.Update:
+        //            using (var Access = new DatabaseAccess(dbInfo.Server, dbInfo))
+        //                Access.ExecuteCommand(sql);
+        //            FillDataTable(result.Item1, dbInfo);
+        //            break;
+        //        case eDMLOperator.Delete:
+        //            FillDataTable(result.Item1, dbInfo);
+        //            using (var Access = new DatabaseAccess(dbInfo.Server, dbInfo))
+        //                Access.ExecuteCommand(sql);
+        //            break;
+        //        case eDMLOperator.Insert:
+        //            using (var Access = new DatabaseAccess(dbInfo.Server, dbInfo))
+        //                Access.ExecuteCommand(sql);
+        //            FillDataTable(result.Item1, dbInfo);
+        //            break;
+        //        default:
+        //            FillDataTable(result.Item1, dbInfo);
+        //            break;
+        //    }
+        //}
     }
     #endregion
 
