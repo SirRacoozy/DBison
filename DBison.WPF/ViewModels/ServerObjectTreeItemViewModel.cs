@@ -230,6 +230,8 @@ public class ServerObjectTreeItemViewModel : ClientViewModelBase
         try
         {
             var newName = GetInput("Choose new name for clone", "Please type a name for the clone", $"{DatabaseObject.DataBase.Name}_Clone");
+            if (newName == null)
+                return;
             var dataBase = DatabaseObject.DataBase;
             if (dataBase is ExtendedDatabaseInfo extendedDbInfo)
             {
@@ -350,6 +352,8 @@ public class ServerObjectTreeItemViewModel : ClientViewModelBase
         {
             var backupDefaultName = DateTime.Now.ToString("ddMMyyyy_HHmmss");
             var backupName = GetInput("Backup name", "Choose a name for the backup", backupDefaultName);
+            if (backupName == null)
+                return;
             if (backupName.IsNullOrEmpty())
                 backupName = backupDefaultName;
             var dataBase = DatabaseObject.DataBase;
