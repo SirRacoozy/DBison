@@ -11,140 +11,142 @@
              MinWidth="500"
              x:Name="this">
 
-    <UserControl.Resources>
-        <sys:Double x:Key="MyFontSize">20</sys:Double>
-        <sys:Double x:Key="InputControlHeight">30</sys:Double>
+  <UserControl.Resources>
+    <sys:Double x:Key="MyFontSize">20</sys:Double>
+    <sys:Double x:Key="InputControlHeight">30</sys:Double>
 
-        <Brush x:Key="InputControlBackGroundBrush">#D9d9D9</Brush>
-        <Brush x:Key="InputControlForeGroundBrush">#6C6666</Brush>
+    <Brush x:Key="InputControlBackGroundBrush">#D9d9D9</Brush>
+    <Brush x:Key="InputControlForeGroundBrush">#6C6666</Brush>
 
-        <Style TargetType="{x:Type controls:DBisonTextBox}">
-            <Setter Property="Foreground"
-                    Value="#BDBDBD" />
-            <Setter Property="FontSize"
-                    Value="16" />
-            <Setter Property="Padding"
-                    Value="5 0 0 0" />
-            <Setter Property="Height"
-                    Value="20" />
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="{x:Type controls:DBisonTextBox}">
-                        <Border Background="{StaticResource InputControlBackGroundBrush}"
-                                BorderBrush="{TemplateBinding BorderBrush}"
-                                CornerRadius="10">
-                            <ScrollViewer x:Name="PART_ContentHost" />
-                        </Border>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-
-        <ControlTemplate x:Key="passwordbox"
-                         TargetType="{x:Type PasswordBox}">
+    <Style TargetType="{x:Type controls:DBisonTextBox}">
+      <Setter Property="Foreground"
+              Value="#BDBDBD" />
+      <Setter Property="FontSize"
+              Value="16" />
+      <Setter Property="Padding"
+              Value="5 0 0 0" />
+      <Setter Property="Height"
+              Value="20" />
+      <Setter Property="Template">
+        <Setter.Value>
+          <ControlTemplate TargetType="{x:Type controls:DBisonTextBox}">
             <Border Background="{StaticResource InputControlBackGroundBrush}"
-                    x:Name="Bd"
-                    BorderBrush="Transparent"
-                    BorderThickness="{TemplateBinding BorderThickness}"
+                    BorderBrush="{TemplateBinding BorderBrush}"
                     CornerRadius="10">
-                <ScrollViewer Name="PART_ContentHost"
-                              SnapsToDevicePixels="{TemplateBinding UIElement.SnapsToDevicePixels}" />
+              <ScrollViewer x:Name="PART_ContentHost" />
             </Border>
-        </ControlTemplate>
+          </ControlTemplate>
+        </Setter.Value>
+      </Setter>
+    </Style>
 
-    </UserControl.Resources>
+    <ControlTemplate x:Key="passwordbox"
+                     TargetType="{x:Type PasswordBox}">
+      <Border Background="{StaticResource InputControlBackGroundBrush}"
+              x:Name="Bd"
+              BorderBrush="Transparent"
+              BorderThickness="{TemplateBinding BorderThickness}"
+              CornerRadius="10">
+        <ScrollViewer Name="PART_ContentHost"
+                      SnapsToDevicePixels="{TemplateBinding UIElement.SnapsToDevicePixels}" />
+      </Border>
+    </ControlTemplate>
 
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
-        </Grid.RowDefinitions>
+  </UserControl.Resources>
 
-        <Grid HorizontalAlignment="Stretch"
-              Grid.Row="0">
-            <Canvas HorizontalAlignment="Stretch"
-                    VerticalAlignment="Top"
-                    Height="50">
-                <Path Data="M 0,50 A 50,50 0 0 0 100,50 H 0 Z"
-                      Fill="#00BBC9"
-                      Stretch="Fill"
-                      Width="{Binding ActualWidth, ElementName=this}" />
-            </Canvas>
+  <Grid>
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="*" />
+    </Grid.RowDefinitions>
 
-            <TextBlock HorizontalAlignment="Center"
-                       VerticalAlignment="Center"
-                       FontSize="30"
-                       Text="Connect to Server" />
-        </Grid>
+    <Grid HorizontalAlignment="Stretch"
+          Grid.Row="0">
+      <Canvas HorizontalAlignment="Stretch"
+              VerticalAlignment="Top"
+              Height="50">
+        <Path Data="M 0,50 A 50,50 0 0 0 100,50 H 0 Z"
+              Fill="#00BBC9"
+              Stretch="Fill"
+              Width="{Binding ActualWidth, ElementName=this}" />
+      </Canvas>
 
-        <Grid Grid.Row="1"
-              Margin="10">
+      <TextBlock HorizontalAlignment="Center"
+                 VerticalAlignment="Center"
+                 FontSize="30"
+                 Text="Connect to Server" />
+    </Grid>
 
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-            </Grid.RowDefinitions>
+    <Grid Grid.Row="1"
+          Margin="10">
 
-            <controls:DBisonTextBox Grid.Row="0"
-                                    Text="{Binding ServerName, Mode=TwoWay}"
-                                    CharacterCasing="Upper"
-                                    Margin="0 10 0 0"
-                                    FontSize="{StaticResource MyFontSize}"
-                                    mah:TextBoxHelper.Watermark="Servername"
-                                    Background="{StaticResource InputControlBackGroundBrush}"
-                                    Foreground="{StaticResource InputControlForeGroundBrush}"
-                                    Height="{StaticResource InputControlHeight}" />
+      <Grid.RowDefinitions>
+        <RowDefinition Height="Auto" />
+        <RowDefinition Height="Auto" />
+        <RowDefinition Height="Auto" />
+        <RowDefinition Height="Auto" />
+        <RowDefinition Height="Auto" />
+      </Grid.RowDefinitions>
 
-            <CheckBox Grid.Row="1"
-                      Content="Integrated security"
-                      IsChecked="{Binding IntegratedSecurity, Mode=TwoWay}"
-                      Margin="0 10 0 0" />
+      <controls:DBisonTextBox x:Name="TBServerName"
+                              Grid.Row="0"
+                              Text="{Binding ServerName, Mode=TwoWay}"
+                              CharacterCasing="Upper"
+                              Margin="0 10 0 0"
+                              FontSize="{StaticResource MyFontSize}"
+                              mah:TextBoxHelper.Watermark="Servername"
+                              Background="{StaticResource InputControlBackGroundBrush}"
+                              Foreground="{StaticResource InputControlForeGroundBrush}"
+                              Height="{StaticResource InputControlHeight}"
+                              Loaded="__Loaded"/>
 
-            <controls:DBisonTextBox Grid.Row="2"
-                                    mah:TextBoxHelper.Watermark="Username"
-                                    Text="{Binding UserName, Mode=TwoWay}"
-                                    Margin="0 10 0 0"
-                                    FontSize="{StaticResource MyFontSize}"
-                                    Background="{StaticResource InputControlBackGroundBrush}"
-                                    Foreground="{StaticResource InputControlForeGroundBrush}"
-                                    Visibility="{Binding CredentialsVisibility}"
-                                    Height="{StaticResource InputControlHeight}" />
+      <CheckBox Grid.Row="1"
+                Content="Integrated security"
+                IsChecked="{Binding IntegratedSecurity, Mode=TwoWay}"
+                Margin="0 10 0 0" />
 
-            <PasswordBox Template="{StaticResource passwordbox}"
-                         Grid.Row="3"
-                         PasswordChanged="__PasswordChanged"
-                         Margin="0 10 0 0"
-                         FontSize="{StaticResource MyFontSize}"
-                         Visibility="{Binding CredentialsVisibility}"
-                         PasswordChar="*"
-                         VerticalAlignment="Center"
-                         VerticalContentAlignment="Center"
-                         Height="{StaticResource InputControlHeight}" />
+      <controls:DBisonTextBox Grid.Row="2"
+                              mah:TextBoxHelper.Watermark="Username"
+                              Text="{Binding UserName, Mode=TwoWay}"
+                              Margin="0 10 0 0"
+                              FontSize="{StaticResource MyFontSize}"
+                              Background="{StaticResource InputControlBackGroundBrush}"
+                              Foreground="{StaticResource InputControlForeGroundBrush}"
+                              Visibility="{Binding CredentialsVisibility}"
+                              Height="{StaticResource InputControlHeight}" />
 
-            <Grid Grid.Row="4"
-                  Margin="0 10 0 0">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition />
-                    <ColumnDefinition />
-                </Grid.ColumnDefinitions>
-                <Button Content="Connect"
-                        Command="{Binding [Ok]}"
-                        Grid.Column="0"
-                        Background="#00747C"
-                        Height="{StaticResource InputControlHeight}" />
-                <Button Content="Cancel"
-                        Command="{Binding [Cancel]}"
-                        Margin="20 0 0 0"
-                        Grid.Column="1"
-                        Background="#878787"
-                        Height="{StaticResource InputControlHeight}" />
-            </Grid>
+      <PasswordBox Template="{StaticResource passwordbox}"
+                   Grid.Row="3"
+                   PasswordChanged="__PasswordChanged"
+                   Margin="0 10 0 0"
+                   FontSize="{StaticResource MyFontSize}"
+                   Visibility="{Binding CredentialsVisibility}"
+                   PasswordChar="*"
+                   VerticalAlignment="Center"
+                   VerticalContentAlignment="Center"
+                   Height="{StaticResource InputControlHeight}" />
 
-        </Grid>
+      <Grid Grid.Row="4"
+            Margin="0 10 0 0">
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition />
+          <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+        <Button Content="Connect"
+                Command="{Binding [Ok]}"
+                Grid.Column="0"
+                Background="#00747C"
+                Height="{StaticResource InputControlHeight}" />
+        <Button Content="Cancel"
+                Command="{Binding [Cancel]}"
+                Margin="20 0 0 0"
+                Grid.Column="1"
+                Background="#878787"
+                Height="{StaticResource InputControlHeight}" />
+      </Grid>
 
     </Grid>
+
+  </Grid>
 
 </UserControl>

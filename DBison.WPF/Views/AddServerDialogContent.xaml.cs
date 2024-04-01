@@ -1,6 +1,7 @@
 ﻿using DBison.WPF.ViewModels;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 
 namespace DBison.WPF.Views;
 /// <summary>
@@ -17,5 +18,11 @@ public partial class AddServerDialogContent : UserControl
     {
         if (DataContext is AddServerDialogViewModel viewModel && sender is PasswordBox passwordBox)
             viewModel.Password = passwordBox.Password;
+    }
+
+    private void __Loaded(object sender, RoutedEventArgs e)
+    {
+        TBServerName.Focusable = true;
+        Keyboard.Focus(TBServerName);
     }
 }
