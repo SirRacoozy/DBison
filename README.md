@@ -20,6 +20,14 @@ DBison is a modern solution to administrate your databases and creating and exec
 - Download the newest version
 - Execute the `DBison.Setup.msi`
 
+# How to build your own plugins
+- Create a .NET 8 class library
+- Add the `DBison.Plugin` dll as reference
+- Create a class that inherits from `IConnectParsingPlugin`
+- Implement the missing methods
+- Build the solution
+- Place the `dll` file into the self-chosen plugin path (choosable in the settings under `Plugins`)
+
 # Contributing to DBison
 
 ## Prerequisites
