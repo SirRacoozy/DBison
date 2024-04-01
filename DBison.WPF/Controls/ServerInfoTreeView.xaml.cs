@@ -8,13 +8,18 @@ namespace DBison.WPF.Controls
     /// </summary>
     public partial class ServerInfoTreeView : UserControlBase
     {
+        #region [ServerInfoTreeView]
         public ServerInfoTreeView()
         {
             InitializeComponent();
         }
+        #endregion
 
+        #region [TreeView]
         public TreeView TreeView => ThisTreeView;
+        #endregion
 
+        #region [__PreviewMouseButtonDown]
         private void __PreviewMouseButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             if (e.OriginalSource is DependencyObject dependency)
@@ -26,7 +31,9 @@ namespace DBison.WPF.Controls
                 }
             }
         }
+        #endregion
 
+        #region [__GetTreeViewItem]
         private TreeViewItem __GetTreeViewItem(DependencyObject source)
         {
             while (source is not null and not TreeViewItem)
@@ -34,6 +41,6 @@ namespace DBison.WPF.Controls
 
             return source as TreeViewItem;
         }
-
+        #endregion
     }
 }

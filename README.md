@@ -20,10 +20,18 @@ DBison is a modern solution to administrate your databases and creating and exec
 - Download the newest version
 - Execute the `DBison.Setup.msi`
 
+# How to build your own plugins
+- Create a .NET 8 class library
+- Add the `DBison.Plugin` dll as reference
+- Create a class that inherits from `IConnectParsingPlugin`
+- Implement the missing methods
+- Build the solution
+- Place the `dll` file into the self-chosen plugin path (choosable in the settings under `Plugins`)
+
 # Contributing to DBison
 
 ## Prerequisites
-In order to download necessary tools, clone the repository and install the dependecies via NuGet, you need network access.
+In order to download necessary tools, clone the repository and install the dependencies via NuGet, you need network access.
 
 You'll need the following tools:
 - [Git](https://git-scm.com/)
@@ -33,11 +41,30 @@ You'll need the following tools:
 In order to work with the setup you'll need the following extension:
 - [Microsoft Visual Studio Installer Projects](https://marketplace.visualstudio.com/items?itemName=VisualStudioClient.MicrosoftVisualStudio2022InstallerProjects)
 
-## How to Build the solution
+## How to build the solution from Visual Studio
+- Navigate to the repository
+- Open `DBison.sln`
+- Build the solution
+
+## How to build the solution from command line
 
 - `git clone https://github.com/SirRacoozy/DBison.git`
 - `cd DBison`
 - `dotnet build DBison.sln`
+
+## How to create a setup
+- Navigate to the repository
+- Open `DBison.sln`
+- Increment each version number of each project
+- Build the `DBison.WPF` as release
+- Publish `DBison.WPF` with
+  - Target location `bin\Release\net8.0-windows\publish\`
+  - Configuration `Release`
+  - Target Framework `net8.0-windows`
+  - Target Runtime `win-x64`
+- Open `DBison.Setup.sln`
+- While having the `DBison.Setup` project selected open the properties window and change the `Version` field
+- Build `DBison.Setup` as `Release`
 
 # Acknowledgements
 This software uses the following nuget packages:

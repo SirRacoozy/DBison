@@ -11,12 +11,31 @@ namespace DBison.WPF.ViewModels
     public class SettingsTabViewModel : TabItemViewModelBase
     {
         private MainWindowViewModel m_MainWindowViewModel;
+
+        #region - ctor -
         public SettingsTabViewModel(MainWindowViewModel mainWindowViewModel) : base(true)
         {
             __ReadAndGenerateSettings();
             SettingsHandler.SettingChanged += __SettingsHandler_SettingChanged;
             m_MainWindowViewModel = mainWindowViewModel;
         }
+        #endregion
+
+        #region [SelectedSettingsGroup]
+        public SettingGroupViewModel SelectedSettingsGroup
+        {
+            get => Get<SettingGroupViewModel>();
+            set => Set(value);
+        }
+        #endregion
+
+        #region [SettingGroups]
+        public ObservableCollection<SettingGroupViewModel> SettingGroups
+        {
+            get => Get<ObservableCollection<SettingGroupViewModel>>();
+            set => Set(value);
+        }
+        #endregion
 
         #region [Execute_Close]
         public override void Execute_Close()
@@ -25,19 +44,7 @@ namespace DBison.WPF.ViewModels
         }
         #endregion
 
-
-        public SettingGroupViewModel SelectedSettingsGroup
-        {
-            get => Get<SettingGroupViewModel>();
-            set => Set(value);
-        }
-
-        public ObservableCollection<SettingGroupViewModel> SettingGroups
-        {
-            get => Get<ObservableCollection<SettingGroupViewModel>>();
-            set => Set(value);
-        }
-
+        #region [__ReadAndGenerateSettings]
         private void __ReadAndGenerateSettings()
         {
             SettingGroups = new ObservableCollection<SettingGroupViewModel>();
@@ -59,14 +66,18 @@ namespace DBison.WPF.ViewModels
             __EvaluateAllSettings();
             SelectedSettingsGroup = SettingGroups.FirstOrDefault();
         }
+        #endregion
 
+        #region [__SettingsHandler_SettingChanged]
         private void __SettingsHandler_SettingChanged(object? sender, SettingChangedEventArgs e)
         {
             SettingsHandler.SettingChanged -= __SettingsHandler_SettingChanged;
             __EvaluateAllSettings();
             SettingsHandler.SettingChanged += __SettingsHandler_SettingChanged;
         }
+        #endregion
 
+        #region [__EvaluateAllSettings]
         private void __EvaluateAllSettings()
         {
             var allSettings = SettingGroups.SelectMany(g => g.SettingItems);
@@ -75,7 +86,9 @@ namespace DBison.WPF.ViewModels
                 settingItem.EvaluateDependencies(allSettings);
             }
         }
+        #endregion
 
+        #region [__AddOrGetSettingsGroupIfNeeded]
         private SettingGroupViewModel __AddOrGetSettingsGroupIfNeeded(SettingAttribute attribute)
         {
             SettingGroupViewModel settingsGroup;
@@ -87,6 +100,6 @@ namespace DBison.WPF.ViewModels
             SettingGroups.Add(settingsGroup);
             return settingsGroup;
         }
-
+        #endregion
     }
 }

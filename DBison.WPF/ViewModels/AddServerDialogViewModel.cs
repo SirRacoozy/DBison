@@ -10,42 +10,54 @@ namespace DBison.WPF.ViewModels;
 public class AddServerDialogViewModel : ClientViewModelBase
 {
     private Window m_Window;
-    public event EventHandler<ConnectInfo> OkClicked;
 
+    #region - ctor -
     public AddServerDialogViewModel(Window window)
     {
         m_Window = window;
         ServerName = Environment.MachineName;
         IntegratedSecurity = Settings.AutoConnectIGS;
     }
+    #endregion
 
+    #region [CredentialsVisibility]
     [DependsUpon(nameof(IntegratedSecurity))]
     public Visibility CredentialsVisibility => IntegratedSecurity ? Visibility.Collapsed : Visibility.Visible;
+    #endregion
 
+    #region [IntegratedSecurity]
     public bool IntegratedSecurity
     {
         get => Get<bool>();
         set => Set(value);
     }
+    #endregion
 
+    #region [ServerName]
     public string ServerName
     {
         get => Get<string>();
         set => Set(value);
     }
+    #endregion
 
+    #region [UserName]
     public string UserName
     {
         get => Get<string>();
         set => Set(value);
     }
+    #endregion
 
+    #region [Password]
     public string Password
     {
         get => Get<string>();
         set => Set(value);
     }
+    #endregion
 
+    #region [CanExecute_Ok]
     [DependsUpon(nameof(ServerName))]
     [DependsUpon(nameof(IntegratedSecurity))]
     [DependsUpon(nameof(UserName))]
@@ -65,7 +77,9 @@ public class AddServerDialogViewModel : ClientViewModelBase
         }
 
     }
+    #endregion
 
+    #region [Execute_Ok]
     public void Execute_Ok()
     {
         var pluginLoader = PluginLoader.Instance;
@@ -87,10 +101,14 @@ public class AddServerDialogViewModel : ClientViewModelBase
         OkClicked?.Invoke(this, pluginResult ?? connectInfo);
         m_Window.Close();
     }
+    #endregion
 
+    #region [Execute_Cancel]
     public void Execute_Cancel()
     {
         m_Window.Close();
     }
+    #endregion
 
+    public event EventHandler<ConnectInfo> OkClicked;
 }

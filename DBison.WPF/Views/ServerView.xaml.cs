@@ -11,13 +11,13 @@ namespace DBison.WPF.Views;
 /// </summary>
 public partial class ServerView : UserControlBase
 {
+    #region - ctor -
     public ServerView()
     {
         InitializeComponent();
         Loaded += __Loaded;
     }
-
-    #region - private methods -
+    #endregion
 
     #region [__Loaded]
     private void __Loaded(object sender, RoutedEventArgs e)
@@ -45,8 +45,7 @@ public partial class ServerView : UserControlBase
     }
     #endregion
 
-    #endregion
-
+    #region [__AutoGeneratingColumn]
     private void __AutoGeneratingColumn(object sender, DataGridAutoGeneratingColumnEventArgs e)
     {
         if (e.PropertyType == typeof(string))
@@ -66,4 +65,5 @@ public partial class ServerView : UserControlBase
             e.Column = templateColumn;
         }
     }
+    #endregion
 }

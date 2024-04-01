@@ -6,25 +6,32 @@ namespace DBison.WPF.Controls
 {
     public class DBisonTextBox : TextBox
     {
+        #region - needs -
+        public static readonly DependencyProperty CornerRadiusProperty =
+            DependencyProperty.Register("CornerRadius", typeof(CornerRadius), typeof(DBisonTextBox)); 
+        #endregion
+
+        #region - ctor -
         public DBisonTextBox()
         {
             TextChanged += __DBisonTextBox_TextChanged;
         }
+
         static DBisonTextBox()
         {
             DefaultStyleKeyProperty.OverrideMetadata(typeof(DBisonTextBox), new FrameworkPropertyMetadata(typeof(DBisonTextBox)));
         }
+        #endregion
 
-        public static readonly DependencyProperty CornerRadiusProperty =
-            DependencyProperty.Register("CornerRadius", typeof(CornerRadius), typeof(DBisonTextBox));
-
+        #region [CornerRadius]
         public CornerRadius CornerRadius
         {
             get { return (CornerRadius)GetValue(CornerRadiusProperty); }
             set { SetValue(CornerRadiusProperty, value); }
         }
+        #endregion
 
-
+        #region [__DBisonTextBox_TextChanged]
         private void __DBisonTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
             if (sender is TextBox tb)
@@ -35,5 +42,6 @@ namespace DBison.WPF.Controls
                     TextBoxHelper.SetClearTextButton(tb, false);
             }
         }
+        #endregion
     }
 }

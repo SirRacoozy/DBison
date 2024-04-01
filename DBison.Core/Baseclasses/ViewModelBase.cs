@@ -7,9 +7,10 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 
-namespace DBison.Core.Baseclasses;
+namespace DBison.Core.BaseClasses;
 public class ViewModelBase : INotifyPropertyChanged, IDisposable
 {
+    #region - needs -
     private const string m_EXECUTE_PREFIX = "Execute_";
     private const string m_CANEXECUTE_PREFIX = "CanExecute_";
     private bool m_SkipCheckingDependendMembers;
@@ -21,8 +22,10 @@ public class ViewModelBase : INotifyPropertyChanged, IDisposable
     private readonly List<string> m_CommandNames;
     private IDictionary<string, MethodInfo> m_Methods;
     private IDictionary<string, DependsUponObject> m_DependsUponDict;
-    public bool IsDisposed;
+    public bool IsDisposed; 
+    #endregion
 
+    #region - ctor -
     public ViewModelBase()
     {
         m_Properties = new ConcurrentDictionary<string, object>();
@@ -32,8 +35,10 @@ public class ViewModelBase : INotifyPropertyChanged, IDisposable
         Type MyType = GetType();
         m_Values = new ConcurrentDictionary<string, object>();
         __GetMembersAndGenerateCommands(MyType);
-    }
+    } 
+    #endregion
 
+    #region [this]
     public object this[string key]
     {
         get
@@ -47,20 +52,25 @@ public class ViewModelBase : INotifyPropertyChanged, IDisposable
             m_Values[key] = value;
             OnPropertyChanged(key);
         }
-    }
+    } 
+    #endregion
 
+    #region [OnPropertyChanged]
     public void OnPropertyChanged([CallerMemberName] string propertyName = "")
     {
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-    }
+    } 
+    #endregion
 
+    #region [HasChanges]
     public bool HasChanges
     {
         get => Get<bool>();
         set => Set(value);
-    }
+    } 
+    #endregion
 
-    #region Get
+    #region [Get]
     protected T Get<T>(Expression<Func<T>> expression)
     {
         return Get<T>(__GetPropertyName(expression));
@@ -127,6 +137,7 @@ public class ViewModelBase : INotifyPropertyChanged, IDisposable
     }
     #endregion
 
+    #region [ExecuteWithoutDependendOptjects]
     public void ExecuteWithoutDependendObjects(Action action)
     {
         try
@@ -144,25 +155,30 @@ public class ViewModelBase : INotifyPropertyChanged, IDisposable
             m_SkipCheckingDependendMembers = false;
         }
     }
+    #endregion
 
+    #region [CGetCommandNames]
     public List<string> GetCommandNames()
     {
         return m_CommandNames;
     }
+    #endregion
 
+    #region [OnCanExecuteChanged]
     public virtual void OnCanExecuteChanged(string commandName)
     {
         try
         {
             var command = Get<RelayCommand>(commandName);
-            if (command != null)
-                command.OnCanExecuteChanged();
+            command?.OnCanExecuteChanged();
         }
         catch (Exception)
         {
         }
     }
+    #endregion
 
+    #region [Dispose]
     protected virtual void Dispose(bool disposing)
     {
         if (!IsDisposed)
@@ -184,14 +200,16 @@ public class ViewModelBase : INotifyPropertyChanged, IDisposable
         Dispose(disposing: true);
         GC.SuppressFinalize(this);
     }
+    #endregion
 
+    #region [__GetPropertyName]
     private string __GetPropertyName<T>(Expression<Func<T>> expression)
     {
-        if (expression.Body is MemberExpression memberExpr)
-            return memberExpr.Member.Name;
-        return string.Empty;
+        return expression.Body is MemberExpression memberExpr ? memberExpr.Member.Name : string.Empty;
     }
+    #endregion
 
+    #region [__GetMembersAndGenerateCommands]
     private void __GetMembersAndGenerateCommands(Type myType)
     {
         var MethodInfos = new Dictionary<String, MethodInfo>(StringComparer.InvariantCultureIgnoreCase);
@@ -210,21 +228,27 @@ public class ViewModelBase : INotifyPropertyChanged, IDisposable
         m_CommandNames.ForEach(n => Set(n, new RelayCommand(p => __ExecuteCommand(n, p), p => __CanExecuteCommand(n, p))));
         m_Methods = MethodInfos;
     }
+    #endregion
 
+    #region [__ProcessPropertyAttributes]
     private void __ProcessPropertyAttributes(PropertyInfo property)
     {
         var attributes = property.GetCustomAttributes<DependsUponAttribute>();
         if (attributes.Any())
             m_DependsUponDict[property.Name] = new DependsUponObject { DependendObjects = attributes.Where(a => a.MemberName.IsNotNullOrEmpty()).Select(m => m.MemberName).ToList() };
     }
+    #endregion
 
+    #region [__ProcessMethodAttributes]
     private void __ProcessMethodAttributes(MethodInfo method)
     {
         var attributes = method.GetCustomAttributes<DependsUponAttribute>();
         if (attributes.Any())
             m_DependsUponDict[method.Name] = new DependsUponObject { DependendObjects = attributes.Where(a => a.MemberName.IsNotNullOrEmpty()).Select(m => m.MemberName).ToList() };
     }
+    #endregion
 
+    #region [__ExecuteCommand]
     private void __ExecuteCommand(string name, object parameter)
     {
         _ = m_Methods.TryGetValue(m_EXECUTE_PREFIX + name, out MethodInfo methodInfo);
@@ -232,7 +256,9 @@ public class ViewModelBase : INotifyPropertyChanged, IDisposable
             return;
         _ = methodInfo.Invoke(this, methodInfo.GetParameters().Length == 1 ? new[] { parameter } : null);
     }
+    #endregion
 
+    #region [__CanExecuteCommand]
     private bool __CanExecuteCommand(string name, object parameter)
     {
         _ = m_Methods.TryGetValue(m_CANEXECUTE_PREFIX + name, out MethodInfo methodInfo);
@@ -241,7 +267,9 @@ public class ViewModelBase : INotifyPropertyChanged, IDisposable
 
         return (bool)methodInfo.Invoke(this, methodInfo.GetParameters().Length == 1 ? new[] { parameter } : null);
     }
+    #endregion
 
+    #region [__RefreshDependendObjects]
     private void __RefreshDependendObjects(string memberName)
     {
         if (m_DependsUponDict != null)
@@ -282,5 +310,6 @@ public class ViewModelBase : INotifyPropertyChanged, IDisposable
                 }
             }
         }
-    }
+    } 
+    #endregion
 }

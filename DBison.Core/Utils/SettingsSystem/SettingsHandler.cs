@@ -5,14 +5,21 @@ using System.Configuration;
 namespace DBison.Core.Utils.SettingsSystem;
 public static class SettingsHandler
 {
-    private readonly static Configuration? m_Config;
+
+    #region - needs -
+    private readonly static Configuration? m_Config; 
+    #endregion
+
+    #region [SettingsHandler]
     static SettingsHandler()
     {
         m_Config = ConfigurationManager.OpenMappedExeConfiguration(new ExeConfigurationFileMap { ExeConfigFilename = "app.config" }, ConfigurationUserLevel.None);
     }
+    #endregion
 
     public static event EventHandler<SettingChangedEventArgs> SettingChanged;
 
+    #region [GetSetting]
     /// <summary>
     /// Retrieves a setting from the application's configuration.
     /// </summary>
@@ -32,14 +39,14 @@ public static class SettingsHandler
             var setting = m_Config.AppSettings.Settings[key].Value;
 
             if (typeof(T) == typeof(List<string>))
+            {
                 return (T)Convert.ChangeType(JsonConvert.DeserializeObject<List<string>>(setting), typeof(List<string>));
-            else if(typeof(T).IsEnum)
+            }
+            else if (typeof(T).IsEnum)
             {
                 Enum.TryParse(typeof(T), setting, true, out object myEnum);
                 return (T)myEnum;
             }
-
-
             return string.IsNullOrEmpty(setting) ? defaultValue : (T)Convert.ChangeType(setting, typeof(T));
         }
         catch (Exception)
@@ -48,7 +55,9 @@ public static class SettingsHandler
         }
 
     }
+    #endregion
 
+    #region [SetSetting]
     /// <summary>
     /// Sets a setting in the application's configuration.
     /// </summary>
@@ -76,5 +85,6 @@ public static class SettingsHandler
             return false;
         }
     }
+    #endregion
 
 }

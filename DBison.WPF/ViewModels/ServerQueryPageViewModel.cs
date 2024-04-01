@@ -15,10 +15,12 @@ using System.Windows.Threading;
 namespace DBison.WPF.ViewModels;
 public class ServerQueryPageViewModel : TabItemViewModelBase
 {
+    #region - needs -
     ServerViewModel m_ServerViewModel;
     ServerQueryHelper m_ServerQueryHelper;
     DispatcherTimer m_ExecutionTimer;
     Stopwatch m_Stopwatch = new Stopwatch();
+    #endregion
 
     #region Ctor
     public ServerQueryPageViewModel(QueryPageCreationReq req /*string name, ServerViewModel serverViewModel, DatabaseObjectBase databaseObject, ServerQueryHelper serverQueryHelper*/)
@@ -92,6 +94,7 @@ public class ServerQueryPageViewModel : TabItemViewModelBase
     #endregion
 
     #region - commands -
+
     #region [Execute_Close]
     public override void Execute_Close()
     {

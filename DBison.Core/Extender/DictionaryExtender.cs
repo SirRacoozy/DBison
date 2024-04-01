@@ -4,6 +4,7 @@ using System.Collections.Concurrent;
 namespace DBison.Core.Extender;
 public static class DictionaryExtender
 {
+    #region [ConvertToSqlParameter]
     public static void ConvertToSqlParameter(this Dictionary<string, object> dict, SqlCommand command)
     {
         ArgumentNullException.ThrowIfNull(dict, nameof(dict));
@@ -15,4 +16,5 @@ public static class DictionaryExtender
         // Adding all items to the parameters
         command.Parameters.AddRange([.. parameters]);
     }
+    #endregion
 }

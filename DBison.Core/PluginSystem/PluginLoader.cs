@@ -8,8 +8,10 @@ using System.Reflection;
 namespace DBison.Core.PluginSystem;
 public class PluginLoader
 {
+    #region - needs -
     private readonly string m_Path = Settings.PluginPath;
-    private static PluginLoader m_Instance;
+    private static PluginLoader m_Instance; 
+    #endregion
 
     #region - ctor -
     private PluginLoader()
@@ -71,6 +73,7 @@ public class PluginLoader
     }
 
     #endregion
+
     #region [__LoadPluginsFromAssembly]
     private void __LoadPluginsFromAssembly(ref ConcurrentBag<ISearchParsingPlugin> searchBag, ref ConcurrentBag<IContextMenuPlugin> commandBag, ref ConcurrentBag<IConnectParsingPlugin> connectBag, string file)
     {

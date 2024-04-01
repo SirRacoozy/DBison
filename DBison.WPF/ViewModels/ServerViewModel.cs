@@ -11,13 +11,15 @@ using System.Windows.Media;
 namespace DBison.WPF.ViewModels;
 public class ServerViewModel : ClientViewModelBase
 {
+    #region - needs -
     ServerQueryHelper m_ServerQueryHelper;
     Action<object?, Exception> m_OnError;
     MainWindowViewModel m_MainWindowViewModel;
     private string m_Filter;
     private ServerInfo m_Server;
     private ServerObjectTreeItemViewModel m_DataBaseNode;
-    private ObservableCollection<ServerObjectTreeItemViewModel> m_OriginalDataBaseNodes;
+    private ObservableCollection<ServerObjectTreeItemViewModel> m_OriginalDataBaseNodes; 
+    #endregion
 
     #region [Ctor]
     public ServerViewModel(ServerInfo server, Action<object?, Exception> onError, MainWindowViewModel mainWindowViewModel, string? filter = null)

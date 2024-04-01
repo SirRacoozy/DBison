@@ -1,9 +1,11 @@
 ﻿namespace DBison.Core.Entities;
 public class DatabaseInfo : DatabaseObjectBase
 {
+    #region - ctor -
     public DatabaseInfo(string name, ServerInfo server, DatabaseInfo dataBase) : base(name, server, dataBase)
     {
-    }
+    } 
+    #endregion
 
     #region - methods -
 
