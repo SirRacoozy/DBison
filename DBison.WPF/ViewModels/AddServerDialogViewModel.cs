@@ -81,7 +81,7 @@ public class AddServerDialogViewModel : ClientViewModelBase
             ServerName = ServerName,
             DatabaseName = string.Empty,
             UseIntegratedSecurity = IntegratedSecurity,
-            Username = UserName,
+            Username = IntegratedSecurity ? Environment.UserName : UserName,
             Password = Password,
         };
         OkClicked?.Invoke(this, pluginResult ?? connectInfo);

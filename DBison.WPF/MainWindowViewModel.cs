@@ -266,7 +266,7 @@ public class MainWindowViewModel : ClientViewModelBase
                     __AddServer(new ConnectInfo()
                     {
                         ServerName = Settings.AutoConnectServerName,
-                        Username = Settings.AutoConnectUsername,
+                        Username = Settings.AutoConnectIGS ? Environment.UserName : Settings.AutoConnectUsername,
                         Password = Settings.AutoConnectPassword,
                         UseIntegratedSecurity = Settings.AutoConnectIGS,
                     });
