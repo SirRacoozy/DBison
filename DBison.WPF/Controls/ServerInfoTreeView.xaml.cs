@@ -6,7 +6,7 @@ namespace DBison.WPF.Controls
     /// <summary>
     /// Interaction logic for ServerInfoTreeView.xaml
     /// </summary>
-    public partial class ServerInfoTreeView : UserControlBase
+    public partial class ServerInfoTreeView : UserControl
     {
         #region [ServerInfoTreeView]
         public ServerInfoTreeView()

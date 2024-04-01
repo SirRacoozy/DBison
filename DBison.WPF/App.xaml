@@ -5,6 +5,7 @@
              xmlns:sys="clr-namespace:System;assembly=mscorlib"
              xmlns:settingssystem="clr-namespace:DBison.Core.Utils.SettingsSystem;assembly=DBison.Core"
              xmlns:controlzex="urn:controlzex"
+             xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
              StartupUri="MainWindow.xaml">
   <Application.Resources>
     <ResourceDictionary>
@@ -16,16 +17,17 @@
         <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Themes/Light.Blue.xaml" />
       </ResourceDictionary.MergedDictionaries>
 
+      <CornerRadius x:Key="ControlCornerRadius">10</CornerRadius>
 
       <Style TargetType="Button">
         <Style.Resources>
           <Style TargetType="Border">
             <Setter Property="CornerRadius"
-                    Value="10" />
+                    Value="{StaticResource ControlCornerRadius}" />
           </Style>
         </Style.Resources>
       </Style>
-      
+
       <Style TargetType="{x:Type controls:LineNumberedTextBox}">
         <Setter Property="Template">
           <Setter.Value>

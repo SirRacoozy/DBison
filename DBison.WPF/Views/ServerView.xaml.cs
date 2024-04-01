@@ -9,7 +9,7 @@ namespace DBison.WPF.Views;
 /// <summary>
 /// Interaction logic for ServerView.xaml
 /// </summary>
-public partial class ServerView : UserControlBase
+public partial class ServerView : UserControl
 {
     #region - ctor -
     public ServerView()

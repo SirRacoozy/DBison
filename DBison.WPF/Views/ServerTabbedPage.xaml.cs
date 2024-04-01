@@ -7,7 +7,7 @@ namespace DBison.WPF.Views;
 /// <summary>
 /// Interaction logic for ServerTabbedPage.xaml
 /// </summary>
-public partial class ServerTabbedPage : UserControlBase
+public partial class ServerTabbedPage : UserControl
 {
     #region - ctor -
     public ServerTabbedPage()

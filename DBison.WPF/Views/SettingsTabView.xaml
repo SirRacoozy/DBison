@@ -82,7 +82,8 @@
                                           <Setter.Value>
                                             <DataTemplate>
                                               <TextBox DataContext="{Binding DataContext, ElementName=this}"
-                                                       Text="{Binding Value, Mode=TwoWay}" />
+                                                       Text="{Binding Value, Mode=TwoWay}"
+                                                       mah:ControlsHelper.CornerRadius="{StaticResource ControlCornerRadius}" />
                                             </DataTemplate>
                                           </Setter.Value>
                                         </Setter>
@@ -120,7 +121,8 @@
                                             <DataTemplate>
                                               <PasswordBox DataContext="{Binding DataContext, ElementName=this}"
                                                            helperobjects:PasswordHelper.Attach="True"
-                                                           helperobjects:PasswordHelper.Password="{Binding Value, ElementName=plain, Mode=TwoWay}" />
+                                                           helperobjects:PasswordHelper.Password="{Binding Value, ElementName=plain, Mode=TwoWay}"
+                                                           mah:ControlsHelper.CornerRadius="{StaticResource ControlCornerRadius}" />
                                             </DataTemplate>
                                           </Setter.Value>
                                         </Setter>
@@ -143,7 +145,8 @@
                               <mah:NumericUpDown Value="{Binding Value, Mode=TwoWay}"
                                                  Minimum="{Binding Minimum, Mode=OneWay}"
                                                  Maximum="{Binding Maximum, Mode=OneWay}"
-                                                 DataContext="{Binding DataContext, ElementName=this}" />
+                                                 DataContext="{Binding DataContext, ElementName=this}"
+                                                 mah:ControlsHelper.CornerRadius="{StaticResource ControlCornerRadius}" />
                             </DataTemplate>
                           </Setter.Value>
                         </Setter>
@@ -157,7 +160,8 @@
                               <mah:NumericUpDown Value="{Binding Value, Mode=TwoWay}"
                                                  Minimum="{Binding Minimum, Mode=OneWay}"
                                                  Maximum="{Binding Maximum, Mode=OneWay}"
-                                                 DataContext="{Binding DataContext, ElementName=this}" />
+                                                 DataContext="{Binding DataContext, ElementName=this}"
+                                                 mah:ControlsHelper.CornerRadius="{StaticResource ControlCornerRadius}" />
                             </DataTemplate>
                           </Setter.Value>
                         </Setter>
@@ -171,7 +175,8 @@
                               <mah:NumericUpDown Value="{Binding Value, Mode=TwoWay}"
                                                  Minimum="{Binding Minimum, Mode=OneWay}"
                                                  Maximum="{Binding Maximum, Mode=OneWay}"
-                                                 DataContext="{Binding DataContext, ElementName=this}" />
+                                                 DataContext="{Binding DataContext, ElementName=this}"
+                                                 mah:ControlsHelper.CornerRadius="{StaticResource ControlCornerRadius}" />
                             </DataTemplate>
                           </Setter.Value>
                         </Setter>
@@ -183,7 +188,8 @@
                           <Setter.Value>
                             <DataTemplate>
                               <mah:DateTimePicker SelectedDateTime="{Binding Value, Mode=TwoWay}"
-                                                  DataContext="{Binding DataContext, ElementName=this}" />
+                                                  DataContext="{Binding DataContext, ElementName=this}"
+                                                  mah:ControlsHelper.CornerRadius="{StaticResource ControlCornerRadius}" />
                             </DataTemplate>
                           </Setter.Value>
                         </Setter>
@@ -196,7 +202,8 @@
                             <DataTemplate>
                               <ComboBox SelectedValue="{Binding Value, Mode=TwoWay}"
                                         ItemsSource="{Binding ListValues}"
-                                        DataContext="{Binding DataContext, ElementName=this}" />
+                                        DataContext="{Binding DataContext, ElementName=this}"
+                                        mah:ControlsHelper.CornerRadius="{StaticResource ControlCornerRadius}" />
                             </DataTemplate>
                           </Setter.Value>
                         </Setter>
@@ -213,7 +220,7 @@
     </Style>
   </UserControl.Resources>
 
-  <Border CornerRadius="10"
+  <Border CornerRadius="{StaticResource ControlCornerRadius}"
           BorderBrush="#00747C"
           BorderThickness="2">
     <Grid>
