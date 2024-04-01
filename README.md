@@ -1,6 +1,6 @@
 <p align="center">
 <kdb>
-<img src="https://github.com/SirRacoozy/DBison/blob/master/Images/DBison_Logo.png" width=200 style="border: 1px solid white"/>
+<img src="https://github.com/SirRacoozy/DBison/blob/master/Images/DBison_Icon.png?raw=true" width=200 style="border: 1px solid white"/>
 </kdb>
 </p>
 
