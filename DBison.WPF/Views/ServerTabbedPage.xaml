@@ -1,11 +1,12 @@
 ﻿<UserControl x:Class="DBison.WPF.Views.ServerTabbedPage"
-                          xmlns:controls="clr-namespace:DBison.WPF.Controls"
-                          xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                          xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                          xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
-                          xmlns:local="clr-namespace:DBison.WPF.Views"
-                          xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
-                          Margin="5">
+             xmlns:controls="clr-namespace:DBison.WPF.Controls"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
+             xmlns:local="clr-namespace:DBison.WPF.Views"
+             xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+             xmlns:helperobjects="clr-namespace:DBison.WPF.HelperObjects"
+             Margin="5">
 
   <UserControl.Resources>
     <Style TargetType="{x:Type TabItem}">
@@ -176,7 +177,8 @@
                    TextChanged="__TextChanged"
                    x:Name="tb"
                    Height="25"
-                   mah:ControlsHelper.CornerRadius="{StaticResource ControlCornerRadius}"/>
+                   mah:ControlsHelper.CornerRadius="{StaticResource ControlCornerRadius}"
+                   helperobjects:TextBoxHelperExtension.AutoClearTextButton="True" />
 
           <Button Grid.Column="1"
                   Margin="2.5 0 2.5 0"

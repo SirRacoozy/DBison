@@ -83,7 +83,8 @@
                                             <DataTemplate>
                                               <TextBox DataContext="{Binding DataContext, ElementName=this}"
                                                        Text="{Binding Value, Mode=TwoWay}"
-                                                       mah:ControlsHelper.CornerRadius="{StaticResource ControlCornerRadius}" />
+                                                       mah:ControlsHelper.CornerRadius="{StaticResource ControlCornerRadius}"
+                                                       helperobjects:TextBoxHelperExtension.AutoClearTextButton="True"/>
                                             </DataTemplate>
                                           </Setter.Value>
                                         </Setter>

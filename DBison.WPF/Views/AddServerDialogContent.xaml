@@ -8,6 +8,7 @@
              mc:Ignorable="d"
              xmlns:sys="clr-namespace:System;assembly=mscorlib"
              xmlns:controls="clr-namespace:DBison.WPF.Controls"
+             xmlns:helperobjects="clr-namespace:DBison.WPF.HelperObjects"
              MinWidth="500"
              x:Name="this">
 
@@ -63,8 +64,9 @@
                Background="{StaticResource InputControlBackGroundBrush}"
                Foreground="{StaticResource InputControlForeGroundBrush}"
                Loaded="__Loaded"
-               mah:ControlsHelper.CornerRadius="{StaticResource ControlCornerRadius}" />
-
+               mah:ControlsHelper.CornerRadius="{StaticResource ControlCornerRadius}"
+               helperobjects:TextBoxHelperExtension.AutoClearTextButton="True" />
+      
       <CheckBox Grid.Row="1"
                 Content="Integrated security"
                 IsChecked="{Binding IntegratedSecurity, Mode=TwoWay}"
@@ -79,7 +81,8 @@
                Background="{StaticResource InputControlBackGroundBrush}"
                Foreground="{StaticResource InputControlForeGroundBrush}"
                Visibility="{Binding CredentialsVisibility}"
-               mah:ControlsHelper.CornerRadius="{StaticResource ControlCornerRadius}" />
+               mah:ControlsHelper.CornerRadius="{StaticResource ControlCornerRadius}"
+               helperobjects:TextBoxHelperExtension.AutoClearTextButton="True" />
 
       <PasswordBox Grid.Row="3"
                    PasswordChanged="__PasswordChanged"
