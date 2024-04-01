@@ -5,6 +5,7 @@ using DBison.Core.Utils.Commands;
 using DBison.Core.Utils.SettingsSystem;
 using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
+using Microsoft.Win32;
 using System.Windows;
 using System.Windows.Media;
 
@@ -15,6 +16,7 @@ namespace DBison.WPF.ClientBaseClasses
         #region - ctor -
         public ClientViewModelBase()
         {
+            SystemEvents.UserPreferenceChanged += (_, _) => OnPropertyChanged(nameof(IconSource));
             ForeGround = Settings.UseDarkMode ? Brushes.White : Brushes.Black;
             SettingsHandler.SettingChanged += (sender, e) =>
             {
@@ -25,12 +27,16 @@ namespace DBison.WPF.ClientBaseClasses
                     OnPropertyChanged(nameof(ImageSource));
                 }
             };
-        } 
+        }
         #endregion
 
         public string ImageSource
         {
-            get => Settings.UseDarkMode ? "./../Resources/AppIcon_White.ico" : "./../Resources/AppIcon.ico";
+            get => Settings.UseDarkMode ? "./../Resources/AppIcon_White.ico" : "./../Resources/AppIcon_Black.ico";
+        }
+        public string IconSource
+        {
+            get => __GetWindowsTheme() ? "./../Resources/AppIcon_White.ico" : "./../Resources/AppIcon_Black.ico";
         }
 
         #region [ForeGround]
@@ -136,6 +142,25 @@ namespace DBison.WPF.ClientBaseClasses
         }
         #endregion
 
+        #endregion
+
+        #region - private methods -
+        private const string m_RegistryKeyPath = @"Software\Microsoft\Windows\CurrentVersion\Themes\Personalize";
+
+        private const string m_RegistryValueName = "AppsUseLightTheme";
+
+        private bool __GetWindowsTheme()
+        {
+            using var key = Registry.CurrentUser.OpenSubKey(m_RegistryKeyPath);
+            var registryValueObject = key?.GetValue(m_RegistryValueName);
+            if (registryValueObject == null)
+            {
+                return false;
+            }
+            var registryValue = (int)registryValueObject;
+
+            return registryValue > 0 ? false : true;
+        }
         #endregion
 
     }

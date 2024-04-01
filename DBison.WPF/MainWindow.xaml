@@ -13,7 +13,8 @@
                  ShowMaxRestoreButton="False"
                  ShowMinButton="False"
                  WindowState="Maximized"
-                 x:Name="this">
+                 x:Name="this"
+                 Icon="{Binding IconSource}">
 
     <mah:MetroWindow.InputBindings>
         <KeyBinding Modifiers="Ctrl"
