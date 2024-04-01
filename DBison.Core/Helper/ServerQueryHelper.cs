@@ -8,13 +8,17 @@ public class ServerQueryHelper
 {
     ServerInfo m_Server;
     private SqlCommand m_Command;
+    private string m_DefaultDataPath;
 
     #region [ServerQueryHelper]
     public ServerQueryHelper(ServerInfo serverInfo)
     {
         m_Server = serverInfo;
+        __GetServerDefaultProperties();
     }
     #endregion
+
+    #region - public methods -
 
     #region [IgnoreNextException]
     public bool IgnoreNextException { get; set; }
@@ -265,6 +269,7 @@ CREATE DATABASE [{newName}]
     }
     #endregion
 
+    #region [DeleteDataBase]
     public void DeleteDataBase(DatabaseInfo databaseInfo)
     {
         __SetDatabaseState(databaseInfo, eDataBaseState.OFFLINE);
@@ -273,14 +278,47 @@ CREATE DATABASE [{newName}]
         using var access = new DataConnection(__GetMasterDataBaseInfo());
         access.ExecuteNonQuery(sql);
     }
+    #endregion
 
+    #region [RenameDataBase]
     public void RenameDataBase(DatabaseInfo databaseInfo, string newName)
     {
         var sql = $@"USE [MASTER] ALTER DATABASE [{databaseInfo.Name}] MODIFY NAME = [{newName}] ;";
         using var access = new DataConnection(__GetMasterDataBaseInfo());
         access.ExecuteNonQuery(sql);
     }
+    #endregion
 
+    #region [BackupDataBase]
+    public void BackupDataBase(DatabaseInfo dataBase, string backupPath)
+    {
+        var sql = @$"USE [master];
+BACKUP DATABASE [{dataBase.Name}]
+TO DISK = '{backupPath}';";
+        using var access = new DataConnection(__GetMasterDataBaseInfo());
+        access.ExecuteNonQuery(sql);
+    }
+    #endregion
+
+    #region [RestoreBackup]
+    public void RestoreBackup(DatabaseInfo dataBase, string backupPath)
+    {
+        string restoreAsName = dataBase.Name;
+        var backupPreviewData = __GetLogicalFileNamesByBackupFile(backupPath);
+        __KillAllConnections(dataBase);
+        var builder = new System.Text.StringBuilder();
+        _ = builder.Append("USE [master] \n");
+        builder.Append($@"RESTORE DATABASE [{restoreAsName}]
+FROM DISK = N'{backupPath}'
+WITH REPLACE,
+    MOVE '{backupPreviewData["DataFile"]}' TO '{m_DefaultDataPath}{restoreAsName}.mdf',
+    MOVE '{backupPreviewData["LogFile"]}' TO '{m_DefaultDataPath}{restoreAsName}.ldf'");
+        using var access = new DataConnection(__GetMasterDataBaseInfo());
+        access.ExecuteNonQuery(builder.ToString());
+    }
+    #endregion
+
+    #region [DeleteDatabaseFile]
     public void DeleteDatabaseFile(DatabaseInfo databaseInfo, string fileName)
     {
         //Does not work, stupid topic
@@ -290,6 +328,11 @@ REMOVE FILE [{fileName}];";
         using var access = new DataConnection(__GetMasterDataBaseInfo());
         access.ExecuteNonQuery(sql);
     }
+    #endregion
+
+    #endregion
+
+    #region - private methods -
 
     #region [__LoadDataBases]
     private void __LoadDataBases()
@@ -319,7 +362,7 @@ ORDER BY sysDb.name ASC";
         {
             while (reader.Read())
             {
-                m_Server.DatabaseInfos.Add(new ExtendedDatabaseInfo(reader[0].ToStringValue(), m_Server, null)
+                var dataBaseInfo = new ExtendedDatabaseInfo(reader[0].ToStringValue(), m_Server, null)
                 {
                     DataBaseState = (eDataBaseState)Convert.ToInt32(reader[1]),
                     DataFileLocation = reader[2].ToStringValue(),
@@ -327,7 +370,9 @@ ORDER BY sysDb.name ASC";
                     LogFileLocation = reader[4].ToStringValue(),
                     LogFileSize = reader[5].ToLongValue(),
                     IsRealDataBaseNode = true,
-                });
+                };
+                dataBaseInfo.ExpectedBackupDirectory = $@"{Path.GetDirectoryName(dataBaseInfo.DataFileLocation)}\backup\[{dataBaseInfo.Name}]_BACKUP";
+                m_Server.DatabaseInfos.Add(dataBaseInfo);
             }
         }
     }
@@ -386,6 +431,55 @@ EXEC(@killstmt);";
         using var access = new DataConnection(__GetMasterDataBaseInfo());
         access.ExecuteNonQuery(sql);
     }
+    #endregion
+
+    #region [__GetLogicalFileNamesByBackupFile]
+    private Dictionary<string, string> __GetLogicalFileNamesByBackupFile(string backupFile)
+    {
+        var DataFile = string.Empty;
+        var LogFile = string.Empty;
+        var sql = $"RESTORE FILELISTONLY FROM DISK = '{backupFile}'";
+        using var access = new DataConnection(new DatabaseInfo("master", m_Server, null));
+        var reader = access.GetReader(sql);
+        {
+            if (reader.HasRows)
+            {
+                while (reader.Read())
+                {
+                    var Type = reader["Type"].ToStringValue();
+                    if (Type.Equals("D"))
+                        DataFile = reader["LogicalName"].ToStringValue();
+                    else if (Type.Equals("L"))
+                        LogFile = reader["LogicalName"].ToStringValue();
+                }
+                reader.Close();
+            }
+        }
+        var BackupFileList = new Dictionary<string, string>
+        {
+            { nameof(DataFile), DataFile },
+            { nameof(LogFile), LogFile }
+        };
+        return BackupFileList;
+    }
+    #endregion
+
+    #region [__GetServerDefaultProperties]
+    private void __GetServerDefaultProperties()
+    {
+        using var access = new DataConnection(new DatabaseInfo("master", m_Server, null));
+        var reader = access.GetReader(@"SELECT SERVERPROPERTY('InstanceDefaultDataPath') AS InstanceDefaultDataPath");
+        {
+            if (reader != null && reader.HasRows)
+            {
+                while (reader.Read())
+                    m_DefaultDataPath = reader["InstanceDefaultDataPath"].ToStringValue();
+                reader.Close();
+            }
+        }
+    }
+    #endregion
+
     #endregion
 
 }

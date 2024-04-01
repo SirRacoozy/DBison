@@ -1,4 +1,5 @@
-﻿using DBison.Core.Utils.SettingsSystem;
+﻿using DBison.Core.Extender;
+using DBison.Core.Utils.SettingsSystem;
 using DBison.Plugin;
 using System.Collections.Concurrent;
 using System.Data;
@@ -13,7 +14,8 @@ public class PluginLoader
     #region - ctor -
     private PluginLoader()
     {
-        ArgumentNullException.ThrowIfNull(nameof(m_Path));
+        if (m_Path.IsNullOrEmpty())
+            return;
         if (!Directory.Exists(m_Path))
             throw new ArgumentException($"'{nameof(m_Path)}' is not a directory.");
 
