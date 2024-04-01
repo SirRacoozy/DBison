@@ -7,13 +7,18 @@ public static class SettingsHandler
 {
 
     #region - needs -
-    private readonly static Configuration? m_Config; 
+    private readonly static Configuration? m_Config;
+    private readonly static string m_ConfigDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "DBison");
+    private readonly static string m_ConfigPath = Path.Combine(m_ConfigDirectory, "app.config");
+
     #endregion
 
     #region [SettingsHandler]
     static SettingsHandler()
     {
-        m_Config = ConfigurationManager.OpenMappedExeConfiguration(new ExeConfigurationFileMap { ExeConfigFilename = "app.config" }, ConfigurationUserLevel.None);
+        if(!Directory.Exists(m_ConfigDirectory))
+            Directory.CreateDirectory(m_ConfigDirectory);
+        m_Config = ConfigurationManager.OpenMappedExeConfiguration(new ExeConfigurationFileMap { ExeConfigFilename = m_ConfigPath }, ConfigurationUserLevel.None);
     }
     #endregion
 
