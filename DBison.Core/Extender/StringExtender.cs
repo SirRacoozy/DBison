@@ -53,14 +53,21 @@ public static class StringExtender
         if (value.IsNullEmptyOrWhitespace())
             return (string.Empty, eDMLOperator.None);
 
-        if (value.StartsWith("select", StringComparison.InvariantCultureIgnoreCase))
-            return (value, eDMLOperator.None);
-        else if (value.StartsWith("delete", StringComparison.InvariantCultureIgnoreCase))
-            return (__ConvertDeleteToSelectStatement(value), eDMLOperator.Delete);
-        else if (value.StartsWith("update", StringComparison.InvariantCultureIgnoreCase))
-            return (__ConvertUpdateToSelectStatement(value), eDMLOperator.Update);
-        else if (value.StartsWith("insert", StringComparison.InvariantCultureIgnoreCase))
-            return (__ConvertInsertToSelectStatement(value), eDMLOperator.Insert);
+        try
+        {
+            if (value.StartsWith("select", StringComparison.InvariantCultureIgnoreCase))
+                return (value, eDMLOperator.None);
+            else if (value.StartsWith("delete", StringComparison.InvariantCultureIgnoreCase))
+                return (__ConvertDeleteToSelectStatement(value), eDMLOperator.Delete);
+            else if (value.StartsWith("update", StringComparison.InvariantCultureIgnoreCase))
+                return (__ConvertUpdateToSelectStatement(value), eDMLOperator.Update);
+            else if (value.StartsWith("insert", StringComparison.InvariantCultureIgnoreCase))
+                return (__ConvertInsertToSelectStatement(value), eDMLOperator.Insert);
+        }
+        catch (Exception)
+        {
+
+        }
 
         return (string.Empty, eDMLOperator.None);
 

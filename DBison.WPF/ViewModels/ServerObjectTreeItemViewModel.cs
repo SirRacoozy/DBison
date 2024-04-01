@@ -5,6 +5,7 @@ using DBison.Core.Helper;
 using DBison.Core.Utils.Commands;
 using DBison.Core.Utils.SettingsSystem;
 using DBison.WPF.ClientBaseClasses;
+using MahApps.Metro.IconPacks;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.IO;
@@ -20,6 +21,8 @@ public class ServerObjectTreeItemViewModel : ClientViewModelBase
     readonly ServerQueryHelper m_ServerQueryHelper;
     readonly ServerViewModel m_ServerVm;
     readonly MainWindowViewModel m_MainWindowViewModel;
+
+    #region [Ctor]
     public ServerObjectTreeItemViewModel(ServerObjectTreeItemViewModel parent, DatabaseObjectBase databaseObject, ServerQueryHelper serverQueryHelper, ExtendedDatabaseInfo extendedDatabaseRef, ServerViewModel serverVm, MainWindowViewModel mainWindowViewModel)
     {
         m_MainWindowViewModel = mainWindowViewModel;
@@ -32,6 +35,7 @@ public class ServerObjectTreeItemViewModel : ClientViewModelBase
         m_ServerVm = serverVm;
         __SetContextMenu();
     }
+    #endregion
 
     #region - public properties -
 
@@ -352,14 +356,15 @@ public class ServerObjectTreeItemViewModel : ClientViewModelBase
                 if (!Directory.Exists(dataFileDir))
                     Directory.CreateDirectory(dataFileDir);
 
-                var BackupPath = dataFileDir + $@"\backup\[{dataBase.Name}]_BACKUP";
-                if (!Directory.Exists(BackupPath))
+                if (!Directory.Exists(extendedDbInfo.ExpectedBackupDirectory))
                 {
-                    _ = Directory.CreateDirectory(BackupPath);
+                    _ = Directory.CreateDirectory(extendedDbInfo.ExpectedBackupDirectory);
                 }
-                BackupPath += @$"\{backupName}.bak";
+                var BackupPath = Path.Combine(extendedDbInfo.ExpectedBackupDirectory, $"{backupName}.bak");
                 m_ServerQueryHelper.BackupDataBase(dataBase, BackupPath);
                 //TODO: Autoclean backup
+
+                __SetContextMenu();
             }
         }
         catch (Exception ex)
@@ -379,6 +384,25 @@ public class ServerObjectTreeItemViewModel : ClientViewModelBase
         try
         {
 
+        }
+        catch (Exception ex)
+        {
+            ShowExceptionMessage(ex);
+        }
+    }
+    #endregion
+
+    #region [Execute_RestoreBackup]
+    public void Execute_RestoreBackup(object commandParameter)
+    {
+        try
+        {
+            if (commandParameter is FileInfo fi)
+            {
+                var dataBase = DatabaseObject.DataBase;
+                m_ServerQueryHelper.RestoreBackup(dataBase, fi.FullName);
+                ShowMessageAsync("Sucessful", "Restoring the backup was sucessful");
+            }
         }
         catch (Exception ex)
         {
@@ -543,6 +567,7 @@ public class ServerObjectTreeItemViewModel : ClientViewModelBase
                 Header = $"Create ODBC",
                 Command = this["CreateODBC"] as ICommand
             });
+            tmpMenuItems.Add(__GetRestoreMenuItem());
         }
         MenuItems = new(tmpMenuItems.OrderBy(m => m.Header));
     }
@@ -554,6 +579,54 @@ public class ServerObjectTreeItemViewModel : ClientViewModelBase
         var treeItemViewModel = new ServerObjectTreeItemViewModel(parent, databaseObject, m_ServerQueryHelper, extendedDatabaseRef, m_ServerVm, m_MainWindowViewModel);
         treeItemViewModel.ServerObjects = new ObservableCollection<ServerObjectTreeItemViewModel>();
         return treeItemViewModel;
+    }
+    #endregion
+
+    #region [__GetRestoreMenuItem]
+    private MenuItem __GetRestoreMenuItem()
+    {
+        var RestoreIcon = new PackIconMaterialDesign
+        {
+            Kind = PackIconMaterialDesignKind.Restore,
+            Width = 20,
+            Height = 20,
+        };
+        var restoreMenuItem = new MenuItem { Header = "Restore backup", Icon = RestoreIcon };
+        restoreMenuItem.IsEnabled = false;
+
+        var dataBase = DatabaseObject.DataBase;
+        if (dataBase is ExtendedDatabaseInfo extendedDatabaseInfo)
+        {
+            if (!Directory.Exists(extendedDatabaseInfo.ExpectedBackupDirectory))
+                return restoreMenuItem;
+
+            var foundBackupPaths = Directory.GetFiles(extendedDatabaseInfo.ExpectedBackupDirectory, "*.bak", SearchOption.AllDirectories);
+
+            if (foundBackupPaths.IsEmpty())
+                return restoreMenuItem;
+
+            restoreMenuItem.IsEnabled = true;
+
+            restoreMenuItem.Header = $"Restore backup ({foundBackupPaths.Count()} found)";
+            restoreMenuItem.Items.Add(new MenuItem
+            {
+                Header = $"[{dataBase.Name}] Restore Backup from",
+                IsEnabled = false,
+            });
+            foreach (var backupPath in foundBackupPaths)
+            {
+                var fi = new FileInfo(backupPath);
+                restoreMenuItem.Items.Add(new MenuItem()
+                {
+                    Header = $"[{fi.LastWriteTime}] {fi.Name}",
+                    Command = this["RestoreBackup"] as ICommand,
+                    CommandParameter = fi,
+                });
+            }
+
+        }
+
+        return restoreMenuItem;
     }
     #endregion
 
