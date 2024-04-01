@@ -25,6 +25,20 @@ public class ServerObjectTreeItemViewModel : ClientViewModelBase
     readonly MainWindowViewModel m_MainWindowViewModel;
     private readonly string m_MSSQLDriver = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\WOW6432Node\ODBC\ODBCINST.INI\SQL Server").GetValue("Driver").ToStringValue();
 
+    #region - Icons -
+    private readonly PackIconMaterial m_RestoreIcon = new () { Kind = PackIconMaterialKind.Restore, Width = 20, Height = 20, };
+    private readonly PackIconMaterial m_CloneIcon = new() { Kind = PackIconMaterialKind.ContentDuplicate, Width = 20, Height = 20, };
+    private readonly PackIconMaterial m_DeleteIcon = new() { Kind = PackIconMaterialKind.DeleteOutline, Width = 20, Height = 20, };
+    private readonly PackIconMaterial m_RenameIcon = new() { Kind = PackIconMaterialKind.FormTextbox, Width = 20, Height = 20, };
+    private readonly PackIconMaterial m_OnlineIcon = new() { Kind = PackIconMaterialKind.CloudOutline, Width = 20, Height = 20, };
+    private readonly PackIconMaterial m_OfflineIcon = new() { Kind = PackIconMaterialKind.CloudOffOutline, Width = 20, Height = 20, };
+    private readonly PackIconMaterial m_QueryIcon = new() { Kind = PackIconMaterialKind.DatabaseSearch, Width = 20, Height = 20, };
+    private readonly PackIconMaterial m_ODBCIcon = new() { Kind = PackIconMaterialKind.DatabaseMarker, Width = 20, Height = 20 };
+    private readonly PackIconMaterial m_BackupIcon = new() { Kind = PackIconMaterialKind.DatabaseRefresh, Width = 20, Height = 20, };
+    private readonly PackIconMaterial m_RefreshIcon = new() { Kind = PackIconMaterialKind.Refresh, Width = 20, Height = 20, };
+    private readonly PackIconMaterial m_TableDataIcon = new() { Kind = PackIconMaterialKind.TableHeadersEye, Width = 20, Height = 20, };
+    #endregion
+
     #region [Ctor]
     public ServerObjectTreeItemViewModel(ServerObjectTreeItemViewModel parent, DatabaseObjectBase databaseObject, ServerQueryHelper serverQueryHelper, ExtendedDatabaseInfo extendedDatabaseRef, ServerViewModel serverVm, MainWindowViewModel mainWindowViewModel)
     {
@@ -513,7 +527,7 @@ public class ServerObjectTreeItemViewModel : ClientViewModelBase
             //Menus on server nodes
             if (DatabaseObject is ServerInfo)
             {
-                MenuItems.Add(new MenuItem { Header = $"Refresh Server ", Command = this["RefreshServer"] as ICommand });
+                MenuItems.Add(new MenuItem { Header = $"Refresh Server ", Command = this["RefreshServer"] as ICommand, Icon = m_RefreshIcon });
             }
             //Menus on database nodes
             else if (DatabaseObject is DatabaseInfo dbInfo)
@@ -521,12 +535,12 @@ public class ServerObjectTreeItemViewModel : ClientViewModelBase
                 if (dbInfo.IsRealDataBaseNode)
                     __AddDataBaseMenuItems(dbInfo);
                 else
-                    MenuItems.Add(new MenuItem { Header = $"Refresh", Command = this["RefreshServer"] as ICommand });
+                    MenuItems.Add(new MenuItem { Header = $"Refresh", Command = this["RefreshServer"] as ICommand, Icon = m_RefreshIcon });
             }
             //Menus on table or view nodes
             else if (!DatabaseObject.IsFolder && (DatabaseObject is DBisonTable || DatabaseObject is DBisonView))
             {
-                MenuItems.Add(new MenuItem { Header = $"Show {DatabaseObject.Name} data", Command = this["ShowTableData"] as ICommand });
+                MenuItems.Add(new MenuItem { Header = $"Show {DatabaseObject.Name} data", Command = this["ShowTableData"] as ICommand, Icon = m_TableDataIcon });
             }
         }));
     }
@@ -536,51 +550,66 @@ public class ServerObjectTreeItemViewModel : ClientViewModelBase
     private void __AddDataBaseMenuItems(DatabaseInfo dbInfo)
     {
         var tmpMenuItems = new List<MenuItem>();
-        tmpMenuItems.Add(new MenuItem { Header = $"Delete database [{DatabaseObject.Name}]", Command = this["DeleteDataBase"] as ICommand });
+        
         if (dbInfo.DataBaseState == eDataBaseState.OFFLINE)
         {
-            tmpMenuItems.Add(new MenuItem { Header = $"Take [{DatabaseObject.Name}] Online", Command = this["SwitchState"] as ICommand });
+            tmpMenuItems.Add(new MenuItem { Header = $"Take [{DatabaseObject.Name}] online", Command = this["SwitchState"] as ICommand , Icon = m_OnlineIcon});
+            tmpMenuItems.Add(new MenuItem { Header = $"Delete database [{DatabaseObject.Name}]", Command = this["DeleteDataBase"] as ICommand , Icon = m_DeleteIcon});
         }
         else
         {
             tmpMenuItems.Add(new MenuItem
             {
                 Header = $"New Query - [{DatabaseObject.Name}]",
-                Command = this["NewQuery"] as ICommand
-            });
-            tmpMenuItems.Add(new MenuItem
-            {
-                Header = $"Switch database State [{DatabaseObject.Name}]",
-                Command = this["SwitchState"] as ICommand
-            });
-            tmpMenuItems.Add(new MenuItem
-            {
-                Header = $"Delete Log File",
-                Command = this["DeleteLogFile"] as ICommand
-            });
-            tmpMenuItems.Add(new MenuItem
-            {
-                Header = $"Rename",
-                Command = this["Rename"] as ICommand
-            });
-            tmpMenuItems.Add(new MenuItem
-            {
-                Header = $"Clone",
-                Command = this["Clone"] as ICommand
-            });
-            tmpMenuItems.Add(new MenuItem
-            {
-                Header = $"Create Backup",
-                Command = this["CreateBackup"] as ICommand
+                Command = this["NewQuery"] as ICommand,
+                Icon = m_QueryIcon,
             });
             tmpMenuItems.Add(new MenuItem
             {
                 Header = $"Create ODBC",
-                Command = this["CreateODBC"] as ICommand
+                Command = this["CreateODBC"] as ICommand,
+                Icon = m_ODBCIcon,
             });
+            tmpMenuItems.Add(new MenuItem
+            {
+                Header = $"Take [{DatabaseObject.Name}] offline",
+                Command = this["SwitchState"] as ICommand,
+                Icon = m_OfflineIcon,
+            });
+            tmpMenuItems.Add(new MenuItem
+            {
+                Header = $"Create Backup",
+                Command = this["CreateBackup"] as ICommand,
+                Icon = m_BackupIcon,
+            });
+            // Restore Backup
             tmpMenuItems.Add(__GetRestoreMenuItem());
+            tmpMenuItems.Add(new MenuItem
+            {
+                Header = $"Clone",
+                Command = this["Clone"] as ICommand,
+                Icon = m_CloneIcon,
+            });
+            tmpMenuItems.Add(new MenuItem
+            {
+                Header = $"Rename",
+                Command = this["Rename"] as ICommand,
+                Icon = m_RenameIcon,
+            });
+            tmpMenuItems.Add(new MenuItem 
+            { 
+                Header = $"Delete database [{DatabaseObject.Name}]",
+                Command = this["DeleteDataBase"] as ICommand,
+                Icon = m_DeleteIcon,
+            });
+            tmpMenuItems.Add(new MenuItem
+            {
+                Header = $"Delete Log File",
+                Command = this["DeleteLogFile"] as ICommand,
+                Visibility = Visibility.Collapsed
+            });
         }
-        MenuItems = new(tmpMenuItems.OrderBy(m => m.Header));
+        MenuItems = new(tmpMenuItems);
     }
     #endregion
 
@@ -596,13 +625,7 @@ public class ServerObjectTreeItemViewModel : ClientViewModelBase
     #region [__GetRestoreMenuItem]
     private MenuItem __GetRestoreMenuItem()
     {
-        var RestoreIcon = new PackIconMaterialDesign
-        {
-            Kind = PackIconMaterialDesignKind.Restore,
-            Width = 20,
-            Height = 20,
-        };
-        var restoreMenuItem = new MenuItem { Header = "Restore backup", Icon = RestoreIcon };
+        var restoreMenuItem = new MenuItem { Header = "Restore backup", Icon = m_RestoreIcon };
         restoreMenuItem.IsEnabled = false;
 
         var dataBase = DatabaseObject.DataBase;

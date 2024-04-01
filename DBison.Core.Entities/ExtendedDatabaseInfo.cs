@@ -13,7 +13,6 @@ public class ExtendedDatabaseInfo : DatabaseInfo
     public long DataFileSize { get; set; }
     public string LogFileLocation { get; set; }
     public long LogFileSize { get; set; }
-
     public string ExpectedBackupDirectory { get; set; }
 
 }
