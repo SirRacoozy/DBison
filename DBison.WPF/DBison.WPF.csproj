@@ -8,17 +8,21 @@
     <UseWPF>true</UseWPF>
     <ApplicationIcon>Resources\AppIcon.ico</ApplicationIcon>
     <Authors>Marvin "SirRacoozy" Mees, Timo "timi99200" Schulze</Authors>
-    <VersionPrefix>0.1.2</VersionPrefix>
+    <VersionPrefix>0.1.3</VersionPrefix>
     <FileVersion>0.1.0</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>
     <None Remove="Resources\AppIcon.ico" />
+    <None Remove="Resources\AppIcon_Black.ico" />
     <None Remove="Resources\AppIcon_White.ico" />
   </ItemGroup>
 
   <ItemGroup>
     <Content Include="Resources\AppIcon.ico">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\AppIcon_Black.ico">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Resources\AppIcon_White.ico">
