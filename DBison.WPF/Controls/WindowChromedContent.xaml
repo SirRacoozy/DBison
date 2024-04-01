@@ -20,8 +20,7 @@
             <StackPanel Orientation="Horizontal"
                         HorizontalAlignment="Left"
                         VerticalAlignment="Center">
-                <Image Source="./../Resources/AppIcon.ico"
-                       Margin="2"
+                <Image Source="{Binding ImageSource}"
                        HorizontalAlignment="Left"
                        VerticalAlignment="Center" />
                 <TextBlock Text="{Binding Window.Title, ElementName=xThis}"
