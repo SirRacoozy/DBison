@@ -8,6 +8,6 @@ public interface ISearchParsingPlugin : IPlugin
     /// Parsing the search input.
     /// </summary>
     /// <param name="searchInput">The search input.</param>
-    /// <returns>Return the database info to which a connection should be opened.</returns>
+    /// <returns>The ConnectInfo or null if the plugin couldn't parse the input..</returns>
     ConnectInfo? ParseSearchInput(string searchInput);
 }

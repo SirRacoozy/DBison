@@ -19,9 +19,11 @@ using System.Windows.Threading;
 namespace DBison.WPF;
 public class MainWindowViewModel : ClientViewModelBase
 {
+    #region - needs -
     bool m_HasAddServerError = false;
     bool m_WasAutoConnectError = true;
-    DispatcherTimer m_ExecutionTimer;
+    DispatcherTimer m_ExecutionTimer; 
+    #endregion
 
     #region [Ctor]
     public MainWindowViewModel()

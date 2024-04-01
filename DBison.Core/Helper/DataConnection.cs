@@ -6,59 +6,76 @@ namespace DBison.Core.Helper;
 public class DataConnection : IDisposable
 {
     private bool m_DisposedValue;
+
     private readonly SqlConnection m_Connection;
 
+    #region [DataConnection]
     public DataConnection(DatabaseInfo dataBaseInfo)
     {
         if (dataBaseInfo == null || dataBaseInfo.Server == null || dataBaseInfo.Name.IsNullOrEmpty() || dataBaseInfo.Server.IsNullOrEmpty())
             return;
         m_Connection = DatabaseConnectionManager.Instance.AddOrGetConnection(dataBaseInfo.Server, dataBaseInfo);
     }
+    #endregion
 
+    #region [GetReader]
     public SqlDataReader GetReader(string sql)
     {
         __Prepare();
         return __GetCommand(sql).ExecuteReader();
     }
+    #endregion
 
-
+    #region [ExecuteNonQuery]
     public int ExecuteNonQuery(string sql)
     {
         __Prepare();
         return __GetCommand(sql).ExecuteNonQuery();
     }
+    #endregion
 
+    #region [ExecuteScalar]
     public object ExecuteScalar(string sql)
     {
         __Prepare();
         return __GetCommand(sql).ExecuteScalar();
     }
+    #endregion
 
+    #region [GetConnectionRef]
     public SqlConnection GetConnectionRef() => m_Connection;
+    #endregion
 
+    #region [CloseConnection]
     public void CloseConnection()
     {
         __CleanUp();
     }
+    #endregion
 
-
+    #region [__Prepare]
     private void __Prepare()
     {
         if (m_Connection.State != System.Data.ConnectionState.Open)
             m_Connection.Open();
     }
+    #endregion
 
+    #region [__CleanUp]
     private void __CleanUp()
     {
         m_Connection.Close();
     }
+    #endregion
 
+    #region [__GetCommand]
     private SqlCommand __GetCommand(string sqlText)
     {
         return new SqlCommand(sqlText, m_Connection);
     }
+    #endregion
 
-
+    #region [Dispose]
     protected virtual void Dispose(bool disposing)
     {
         if (!m_DisposedValue)
@@ -74,17 +91,13 @@ public class DataConnection : IDisposable
             m_DisposedValue = true;
         }
     }
+    #endregion
 
-    // // TODO: override finalizer only if 'Dispose(bool disposing)' has code to free unmanaged resources
-    // ~DataConnection()
-    // {
-    //     // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
-    //     Dispose(disposing: false);
-    // }
-
+    #region [Dispose]
     public void Dispose()
     {
         Dispose(disposing: true);
         GC.SuppressFinalize(this);
     }
+    #endregion   
 }

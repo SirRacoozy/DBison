@@ -14,21 +14,4 @@ public partial class MainWindow : MetroWindow
         InitializeComponent();
         DataContext = new MainWindowViewModel();
     }
-
-    private void __Click_Click(object sender, System.Windows.RoutedEventArgs e)
-    {
-#if DEBUG
-        __TestPluginSystem();
-#endif
-
-    }
-
-#if DEBUG
-    private static void __TestPluginSystem()
-    {
-        var loader = PluginLoader.Instance;
-
-        //_ = MessageBox.Show($"{r1.Name}\n{r2.Message}");
-    }
-#endif
 }

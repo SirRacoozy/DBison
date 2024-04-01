@@ -1,6 +1,7 @@
 ﻿namespace DBison.Core.Extender;
 public static class NumericExtender
 {
+    #region [ToLongValue]
     public static long ToLongValue(this object value)
     {
         if (value == null || DBNull.Value == value)
@@ -9,4 +10,5 @@ public static class NumericExtender
 
         return casted;
     }
+    #endregion
 }

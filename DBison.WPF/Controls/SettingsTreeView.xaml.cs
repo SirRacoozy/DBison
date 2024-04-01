@@ -8,16 +8,22 @@ namespace DBison.WPF.Controls;
 /// </summary>
 public partial class SettingsTreeView : UserControl
 {
+    #region [SettingsTreeView]
     public SettingsTreeView()
     {
         InitializeComponent();
     }
+    #endregion
 
+    #region [TreeView]
     public TreeView TreeView => ThisTreeView;
+    #endregion
 
+    #region [__SelectedItemChanged]
     private void __SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
     {
         if (sender is TreeView tv && tv.DataContext is SettingsTabViewModel settingsVm && tv.SelectedItem is SettingGroupViewModel groupVm)
             settingsVm.SelectedSettingsGroup = groupVm;
     }
+    #endregion
 }

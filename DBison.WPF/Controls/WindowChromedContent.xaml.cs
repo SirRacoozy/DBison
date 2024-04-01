@@ -1,5 +1,4 @@
-﻿using System.CodeDom.Compiler;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 
@@ -9,23 +8,36 @@ namespace DBison.WPF.Controls;
 /// </summary>
 public partial class WindowChromedContent : UserControl
 {
+    public static readonly DependencyProperty WindowProperty =
+        DependencyProperty.Register("Window", typeof(Window), typeof(WindowChromedContent), new PropertyMetadata(null, __WindowChanged));
+
+    public static readonly DependencyProperty ContentProperty =
+        DependencyProperty.Register("Content", typeof(UIElement), typeof(WindowChromedContent), new PropertyMetadata(null));
+
+    #region [WindowChromedContent]
     public WindowChromedContent()
     {
         InitializeComponent();
     }
+    #endregion
 
-
-
+    #region [Window]
     public Window Window
     {
         get { return (Window)GetValue(WindowProperty); }
         set { SetValue(WindowProperty, value); }
     }
+    #endregion
 
-    // Using a DependencyProperty as the backing store for Window.  This enables animation, styling, binding, etc...
-    public static readonly DependencyProperty WindowProperty =
-        DependencyProperty.Register("Window", typeof(Window), typeof(WindowChromedContent), new PropertyMetadata(null, __WindowChanged));
+    #region [Content]
+    public UIElement Content
+    {
+        get { return (UIElement)GetValue(ContentProperty); }
+        set { SetValue(ContentProperty, value); }
+    }
+    #endregion
 
+    #region [__WindowChanged]
     private static void __WindowChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
     {
         if (e.NewValue != null && e.NewValue is Window wnd)
@@ -37,7 +49,9 @@ public partial class WindowChromedContent : UserControl
             xThis.__AddCommandBindings();
         }
     }
+    #endregion
 
+    #region [__AddCommandBindings]
     private void __AddCommandBindings()
     {
         if (Window == null)
@@ -48,18 +62,9 @@ public partial class WindowChromedContent : UserControl
         Window.CommandBindings.Add(new CommandBinding(SystemCommands.MinimizeWindowCommand, __Execute_Minimize, __CanExecute));
         Window.CommandBindings.Add(new CommandBinding(SystemCommands.RestoreWindowCommand, __Execute_Restore, __CanExecute));
     }
+    #endregion
 
-    public UIElement Content
-    {
-        get { return (UIElement)GetValue(ContentProperty); }
-        set { SetValue(ContentProperty, value); }
-    }
-
-    // Using a DependencyProperty as the backing store for Content.  This enables animation, styling, binding, etc...
-    public static readonly DependencyProperty ContentProperty =
-        DependencyProperty.Register("Content", typeof(UIElement), typeof(WindowChromedContent), new PropertyMetadata(null));
-
-
+    #region [__MouseLeftButtonDown]
     private void __MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
     {
         if (Window == null)
@@ -72,7 +77,9 @@ public partial class WindowChromedContent : UserControl
                 SystemCommands.MaximizeWindow(Window);
         }
     }
+    #endregion
 
+    #region [__MainWindowStateChangeRaised]
     private void __MainWindowStateChangeRaised(object sender, EventArgs e)
     {
         if (Window == null)
@@ -88,30 +95,40 @@ public partial class WindowChromedContent : UserControl
             MaximizeButton.Visibility = Visibility.Visible;
         }
     }
+    #endregion
 
+    #region [__CanExecute]
     private void __CanExecute(object sender, CanExecuteRoutedEventArgs e)
     {
         e.CanExecute = true;
     }
+    #endregion
 
+    #region [__Execute_Minimize]
     private void __Execute_Minimize(object sender, ExecutedRoutedEventArgs e)
     {
         SystemCommands.MinimizeWindow(Window);
     }
+    #endregion
 
+    #region [__Execute_Maximize]
     private void __Execute_Maximize(object sender, ExecutedRoutedEventArgs e)
     {
         SystemCommands.MaximizeWindow(Window);
     }
+    #endregion
 
+    #region [__Execute_Restore]
     private void __Execute_Restore(object sender, ExecutedRoutedEventArgs e)
     {
         SystemCommands.RestoreWindow(Window);
     }
+    #endregion
 
+    #region [__Execute_Close]
     private void __Execute_Close(object sender, ExecutedRoutedEventArgs e)
     {
         SystemCommands.CloseWindow(Window);
     }
-
+    #endregion
 }

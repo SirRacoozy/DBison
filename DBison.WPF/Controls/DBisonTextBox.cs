@@ -4,27 +4,36 @@ using System.Windows.Controls;
 
 namespace DBison.WPF.Controls
 {
-    public class DBisonTextBox : TextBox
+    public class __DBisonTextBox : TextBox
     {
-        public DBisonTextBox()
+        #region - needs -
+        public static readonly DependencyProperty CornerRadiusProperty =
+            DependencyProperty.Register("CornerRadius", typeof(CornerRadius), typeof(__DBisonTextBox)); 
+        #endregion
+
+        #region [__DBisonTextBox]
+        public __DBisonTextBox()
         {
             TextChanged += __DBisonTextBox_TextChanged;
         }
-        static DBisonTextBox()
+        #endregion
+
+        #region [__DBisonTextBox]
+        static __DBisonTextBox()
         {
-            DefaultStyleKeyProperty.OverrideMetadata(typeof(DBisonTextBox), new FrameworkPropertyMetadata(typeof(DBisonTextBox)));
+            DefaultStyleKeyProperty.OverrideMetadata(typeof(__DBisonTextBox), new FrameworkPropertyMetadata(typeof(__DBisonTextBox)));
         }
+        #endregion
 
-        public static readonly DependencyProperty CornerRadiusProperty =
-            DependencyProperty.Register("CornerRadius", typeof(CornerRadius), typeof(DBisonTextBox));
-
+        #region [CornerRadius]
         public CornerRadius CornerRadius
         {
             get { return (CornerRadius)GetValue(CornerRadiusProperty); }
             set { SetValue(CornerRadiusProperty, value); }
         }
+        #endregion
 
-
+        #region [__DBisonTextBox_TextChanged]
         private void __DBisonTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
             if (sender is TextBox tb)
@@ -35,5 +44,6 @@ namespace DBison.WPF.Controls
                     TextBoxHelper.SetClearTextButton(tb, false);
             }
         }
+        #endregion
     }
 }

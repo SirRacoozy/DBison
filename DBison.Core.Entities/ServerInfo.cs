@@ -3,10 +3,12 @@
 namespace DBison.Core.Entities;
 public class ServerInfo : DatabaseObjectBase
 {
+    #region - ctor -
     public ServerInfo(string serverName) : base(serverName, null, null)
     {
         Name = serverName;
-    }
+    } 
+    #endregion
 
     #region [ServerName]
     /// <summary>

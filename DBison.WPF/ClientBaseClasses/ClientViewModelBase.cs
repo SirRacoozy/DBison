@@ -1,4 +1,4 @@
-﻿using DBison.Core.Baseclasses;
+﻿using DBison.Core.BaseClasses;
 using DBison.Core.Entities;
 using DBison.Core.Helper;
 using DBison.Core.Utils.Commands;
@@ -12,6 +12,7 @@ namespace DBison.WPF.ClientBaseClasses
 {
     public class ClientViewModelBase : ViewModelBase
     {
+        #region - ctor -
         public ClientViewModelBase()
         {
             ForeGround = Settings.UseDarkMode ? Brushes.White : Brushes.Black;
@@ -23,7 +24,8 @@ namespace DBison.WPF.ClientBaseClasses
                     BackGround = Settings.UseDarkMode ? Brushes.Gray : Brushes.White;
                 }
             };
-        }
+        } 
+        #endregion
 
         #region [ForeGround]
         public Brush ForeGround

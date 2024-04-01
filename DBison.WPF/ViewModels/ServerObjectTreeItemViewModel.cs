@@ -20,10 +20,12 @@ namespace DBison.WPF.ViewModels;
 
 public class ServerObjectTreeItemViewModel : ClientViewModelBase
 {
+    #region - needs -
     readonly ServerQueryHelper m_ServerQueryHelper;
     readonly ServerViewModel m_ServerVm;
     readonly MainWindowViewModel m_MainWindowViewModel;
-    private readonly string m_MSSQLDriver = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\WOW6432Node\ODBC\ODBCINST.INI\SQL Server").GetValue("Driver").ToStringValue();
+    private readonly string m_MSSQLDriver = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\WOW6432Node\ODBC\ODBCINST.INI\SQL Server").GetValue("Driver").ToStringValue(); 
+    #endregion
 
     #region - Icons -
     private readonly PackIconMaterial m_RestoreIcon = new () { Kind = PackIconMaterialKind.Restore, Width = 20, Height = 20, };

@@ -6,6 +6,8 @@ namespace DBison.Core.Extender;
 public static class StringExtender
 {
     private const StringSplitOptions m_STRINGSPLITTING_NO_EMPTY_TRIM = StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries;
+
+    #region [ToStringValue]
     public static string ToStringValue(this object rawValue)
     {
         if (rawValue == null)
@@ -15,20 +17,31 @@ public static class StringExtender
         else
             return rawValue.ToString();
     }
+    #endregion
 
+    #region [IsNotNullOrEmpty]
     public static bool IsNotNullOrEmpty(this string value)
         => !string.IsNullOrEmpty(value);
+    #endregion
+
+    #region [IsNullOrEmpty]
     public static bool IsNullOrEmpty(this string value)
         => string.IsNullOrEmpty(value);
 
     public static bool IsNullOrEmpty(this object value) => value == null || value.ToString()?.Trim().Length == 0;
+    #endregion
 
+    #region [ToByteArray]
     public static byte[] ToByteArray(this string value)
         => Encoding.UTF8.GetBytes(value);
+    #endregion
 
+    #region [ToUTF8String]
     public static string ToUTF8String(this string value)
         => Encoding.Unicode.GetString(Encoding.UTF8.GetBytes(value));
+    #endregion
 
+    #region [IsEquals]
     public static bool IsEquals(this string value, string valueToCompare)
     {
         if (value == null && valueToCompare == null)
@@ -38,16 +51,23 @@ public static class StringExtender
 
         return value.Equals(valueToCompare, StringComparison.InvariantCultureIgnoreCase);
     }
+    #endregion
 
+    #region [IsNullEmptyOrWhitespace]
     public static bool IsNullEmptyOrWhitespace(this string value)
     {
         return string.IsNullOrEmpty(value) || string.IsNullOrWhiteSpace(value);
     }
+    #endregion
+
+    #region [IsNotNullEmptyOrWhitespace]
     public static bool IsNotNullEmptyOrWhitespace(this string value)
     {
         return !IsNullEmptyOrWhitespace(value);
     }
+    #endregion
 
+    #region [ConvertToSelectStatement]
     public static (string, eDMLOperator) ConvertToSelectStatement(this string value)
     {
         if (value.IsNullEmptyOrWhitespace())
@@ -72,7 +92,9 @@ public static class StringExtender
         return (string.Empty, eDMLOperator.None);
 
     }
+    #endregion
 
+    #region [__ConvertInsertToSelectStatement]
     private static string __ConvertInsertToSelectStatement(string value)
     {
         var match = Regex.Match(value, @"INSERT INTO (\w+) ?\((.+)\) VALUES (\(.+\)),+", RegexOptions.IgnoreCase);
@@ -95,6 +117,9 @@ public static class StringExtender
 
         return string.Join("; ", selectStatements);
     }
+    #endregion
+
+    #region [__ConvertDeleteToSelectStatement]
     private static string __ConvertDeleteToSelectStatement(string value)
     {
         var match = Regex.Match(value, @"DELETE FROM (\w+) WHERE (.+)", RegexOptions.IgnoreCase);
@@ -109,6 +134,9 @@ public static class StringExtender
 
         return $"SELECT * FROM {table} WHERE {whereClause}";
     }
+    #endregion
+
+    #region [__ConvertUpdateToSelectStatement]
     private static string __ConvertUpdateToSelectStatement(string value)
     {
         var match = Regex.Match(value, @"UPDATE (\w+) SET (.+) WHERE (.+)", RegexOptions.IgnoreCase);
@@ -123,4 +151,5 @@ public static class StringExtender
 
         return $"SELECT * FROM {table} WHERE {whereClause}";
     }
+    #endregion
 }
