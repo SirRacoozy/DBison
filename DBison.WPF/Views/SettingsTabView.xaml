@@ -101,12 +101,12 @@
                                                 <Button Command="{Binding [OpenFolderDialog]}"
                                                         Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}"
                                                         Grid.Column="0">
-                                                  <iconPacks:PackIconFontAwesome Kind="FolderOpenRegular"/>
+                                                  <iconPacks:PackIconFontAwesome Kind="FolderOpenRegular" />
                                                 </Button>
                                                 <TextBlock Text="{Binding Value}"
                                                            Grid.Column="1"
                                                            VerticalAlignment="Center"
-                                                           Foreground="{Binding ForeGround}"/>
+                                                           Foreground="{Binding ForeGround}" />
                                               </Grid>
                                             </DataTemplate>
                                           </Setter.Value>
@@ -120,7 +120,7 @@
                                             <DataTemplate>
                                               <PasswordBox DataContext="{Binding DataContext, ElementName=this}"
                                                            helperobjects:PasswordHelper.Attach="True"
-                                                           helperobjects:PasswordHelper.Password="{Binding Value, ElementName=plain, Mode=TwoWay}"/>
+                                                           helperobjects:PasswordHelper.Password="{Binding Value, ElementName=plain, Mode=TwoWay}" />
                                             </DataTemplate>
                                           </Setter.Value>
                                         </Setter>
@@ -136,7 +136,7 @@
                       </DataTrigger>
                       <!--Int32-->
                       <DataTrigger Binding="{Binding SettingType, Mode=TwoWay}"
-                                                         Value="{x:Type system:Int32}">
+                                   Value="{x:Type system:Int32}">
                         <Setter Property="ContentTemplate">
                           <Setter.Value>
                             <DataTemplate>
@@ -150,7 +150,7 @@
                       </DataTrigger>
                       <!--UInt32-->
                       <DataTrigger Binding="{Binding SettingType, Mode=TwoWay}"
-                                                         Value="{x:Type system:UInt32}">
+                                   Value="{x:Type system:UInt32}">
                         <Setter Property="ContentTemplate">
                           <Setter.Value>
                             <DataTemplate>
@@ -164,7 +164,7 @@
                       </DataTrigger>
                       <!--Double-->
                       <DataTrigger Binding="{Binding SettingType, Mode=TwoWay}"
-                                                         Value="{x:Type system:Double}">
+                                   Value="{x:Type system:Double}">
                         <Setter Property="ContentTemplate">
                           <Setter.Value>
                             <DataTemplate>
@@ -184,6 +184,19 @@
                             <DataTemplate>
                               <mah:DateTimePicker SelectedDateTime="{Binding Value, Mode=TwoWay}"
                                                   DataContext="{Binding DataContext, ElementName=this}" />
+                            </DataTemplate>
+                          </Setter.Value>
+                        </Setter>
+                      </DataTrigger>
+                      <!--DateTime-->
+                      <DataTrigger Binding="{Binding SettingType, Mode=TwoWay}"
+                                   Value="{x:Type system:Enum}">
+                        <Setter Property="ContentTemplate">
+                          <Setter.Value>
+                            <DataTemplate>
+                              <ComboBox SelectedValue="{Binding Value, Mode=TwoWay}"
+                                        ItemsSource="{Binding ListValues}"
+                                        DataContext="{Binding DataContext, ElementName=this}" />
                             </DataTemplate>
                           </Setter.Value>
                         </Setter>

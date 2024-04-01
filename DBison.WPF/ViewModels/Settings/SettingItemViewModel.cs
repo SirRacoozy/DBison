@@ -94,6 +94,12 @@ public class SettingItemViewModel : ClientViewModelBase
         set => Set(value);
     }
 
+    public List<object> ListValues
+    {
+        get => Get<List<object>>();
+        set => Set(value);
+    }
+
     public void Execute_OpenFolderDialog()
     {
         __OpenFolderDialog();
@@ -111,6 +117,19 @@ public class SettingItemViewModel : ClientViewModelBase
         StringStyleVariation = SettingAttribute.StringStyleVariation;
         if (SettingType == typeof(uint) || SettingType == typeof(int))
             Value = Convert.ToDouble(value);
+        else if (SettingType == typeof(Enum))
+        {
+            var values = Enum.GetValues(propertyInfo.PropertyType);
+            ListValues = new List<object>();
+            if (values != null)
+            {
+                foreach (var enumvalue in values)
+                {
+                    ListValues.Add(enumvalue);
+                }
+            }
+            Value = value;
+        }
         else
             Value = value;
 

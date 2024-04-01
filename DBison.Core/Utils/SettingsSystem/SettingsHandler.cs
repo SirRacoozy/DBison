@@ -33,6 +33,12 @@ public static class SettingsHandler
 
             if (typeof(T) == typeof(List<string>))
                 return (T)Convert.ChangeType(JsonConvert.DeserializeObject<List<string>>(setting), typeof(List<string>));
+            else if(typeof(T).IsEnum)
+            {
+                Enum.TryParse(typeof(T), setting, true, out object myEnum);
+                return (T)myEnum;
+            }
+
 
             return string.IsNullOrEmpty(setting) ? defaultValue : (T)Convert.ChangeType(setting, typeof(T));
         }

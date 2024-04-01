@@ -35,7 +35,10 @@ public class ServerInfo : DatabaseObjectBase
     /// <summary>
     /// Gets or sets the username.
     /// </summary>
-    public string Username { get; set; } = string.Empty;
+    public string Username { 
+        get; 
+        set;
+    } = string.Empty;
     #endregion
 
     #region [Password]
