@@ -22,10 +22,16 @@ namespace DBison.WPF.ClientBaseClasses
                 {
                     ForeGround = Settings.UseDarkMode ? Brushes.White : Brushes.Black;
                     BackGround = Settings.UseDarkMode ? Brushes.Gray : Brushes.White;
+                    OnPropertyChanged(nameof(ImageSource));
                 }
             };
         } 
         #endregion
+
+        public string ImageSource
+        {
+            get => Settings.UseDarkMode ? "./../Resources/AppIcon_White.ico" : "./../Resources/AppIcon.ico";
+        }
 
         #region [ForeGround]
         public Brush ForeGround

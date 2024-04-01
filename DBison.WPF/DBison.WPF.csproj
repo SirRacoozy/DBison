@@ -14,10 +14,14 @@
 
   <ItemGroup>
     <None Remove="Resources\AppIcon.ico" />
+    <None Remove="Resources\AppIcon_White.ico" />
   </ItemGroup>
 
   <ItemGroup>
     <Content Include="Resources\AppIcon.ico">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\AppIcon_White.ico">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
