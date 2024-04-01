@@ -42,13 +42,6 @@
 
     </mah:MetroWindow.InputBindings>
 
-    <Window.Resources>
-
-        <ResourceDictionary>
-            <local:WidthDividerConverter x:Key="WidthDividerConverter" />
-        </ResourceDictionary>
-    </Window.Resources>
-
     <WindowChrome.WindowChrome>
         <WindowChrome UseAeroCaptionButtons="False" />
     </WindowChrome.WindowChrome>

@@ -3,12 +3,12 @@ using System.Windows.Controls;
 
 namespace DBison.WPF.Controls
 {
-    public class __LineNumberedTextBox : TextBox
+    public class LineNumberedTextBox : TextBox
     {
-        #region [__LineNumberedTextBox]
-        static __LineNumberedTextBox()
+        #region - ctor -
+        static LineNumberedTextBox()
         {
-            DefaultStyleKeyProperty.OverrideMetadata(typeof(__LineNumberedTextBox), new FrameworkPropertyMetadata(typeof(__LineNumberedTextBox)));
+            DefaultStyleKeyProperty.OverrideMetadata(typeof(LineNumberedTextBox), new FrameworkPropertyMetadata(typeof(LineNumberedTextBox)));
         }
         #endregion
 

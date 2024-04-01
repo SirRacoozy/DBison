@@ -149,7 +149,9 @@ public class SettingItemViewModel : ClientViewModelBase
         Tooltip = SettingAttribute.ToolTip;
         StringStyleVariation = SettingAttribute.StringStyleVariation;
         if (SettingType == typeof(uint) || SettingType == typeof(int))
+        {
             Value = Convert.ToDouble(value);
+        }
         else if (SettingType == typeof(Enum))
         {
             var values = Enum.GetValues(propertyInfo.PropertyType);
@@ -164,7 +166,9 @@ public class SettingItemViewModel : ClientViewModelBase
             Value = value;
         }
         else
+        {
             Value = value;
+        }
 
         if (rangeAttribute != null)
         {

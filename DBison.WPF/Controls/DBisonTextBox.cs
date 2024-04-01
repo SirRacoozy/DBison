@@ -4,24 +4,22 @@ using System.Windows.Controls;
 
 namespace DBison.WPF.Controls
 {
-    public class __DBisonTextBox : TextBox
+    public class DBisonTextBox : TextBox
     {
         #region - needs -
         public static readonly DependencyProperty CornerRadiusProperty =
-            DependencyProperty.Register("CornerRadius", typeof(CornerRadius), typeof(__DBisonTextBox)); 
+            DependencyProperty.Register("CornerRadius", typeof(CornerRadius), typeof(DBisonTextBox)); 
         #endregion
 
-        #region [__DBisonTextBox]
-        public __DBisonTextBox()
+        #region - ctor -
+        public DBisonTextBox()
         {
             TextChanged += __DBisonTextBox_TextChanged;
         }
-        #endregion
 
-        #region [__DBisonTextBox]
-        static __DBisonTextBox()
+        static DBisonTextBox()
         {
-            DefaultStyleKeyProperty.OverrideMetadata(typeof(__DBisonTextBox), new FrameworkPropertyMetadata(typeof(__DBisonTextBox)));
+            DefaultStyleKeyProperty.OverrideMetadata(typeof(DBisonTextBox), new FrameworkPropertyMetadata(typeof(DBisonTextBox)));
         }
         #endregion
 
