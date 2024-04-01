@@ -10,25 +10,7 @@
     <KeyBinding Key="F5"
                 Command="{Binding [ExecuteSQL]}" />
   </controls:UserControlBase.InputBindings>
-
-  <controls:UserControlBase.Resources>
-    <Style TargetType="{x:Type controls:DBisonTextBox}">
-      <Setter Property="FontSize"
-              Value="16" />
-      <Setter Property="Padding"
-              Value="5" />
-      <Setter Property="Template">
-        <Setter.Value>
-          <ControlTemplate TargetType="{x:Type controls:DBisonTextBox}">
-            <Border BorderBrush="Transparent"
-                    CornerRadius="10">
-              <ScrollViewer x:Name="PART_ContentHost" />
-            </Border>
-          </ControlTemplate>
-        </Setter.Value>
-      </Setter>
-    </Style>
-  </controls:UserControlBase.Resources>
+  
 
   <Border CornerRadius="10"
           BorderBrush="#00747C"

@@ -15,11 +15,7 @@ namespace DBison.WPF.Controls
         public DBisonTextBox()
         {
             TextChanged += __DBisonTextBox_TextChanged;
-        }
-
-        static DBisonTextBox()
-        {
-            DefaultStyleKeyProperty.OverrideMetadata(typeof(DBisonTextBox), new FrameworkPropertyMetadata(typeof(DBisonTextBox)));
+            
         }
         #endregion
 
@@ -34,7 +30,7 @@ namespace DBison.WPF.Controls
         #region [__DBisonTextBox_TextChanged]
         private void __DBisonTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-            if (sender is TextBox tb)
+            if (sender is DBisonTextBox tb)
             {
                 if (tb.Text.Length > 0)
                     TextBoxHelper.SetClearTextButton(tb, true);
