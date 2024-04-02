@@ -10,10 +10,10 @@ assignees: ''
 **Describe the bug**
 A clear and concise description of what the bug is.
 
-**Severity**
-- [ ]  It bothers a little bit
-- [ ] I have a workaround to keep working
-- [ ] Can't work with this
+**Severity** (remove the excessive)
+- It bothers a little bit
+- I have a workaround to keep working
+- Can't work with this
 
 **To Reproduce**
 Steps to reproduce the behavior:
