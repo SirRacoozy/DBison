@@ -477,6 +477,7 @@ public class MainWindowViewModel : ClientViewModelBase
     private void __HandleSettingsChanged()
     {
         Application.Current.Resources["GlobalFontSize"] = Convert.ToDouble(Settings.FontSize);
+        Application.Current.Resources["GlobalScaleFactor"] = Settings.UIScaling;
         SettingsHandler.SettingChanged += __SettingsHandler_SettingChanged;
     }
     #endregion
@@ -501,6 +502,10 @@ public class MainWindowViewModel : ClientViewModelBase
         else if (e.ChangedSettingName == nameof(Settings.FontSize))
         {
             Application.Current.Resources["GlobalFontSize"] = Convert.ToDouble(Settings.FontSize);
+        }
+        else if (e.ChangedSettingName == nameof(Settings.UIScaling))
+        {
+            Application.Current.Resources["GlobalScaleFactor"] = Settings.UIScaling;
         }
     }
     #endregion

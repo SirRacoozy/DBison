@@ -149,6 +149,7 @@
                                                             <mah:NumericUpDown Value="{Binding Value, Mode=TwoWay}"
                                                                                Minimum="{Binding Minimum, Mode=OneWay}"
                                                                                Maximum="{Binding Maximum, Mode=OneWay}"
+                                                                               Interval="{Binding Interval, Mode=OneWay}"
                                                                                DataContext="{Binding DataContext, ElementName=this}"
                                                                                mah:ControlsHelper.CornerRadius="{StaticResource ControlCornerRadius}"
                                                                                FontSize="{DynamicResource GlobalFontSize}"/>
@@ -165,6 +166,7 @@
                                                             <mah:NumericUpDown Value="{Binding Value, Mode=TwoWay}"
                                                                                Minimum="{Binding Minimum, Mode=OneWay}"
                                                                                Maximum="{Binding Maximum, Mode=OneWay}"
+                                                                               Interval="{Binding Interval, Mode=OneWay}"
                                                                                DataContext="{Binding DataContext, ElementName=this}"
                                                                                mah:ControlsHelper.CornerRadius="{StaticResource ControlCornerRadius}"
                                                                                FontSize="{DynamicResource GlobalFontSize}"/>
@@ -181,6 +183,7 @@
                                                             <mah:NumericUpDown Value="{Binding Value, Mode=TwoWay}"
                                                                                Minimum="{Binding Minimum, Mode=OneWay}"
                                                                                Maximum="{Binding Maximum, Mode=OneWay}"
+                                                                               Interval="{Binding Interval, Mode=OneWay}"
                                                                                DataContext="{Binding DataContext, ElementName=this}"
                                                                                mah:ControlsHelper.CornerRadius="{StaticResource ControlCornerRadius}"
                                                                                FontSize="{DynamicResource GlobalFontSize}"/>

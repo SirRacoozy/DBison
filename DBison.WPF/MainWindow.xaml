@@ -16,6 +16,13 @@
                  x:Name="this"
                  Icon="{Binding IconSource}">
 
+    <mah:MetroWindow.LayoutTransform>
+        <ScaleTransform ScaleX="{DynamicResource GlobalScaleFactor}"
+                        ScaleY="{DynamicResource GlobalScaleFactor}"
+                        CenterX="0"
+                        CenterY="0" />
+    </mah:MetroWindow.LayoutTransform>
+
     <mah:MetroWindow.InputBindings>
         <KeyBinding Modifiers="Ctrl"
                     Key="T"

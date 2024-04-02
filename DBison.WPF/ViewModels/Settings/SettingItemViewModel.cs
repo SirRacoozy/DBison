@@ -2,6 +2,7 @@
 using DBison.Core.Entities.Enums;
 using DBison.Core.Extender;
 using DBison.Core.Utils.Commands;
+using DBison.Core.Utils.SettingsSystem;
 using DBison.WPF.ClientBaseClasses;
 using System.ComponentModel.DataAnnotations;
 using System.Reflection;
@@ -114,6 +115,14 @@ public class SettingItemViewModel : ClientViewModelBase
     }
     #endregion
 
+    #region [Interval]
+    public double Interval
+    {
+        get => Get<double>();
+        set => Set(value);
+    }
+    #endregion
+
     #region [StringStyleVariation]
     public eStringStyleVariation StringStyleVariation
     {
@@ -180,6 +189,10 @@ public class SettingItemViewModel : ClientViewModelBase
             Minimum = 0;
             Maximum = double.MaxValue;
         }
+        if (propertyInfo.Name == nameof(Settings.UIScaling))
+            Interval = 0.1;
+        else
+            Interval = 1;
         m_Loaded = true;
     }
     #endregion
