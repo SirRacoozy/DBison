@@ -16,56 +16,56 @@
                  x:Name="this"
                  Icon="{Binding IconSource}">
 
-    <mah:MetroWindow.LayoutTransform>
-        <ScaleTransform ScaleX="{DynamicResource GlobalScaleFactor}"
-                        ScaleY="{DynamicResource GlobalScaleFactor}"
-                        CenterX="0"
-                        CenterY="0" />
-    </mah:MetroWindow.LayoutTransform>
+  <mah:MetroWindow.LayoutTransform>
+    <ScaleTransform ScaleX="{DynamicResource GlobalScaleFactor}"
+                    ScaleY="{DynamicResource GlobalScaleFactor}"
+                    CenterX="0"
+                    CenterY="0" />
+  </mah:MetroWindow.LayoutTransform>
 
-    <mah:MetroWindow.InputBindings>
-        <KeyBinding Modifiers="Ctrl"
-                    Key="T"
-                    Command="{Binding [NewQuery]}" />
+  <mah:MetroWindow.InputBindings>
+    <KeyBinding Modifiers="Ctrl"
+                Key="T"
+                Command="{Binding [NewQuery]}" />
 
-        <KeyBinding Modifiers="Ctrl"
-                    Key="W"
-                    Command="{Binding SelectedTabItem.[Close]}" />
+    <KeyBinding Modifiers="Ctrl"
+                Key="W"
+                Command="{Binding SelectedTabItem.[Close]}" />
 
-        <KeyBinding Modifiers="Ctrl"
-                    Key="S"
-                    Command="{Binding SelectedTabItem.[SaveQueryAs]}" />
+    <KeyBinding Modifiers="Ctrl"
+                Key="S"
+                Command="{Binding SelectedTabItem.[SaveQueryAs]}" />
 
-        <KeyBinding Modifiers="Ctrl"
-                    Key="O"
-                    Command="{Binding [OpenQueryFromFile]}" />
+    <KeyBinding Modifiers="Ctrl"
+                Key="O"
+                Command="{Binding [OpenQueryFromFile]}" />
 
-        <KeyBinding Modifiers="Ctrl"
-                    Key="Q"
-                    Command="{Binding [QuitApplication]}" />
+    <KeyBinding Modifiers="Ctrl"
+                Key="Q"
+                Command="{Binding [QuitApplication]}" />
 
-        <KeyBinding Modifiers="Ctrl"
-                    Key="R"
-                    Command="{Binding [RestartApplication]}" />
+    <KeyBinding Modifiers="Ctrl"
+                Key="R"
+                Command="{Binding [RestartApplication]}" />
 
-        <KeyBinding Modifiers="Ctrl"
-                    Key="K"
-                    Command="{Binding [ConnectParseConnect]}" />
+    <KeyBinding Modifiers="Ctrl"
+                Key="K"
+                Command="{Binding [ConnectParseConnect]}" />
 
-    </mah:MetroWindow.InputBindings>
+  </mah:MetroWindow.InputBindings>
 
-    <WindowChrome.WindowChrome>
-        <WindowChrome UseAeroCaptionButtons="False" />
-    </WindowChrome.WindowChrome>
+  <WindowChrome.WindowChrome>
+    <WindowChrome UseAeroCaptionButtons="False" />
+  </WindowChrome.WindowChrome>
 
-    <Border x:Name="MainWindowBorder"
-            BorderBrush="DarkRed"
-            BorderThickness="0">
-        <controls:WindowChromedContent Window="{Binding ElementName=this}">
-            <controls:WindowChromedContent.Content>
-                <views:ServerTabbedPage Grid.Row="1" />
-            </controls:WindowChromedContent.Content>
-        </controls:WindowChromedContent>
-    </Border>
+  <Border x:Name="MainWindowBorder"
+          BorderBrush="DarkRed"
+          BorderThickness="0">
+    <controls:WindowChromedContent Window="{Binding ElementName=this}">
+      <controls:WindowChromedContent.Content>
+        <views:ServerTabbedPage Grid.Row="1" />
+      </controls:WindowChromedContent.Content>
+    </controls:WindowChromedContent>
+  </Border>
 </mah:MetroWindow>
   

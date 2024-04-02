@@ -9,249 +9,249 @@
              xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
              xmlns:helperobjects="clr-namespace:DBison.WPF.HelperObjects">
 
-    <UserControl.Resources>
-        <Style TargetType="ItemsControl">
-            <Setter Property="ItemTemplate">
-                <Setter.Value>
-                    <DataTemplate>
-                        <Grid Margin="0 0 0 10"
-                              Visibility="{Binding SettingVisibility, Mode=TwoWay}">
+  <UserControl.Resources>
+    <Style TargetType="ItemsControl">
+      <Setter Property="ItemTemplate">
+        <Setter.Value>
+          <DataTemplate>
+            <Grid Margin="0 0 0 10"
+                  Visibility="{Binding SettingVisibility, Mode=TwoWay}">
 
-                            <Grid.Resources>
-                                <Style TargetType="TextBlock">
-                                    <Setter Property="FontSize"
-                                            Value="{DynamicResource GlobalFontSize}" />
-                                </Style>
-                            </Grid.Resources>
+              <Grid.Resources>
+                <Style TargetType="TextBlock">
+                  <Setter Property="FontSize"
+                          Value="{DynamicResource GlobalFontSize}" />
+                </Style>
+              </Grid.Resources>
 
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="1*" />
-                                <ColumnDefinition Width="*" />
-                            </Grid.ColumnDefinitions>
-                            <TextBlock Text="{Binding Name}"
-                                       ToolTip="{Binding Tooltip}"
-                                       Grid.Column="0"
-                                       Foreground="{Binding ForeGround}" />
-
-                            <ContentControl Grid.Column="2"
-                                            Margin="5 0 0 0"
-                                            MinWidth="200"
-                                            HorizontalAlignment="Left"
-                                            x:Name="this">
-                                <ContentControl.Style>
-                                    <Style TargetType="ContentControl">
-                                        <Setter Property="Content">
-                                            <Setter.Value>
-                                                <TextBlock Text="NOT IMPLEMENTED TYPE" />
-                                            </Setter.Value>
-                                        </Setter>
-
-                                        <Style.Triggers>
-                                            <!--Boolean-->
-                                            <DataTrigger Binding="{Binding SettingType, Mode=TwoWay}"
-                                                         Value="{x:Type system:Boolean}">
-                                                <Setter Property="ContentTemplate">
-                                                    <Setter.Value>
-                                                        <DataTemplate>
-                                                            <mah:ToggleSwitch IsOn="{Binding Value, Mode=TwoWay}"
-                                                                              DataContext="{Binding DataContext, ElementName=this}"
-                                                                              FontSize="{DynamicResource GlobalFontSize}" />
-                                                        </DataTemplate>
-                                                    </Setter.Value>
-                                                </Setter>
-                                            </DataTrigger>
-                                            <!--String-->
-                                            <DataTrigger Binding="{Binding SettingType, Mode=TwoWay}"
-                                                         Value="{x:Type system:String}">
-                                                <Setter Property="ContentTemplate">
-                                                    <Setter.Value>
-                                                        <DataTemplate>
-                                                            <ContentControl DataContext="{Binding DataContext, ElementName=this}">
-                                                                <ContentControl.Style>
-                                                                    <Style TargetType="ContentControl">
-                                                                        <Setter Property="Content">
-                                                                            <Setter.Value>
-                                                                                <TextBlock Text="NOT IMPLEMENTED TYPE" />
-                                                                            </Setter.Value>
-                                                                        </Setter>
-                                                                        <Style.Triggers>
-                                                                            <!-- Default -->
-                                                                            <DataTrigger Binding="{Binding StringStyleVariation}"
-                                                                                         Value="{x:Static enums:eStringStyleVariation.Default}">
-                                                                                <Setter Property="ContentTemplate">
-                                                                                    <Setter.Value>
-                                                                                        <DataTemplate>
-                                                                                            <TextBox DataContext="{Binding DataContext, ElementName=this}"
-                                                                                                     Text="{Binding Value, Mode=TwoWay}"
-                                                                                                     mah:ControlsHelper.CornerRadius="{StaticResource ControlCornerRadius}"
-                                                                                                     helperobjects:TextBoxHelperExtension.AutoClearTextButton="True"
-                                                                                                     FontSize="{DynamicResource GlobalFontSize}" />
-                                                                                        </DataTemplate>
-                                                                                    </Setter.Value>
-                                                                                </Setter>
-                                                                            </DataTrigger>
-                                                                            <!-- Path -->
-                                                                            <DataTrigger Binding="{Binding StringStyleVariation}"
-                                                                                         Value="{x:Static enums:eStringStyleVariation.Path}">
-                                                                                <Setter Property="ContentTemplate">
-                                                                                    <Setter.Value>
-                                                                                        <DataTemplate>
-                                                                                            <Grid DataContext="{Binding DataContext, ElementName=this}">
-                                                                                                <Grid.ColumnDefinitions>
-                                                                                                    <ColumnDefinition Width="Auto" />
-                                                                                                    <ColumnDefinition Width="*" />
-                                                                                                </Grid.ColumnDefinitions>
-                                                                                                <Button Command="{Binding [OpenFolderDialog]}"
-                                                                                                        Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}"
-                                                                                                        Grid.Column="0">
-                                                                                                    <iconPacks:PackIconFontAwesome Kind="FolderOpenRegular" />
-                                                                                                </Button>
-                                                                                                <TextBlock Text="{Binding Value}"
-                                                                                                           Grid.Column="1"
-                                                                                                           VerticalAlignment="Center"
-                                                                                                           Foreground="{Binding ForeGround}"
-                                                                                                           FontSize="{DynamicResource GlobalFontSize}" />
-                                                                                            </Grid>
-                                                                                        </DataTemplate>
-                                                                                    </Setter.Value>
-                                                                                </Setter>
-                                                                            </DataTrigger>
-                                                                            <!-- Password -->
-                                                                            <DataTrigger Binding="{Binding StringStyleVariation}"
-                                                                                         Value="{x:Static enums:eStringStyleVariation.Password}">
-                                                                                <Setter Property="ContentTemplate">
-                                                                                    <Setter.Value>
-                                                                                        <DataTemplate>
-                                                                                            <PasswordBox DataContext="{Binding DataContext, ElementName=this}"
-                                                                                                         helperobjects:PasswordHelper.Attach="True"
-                                                                                                         helperobjects:PasswordHelper.Password="{Binding Value, ElementName=plain, Mode=TwoWay}"
-                                                                                                         mah:ControlsHelper.CornerRadius="{StaticResource ControlCornerRadius}"
-                                                                                                         FontSize="{DynamicResource GlobalFontSize}"/>
-                                                                                        </DataTemplate>
-                                                                                    </Setter.Value>
-                                                                                </Setter>
-                                                                            </DataTrigger>
-                                                                        </Style.Triggers>
-
-                                                                    </Style>
-                                                                </ContentControl.Style>
-                                                            </ContentControl>
-                                                        </DataTemplate>
-                                                    </Setter.Value>
-                                                </Setter>
-                                            </DataTrigger>
-                                            <!--Int32-->
-                                            <DataTrigger Binding="{Binding SettingType, Mode=TwoWay}"
-                                                         Value="{x:Type system:Int32}">
-                                                <Setter Property="ContentTemplate">
-                                                    <Setter.Value>
-                                                        <DataTemplate>
-                                                            <mah:NumericUpDown Value="{Binding Value, Mode=TwoWay}"
-                                                                               Minimum="{Binding Minimum, Mode=OneWay}"
-                                                                               Maximum="{Binding Maximum, Mode=OneWay}"
-                                                                               Interval="{Binding Interval, Mode=OneWay}"
-                                                                               DataContext="{Binding DataContext, ElementName=this}"
-                                                                               mah:ControlsHelper.CornerRadius="{StaticResource ControlCornerRadius}"
-                                                                               FontSize="{DynamicResource GlobalFontSize}"/>
-                                                        </DataTemplate>
-                                                    </Setter.Value>
-                                                </Setter>
-                                            </DataTrigger>
-                                            <!--UInt32-->
-                                            <DataTrigger Binding="{Binding SettingType, Mode=TwoWay}"
-                                                         Value="{x:Type system:UInt32}">
-                                                <Setter Property="ContentTemplate">
-                                                    <Setter.Value>
-                                                        <DataTemplate>
-                                                            <mah:NumericUpDown Value="{Binding Value, Mode=TwoWay}"
-                                                                               Minimum="{Binding Minimum, Mode=OneWay}"
-                                                                               Maximum="{Binding Maximum, Mode=OneWay}"
-                                                                               Interval="{Binding Interval, Mode=OneWay}"
-                                                                               DataContext="{Binding DataContext, ElementName=this}"
-                                                                               mah:ControlsHelper.CornerRadius="{StaticResource ControlCornerRadius}"
-                                                                               FontSize="{DynamicResource GlobalFontSize}"/>
-                                                        </DataTemplate>
-                                                    </Setter.Value>
-                                                </Setter>
-                                            </DataTrigger>
-                                            <!--Double-->
-                                            <DataTrigger Binding="{Binding SettingType, Mode=TwoWay}"
-                                                         Value="{x:Type system:Double}">
-                                                <Setter Property="ContentTemplate">
-                                                    <Setter.Value>
-                                                        <DataTemplate>
-                                                            <mah:NumericUpDown Value="{Binding Value, Mode=TwoWay}"
-                                                                               Minimum="{Binding Minimum, Mode=OneWay}"
-                                                                               Maximum="{Binding Maximum, Mode=OneWay}"
-                                                                               Interval="{Binding Interval, Mode=OneWay}"
-                                                                               DataContext="{Binding DataContext, ElementName=this}"
-                                                                               mah:ControlsHelper.CornerRadius="{StaticResource ControlCornerRadius}"
-                                                                               FontSize="{DynamicResource GlobalFontSize}"/>
-                                                        </DataTemplate>
-                                                    </Setter.Value>
-                                                </Setter>
-                                            </DataTrigger>
-                                            <!--DateTime-->
-                                            <DataTrigger Binding="{Binding SettingType, Mode=TwoWay}"
-                                                         Value="{x:Type system:DateTime}">
-                                                <Setter Property="ContentTemplate">
-                                                    <Setter.Value>
-                                                        <DataTemplate>
-                                                            <mah:DateTimePicker SelectedDateTime="{Binding Value, Mode=TwoWay}"
-                                                                                DataContext="{Binding DataContext, ElementName=this}"
-                                                                                mah:ControlsHelper.CornerRadius="{StaticResource ControlCornerRadius}"
-                                                                                FontSize="{DynamicResource GlobalFontSize}"/>
-                                                        </DataTemplate>
-                                                    </Setter.Value>
-                                                </Setter>
-                                            </DataTrigger>
-                                            <!--DateTime-->
-                                            <DataTrigger Binding="{Binding SettingType, Mode=TwoWay}"
-                                                         Value="{x:Type system:Enum}">
-                                                <Setter Property="ContentTemplate">
-                                                    <Setter.Value>
-                                                        <DataTemplate>
-                                                            <ComboBox SelectedValue="{Binding Value, Mode=TwoWay}"
-                                                                      ItemsSource="{Binding ListValues}"
-                                                                      DataContext="{Binding DataContext, ElementName=this}"
-                                                                      mah:ControlsHelper.CornerRadius="{StaticResource ControlCornerRadius}"
-                                                                      FontSize="{DynamicResource GlobalFontSize}" />
-                                                        </DataTemplate>
-                                                    </Setter.Value>
-                                                </Setter>
-                                            </DataTrigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </ContentControl.Style>
-                            </ContentControl>
-
-                        </Grid>
-                    </DataTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-    </UserControl.Resources>
-
-    <Border CornerRadius="{StaticResource ControlCornerRadius}"
-            BorderBrush="#00747C"
-            BorderThickness="2">
-        <Grid>
-            <Grid.ColumnDefinitions>
+              <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="1*" />
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="5*" />
-            </Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+              </Grid.ColumnDefinitions>
+              <TextBlock Text="{Binding Name}"
+                         ToolTip="{Binding Tooltip}"
+                         Grid.Column="0"
+                         Foreground="{Binding ForeGround}" />
 
-            <controls:SettingsTreeView Grid.Column="0" />
+              <ContentControl Grid.Column="2"
+                              Margin="5 0 0 0"
+                              MinWidth="200"
+                              HorizontalAlignment="Left"
+                              x:Name="this">
+                <ContentControl.Style>
+                  <Style TargetType="ContentControl">
+                    <Setter Property="Content">
+                      <Setter.Value>
+                        <TextBlock Text="NOT IMPLEMENTED TYPE" />
+                      </Setter.Value>
+                    </Setter>
 
-            <GridSplitter Grid.Column="1"
-                          ResizeDirection="Columns"
-                          Width="5" />
+                    <Style.Triggers>
+                      <!--Boolean-->
+                      <DataTrigger Binding="{Binding SettingType, Mode=TwoWay}"
+                                   Value="{x:Type system:Boolean}">
+                        <Setter Property="ContentTemplate">
+                          <Setter.Value>
+                            <DataTemplate>
+                              <mah:ToggleSwitch IsOn="{Binding Value, Mode=TwoWay}"
+                                                DataContext="{Binding DataContext, ElementName=this}"
+                                                FontSize="{DynamicResource GlobalFontSize}" />
+                            </DataTemplate>
+                          </Setter.Value>
+                        </Setter>
+                      </DataTrigger>
+                      <!--String-->
+                      <DataTrigger Binding="{Binding SettingType, Mode=TwoWay}"
+                                   Value="{x:Type system:String}">
+                        <Setter Property="ContentTemplate">
+                          <Setter.Value>
+                            <DataTemplate>
+                              <ContentControl DataContext="{Binding DataContext, ElementName=this}">
+                                <ContentControl.Style>
+                                  <Style TargetType="ContentControl">
+                                    <Setter Property="Content">
+                                      <Setter.Value>
+                                        <TextBlock Text="NOT IMPLEMENTED TYPE" />
+                                      </Setter.Value>
+                                    </Setter>
+                                    <Style.Triggers>
+                                      <!-- Default -->
+                                      <DataTrigger Binding="{Binding StringStyleVariation}"
+                                                   Value="{x:Static enums:eStringStyleVariation.Default}">
+                                        <Setter Property="ContentTemplate">
+                                          <Setter.Value>
+                                            <DataTemplate>
+                                              <TextBox DataContext="{Binding DataContext, ElementName=this}"
+                                                       Text="{Binding Value, Mode=TwoWay}"
+                                                       mah:ControlsHelper.CornerRadius="{StaticResource ControlCornerRadius}"
+                                                       helperobjects:TextBoxHelperExtension.AutoClearTextButton="True"
+                                                       FontSize="{DynamicResource GlobalFontSize}" />
+                                            </DataTemplate>
+                                          </Setter.Value>
+                                        </Setter>
+                                      </DataTrigger>
+                                      <!-- Path -->
+                                      <DataTrigger Binding="{Binding StringStyleVariation}"
+                                                   Value="{x:Static enums:eStringStyleVariation.Path}">
+                                        <Setter Property="ContentTemplate">
+                                          <Setter.Value>
+                                            <DataTemplate>
+                                              <Grid DataContext="{Binding DataContext, ElementName=this}">
+                                                <Grid.ColumnDefinitions>
+                                                  <ColumnDefinition Width="Auto" />
+                                                  <ColumnDefinition Width="*" />
+                                                </Grid.ColumnDefinitions>
+                                                <Button Command="{Binding [OpenFolderDialog]}"
+                                                        Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}"
+                                                        Grid.Column="0">
+                                                  <iconPacks:PackIconFontAwesome Kind="FolderOpenRegular" />
+                                                </Button>
+                                                <TextBlock Text="{Binding Value}"
+                                                           Grid.Column="1"
+                                                           VerticalAlignment="Center"
+                                                           Foreground="{Binding ForeGround}"
+                                                           FontSize="{DynamicResource GlobalFontSize}" />
+                                              </Grid>
+                                            </DataTemplate>
+                                          </Setter.Value>
+                                        </Setter>
+                                      </DataTrigger>
+                                      <!-- Password -->
+                                      <DataTrigger Binding="{Binding StringStyleVariation}"
+                                                   Value="{x:Static enums:eStringStyleVariation.Password}">
+                                        <Setter Property="ContentTemplate">
+                                          <Setter.Value>
+                                            <DataTemplate>
+                                              <PasswordBox DataContext="{Binding DataContext, ElementName=this}"
+                                                           helperobjects:PasswordHelper.Attach="True"
+                                                           helperobjects:PasswordHelper.Password="{Binding Value, ElementName=plain, Mode=TwoWay}"
+                                                           mah:ControlsHelper.CornerRadius="{StaticResource ControlCornerRadius}"
+                                                           FontSize="{DynamicResource GlobalFontSize}" />
+                                            </DataTemplate>
+                                          </Setter.Value>
+                                        </Setter>
+                                      </DataTrigger>
+                                    </Style.Triggers>
 
-            <ItemsControl Grid.Column="2"
-                          ItemsSource="{Binding SelectedSettingsGroup.SettingItems}"
-                          Margin="10" />
+                                  </Style>
+                                </ContentControl.Style>
+                              </ContentControl>
+                            </DataTemplate>
+                          </Setter.Value>
+                        </Setter>
+                      </DataTrigger>
+                      <!--Int32-->
+                      <DataTrigger Binding="{Binding SettingType, Mode=TwoWay}"
+                                   Value="{x:Type system:Int32}">
+                        <Setter Property="ContentTemplate">
+                          <Setter.Value>
+                            <DataTemplate>
+                              <mah:NumericUpDown Value="{Binding Value, Mode=TwoWay}"
+                                                 Minimum="{Binding Minimum, Mode=OneWay}"
+                                                 Maximum="{Binding Maximum, Mode=OneWay}"
+                                                 Interval="{Binding Interval, Mode=OneWay}"
+                                                 DataContext="{Binding DataContext, ElementName=this}"
+                                                 mah:ControlsHelper.CornerRadius="{StaticResource ControlCornerRadius}"
+                                                 FontSize="{DynamicResource GlobalFontSize}" />
+                            </DataTemplate>
+                          </Setter.Value>
+                        </Setter>
+                      </DataTrigger>
+                      <!--UInt32-->
+                      <DataTrigger Binding="{Binding SettingType, Mode=TwoWay}"
+                                   Value="{x:Type system:UInt32}">
+                        <Setter Property="ContentTemplate">
+                          <Setter.Value>
+                            <DataTemplate>
+                              <mah:NumericUpDown Value="{Binding Value, Mode=TwoWay}"
+                                                 Minimum="{Binding Minimum, Mode=OneWay}"
+                                                 Maximum="{Binding Maximum, Mode=OneWay}"
+                                                 Interval="{Binding Interval, Mode=OneWay}"
+                                                 DataContext="{Binding DataContext, ElementName=this}"
+                                                 mah:ControlsHelper.CornerRadius="{StaticResource ControlCornerRadius}"
+                                                 FontSize="{DynamicResource GlobalFontSize}" />
+                            </DataTemplate>
+                          </Setter.Value>
+                        </Setter>
+                      </DataTrigger>
+                      <!--Double-->
+                      <DataTrigger Binding="{Binding SettingType, Mode=TwoWay}"
+                                   Value="{x:Type system:Double}">
+                        <Setter Property="ContentTemplate">
+                          <Setter.Value>
+                            <DataTemplate>
+                              <mah:NumericUpDown Value="{Binding Value, Mode=TwoWay}"
+                                                 Minimum="{Binding Minimum, Mode=OneWay}"
+                                                 Maximum="{Binding Maximum, Mode=OneWay}"
+                                                 Interval="{Binding Interval, Mode=OneWay}"
+                                                 DataContext="{Binding DataContext, ElementName=this}"
+                                                 mah:ControlsHelper.CornerRadius="{StaticResource ControlCornerRadius}"
+                                                 FontSize="{DynamicResource GlobalFontSize}" />
+                            </DataTemplate>
+                          </Setter.Value>
+                        </Setter>
+                      </DataTrigger>
+                      <!--DateTime-->
+                      <DataTrigger Binding="{Binding SettingType, Mode=TwoWay}"
+                                   Value="{x:Type system:DateTime}">
+                        <Setter Property="ContentTemplate">
+                          <Setter.Value>
+                            <DataTemplate>
+                              <mah:DateTimePicker SelectedDateTime="{Binding Value, Mode=TwoWay}"
+                                                  DataContext="{Binding DataContext, ElementName=this}"
+                                                  mah:ControlsHelper.CornerRadius="{StaticResource ControlCornerRadius}"
+                                                  FontSize="{DynamicResource GlobalFontSize}" />
+                            </DataTemplate>
+                          </Setter.Value>
+                        </Setter>
+                      </DataTrigger>
+                      <!--DateTime-->
+                      <DataTrigger Binding="{Binding SettingType, Mode=TwoWay}"
+                                   Value="{x:Type system:Enum}">
+                        <Setter Property="ContentTemplate">
+                          <Setter.Value>
+                            <DataTemplate>
+                              <ComboBox SelectedValue="{Binding Value, Mode=TwoWay}"
+                                        ItemsSource="{Binding ListValues}"
+                                        DataContext="{Binding DataContext, ElementName=this}"
+                                        mah:ControlsHelper.CornerRadius="{StaticResource ControlCornerRadius}"
+                                        FontSize="{DynamicResource GlobalFontSize}" />
+                            </DataTemplate>
+                          </Setter.Value>
+                        </Setter>
+                      </DataTrigger>
+                    </Style.Triggers>
+                  </Style>
+                </ContentControl.Style>
+              </ContentControl>
 
-        </Grid>
-    </Border>
+            </Grid>
+          </DataTemplate>
+        </Setter.Value>
+      </Setter>
+    </Style>
+  </UserControl.Resources>
+
+  <Border CornerRadius="{StaticResource ControlCornerRadius}"
+          BorderBrush="#00747C"
+          BorderThickness="2">
+    <Grid>
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="1*" />
+        <ColumnDefinition Width="Auto" />
+        <ColumnDefinition Width="5*" />
+      </Grid.ColumnDefinitions>
+
+      <controls:SettingsTreeView Grid.Column="0" />
+
+      <GridSplitter Grid.Column="1"
+                    ResizeDirection="Columns"
+                    Width="5" />
+
+      <ItemsControl Grid.Column="2"
+                    ItemsSource="{Binding SelectedSettingsGroup.SettingItems}"
+                    Margin="10" />
+
+    </Grid>
+  </Border>
 </UserControl>

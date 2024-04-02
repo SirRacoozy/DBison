@@ -5,16 +5,16 @@
              Background="Transparent"
              Margin="5">
 
-    <TreeView Background="Transparent"
-              ItemsSource="{Binding SettingGroups}"
-              SelectedItemChanged="__SelectedItemChanged"
-              x:Name="ThisTreeView">
-        <TreeView.ItemTemplate>
-            <DataTemplate>
-                <TextBlock Text="{Binding Name}"
-                           FontSize="{DynamicResource GlobalFontSize}"
-                           Grid.Column="0" />
-            </DataTemplate>
-        </TreeView.ItemTemplate>
-    </TreeView>
+  <TreeView Background="Transparent"
+            ItemsSource="{Binding SettingGroups}"
+            SelectedItemChanged="__SelectedItemChanged"
+            x:Name="ThisTreeView">
+    <TreeView.ItemTemplate>
+      <DataTemplate>
+        <TextBlock Text="{Binding Name}"
+                   FontSize="{DynamicResource GlobalFontSize}"
+                   Grid.Column="0" />
+      </DataTemplate>
+    </TreeView.ItemTemplate>
+  </TreeView>
 </UserControl>

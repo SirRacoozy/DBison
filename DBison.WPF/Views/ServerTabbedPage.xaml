@@ -8,226 +8,226 @@
              xmlns:helperobjects="clr-namespace:DBison.WPF.HelperObjects"
              Margin="5">
 
-    <UserControl.Resources>
-        <Style TargetType="{x:Type TabItem}">
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="{x:Type TabItem}">
-                        <Grid>
-                            <Border Name="Border"
-                                    Margin="0 0 5 0"
-                                    BorderThickness="1 1 1 0"
-                                    CornerRadius="10 10 0 0"
-                                    Focusable="False">
-                                <ContentPresenter x:Name="ContentSite"
-                                                  ContentSource="Header"
-                                                  VerticalAlignment="Center"
-                                                  HorizontalAlignment="Center"
-                                                  RecognizesAccessKey="True" />
-                            </Border>
-
-                        </Grid>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsSelected"
-                                     Value="True">
-                                <Setter Property="FontWeight"
-                                        Value="Bold" />
-                                <Setter Property="FontStyle"
-                                        Value="Italic" />
-                                <Setter TargetName="Border"
-                                        Property="Background"
-                                        Value="#00BBC9" />
-                            </Trigger>
-                            <Trigger Property="IsSelected"
-                                     Value="False">
-                                <Setter TargetName="Border"
-                                        Property="Background"
-                                        Value="#00747C" />
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-            <Setter Property="HeaderTemplate">
-                <Setter.Value>
-                    <DataTemplate>
-                        <Grid Margin="5"
-                              MouseDown="__MouseWheelClick">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="Auto" />
-                            </Grid.ColumnDefinitions>
-
-                            <TextBlock Text="{Binding Header}"
-                                       Grid.Column="0"
-                                       VerticalAlignment="Center" />
-                            <mah:ProgressRing Grid.Column="1"
-                                              IsActive="{Binding IsLoading, Mode=TwoWay, FallbackValue=False}"
-                                              Width="16"
-                                              Margin="5 0 0 0"
-                                              Height="16" />
-                            <controls:CrossButton Grid.Column="2"
-                                                  Margin="5 0 0 0"
-                                                  Command="{Binding [Close]}" />
-                        </Grid>
-                    </DataTemplate>
-                </Setter.Value>
-            </Setter>
-            <Setter Property="FontFamily"
-                    Value="Arial" />
-            <Setter Property="FontSize"
-                    Value="{DynamicResource GlobalFontSize}" />
-            <Style.Triggers>
-                <DataTrigger Binding="{Binding Setting}"
-                             Value="False">
-                    <DataTrigger.Setters>
-                        <Setter Property="Content">
-                            <Setter.Value>
-                                <local:ServerView Grid.Row="1" />
-                            </Setter.Value>
-                        </Setter>
-                    </DataTrigger.Setters>
-                </DataTrigger>
-                <DataTrigger Binding="{Binding Setting}"
-                             Value="True">
-                    <DataTrigger.Setters>
-                        <Setter Property="Content">
-                            <Setter.Value>
-                                <local:SettingsTabView />
-                            </Setter.Value>
-                        </Setter>
-                    </DataTrigger.Setters>
-                </DataTrigger>
-            </Style.Triggers>
-        </Style>
-
-        <Style  TargetType="{x:Type controls:TabControlBase}">
-            <Setter Property="OverridesDefaultStyle"
-                    Value="True" />
-            <Setter Property="SnapsToDevicePixels"
-                    Value="True" />
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="{x:Type controls:TabControlBase}">
-                        <Grid KeyboardNavigation.TabNavigation="Local">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="*" />
-                            </Grid.RowDefinitions>
-                            <TabPanel Name="HeaderPanel"
-                                      Grid.Row="0"
-                                      Panel.ZIndex="1"
-                                      Margin="25,0,4,-1"
-                                      IsItemsHost="True"
-                                      KeyboardNavigation.TabIndex="1"
-                                      Background="Transparent" />
-                            <Border Name="Border"
-                                    Grid.Row="1"
-                                    Background="Transparent"
-                                    BorderBrush="Transparent"
-                                    BorderThickness="1"
-                                    KeyboardNavigation.TabNavigation="Local"
-                                    KeyboardNavigation.DirectionalNavigation="Contained"
-                                    KeyboardNavigation.TabIndex="2">
-                                <ContentPresenter Name="PART_SelectedContentHost"
-                                                  Margin="0"
-                                                  ContentSource="SelectedContent" />
-                            </Border>
-                        </Grid>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-    </UserControl.Resources>
-
-    <Grid>
-
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="1*" />
-            <ColumnDefinition Width="Auto" />
-            <ColumnDefinition Width="5*" />
-        </Grid.ColumnDefinitions>
-
-        <Border Grid.Row="0"
-                CornerRadius="{StaticResource ControlCornerRadius}"
-                BorderBrush="#878787"
-                BorderThickness="2"
-                Padding="5"
-                Margin="0 0 5 0">
-
+  <UserControl.Resources>
+    <Style TargetType="{x:Type TabItem}">
+      <Setter Property="Template">
+        <Setter.Value>
+          <ControlTemplate TargetType="{x:Type TabItem}">
             <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="*" />
-                </Grid.RowDefinitions>
-
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="Auto" />
-                    </Grid.ColumnDefinitions>
-
-                    <TextBox Text="{Binding FilterText, Mode=TwoWay}"
-                             Grid.Column="0"
-                             Margin="0 0 2.5 0"
-                             VerticalAlignment="Center"
-                             mah:TextBoxHelper.Watermark="Search"
-                             TextChanged="__TextChanged"
-                             x:Name="tb"
-                             mah:ControlsHelper.CornerRadius="{StaticResource ControlCornerRadius}"
-                             helperobjects:TextBoxHelperExtension.AutoClearTextButton="True"
-                             FontSize="{DynamicResource GlobalFontSize}"/>
-
-                    <Button Grid.Column="1"
-                            Margin="2.5 0 2.5 0"
-                            Background="Transparent"
-                            Height="25"
-                            Width="25"
-                            Command="{Binding [AddServer]}">
-                        <Button.Content>
-                            <iconPacks:PackIconMaterial Kind="ServerNetwork"
-                                                        Width="15"
-                                                        Height="15" />
-                        </Button.Content>
-                    </Button>
-
-                    <Button Grid.Column="2"
-                            Margin="2.5 0 2.5 0"
-                            Background="Transparent"
-                            Height="25"
-                            Width="25"
-                            HorizontalContentAlignment="Center"
-                            VerticalContentAlignment="Center"
-                            Command="{Binding [ToggleSettings]}">
-                        <Button.Content>
-                            <iconPacks:PackIconMaterial Kind="TuneVerticalVariant"
-                                                        Width="15"
-                                                        Height="15" />
-                        </Button.Content>
-                    </Button>
-                </Grid>
-
-                <controls:ServerInfoTreeView Grid.Row="1"
-                                             TreeView.SelectedItemChanged="__SelectedItemChanged" />
+              <Border Name="Border"
+                      Margin="0 0 5 0"
+                      BorderThickness="1 1 1 0"
+                      CornerRadius="10 10 0 0"
+                      Focusable="False">
+                <ContentPresenter x:Name="ContentSite"
+                                  ContentSource="Header"
+                                  VerticalAlignment="Center"
+                                  HorizontalAlignment="Center"
+                                  RecognizesAccessKey="True" />
+              </Border>
 
             </Grid>
+            <ControlTemplate.Triggers>
+              <Trigger Property="IsSelected"
+                       Value="True">
+                <Setter Property="FontWeight"
+                        Value="Bold" />
+                <Setter Property="FontStyle"
+                        Value="Italic" />
+                <Setter TargetName="Border"
+                        Property="Background"
+                        Value="#00BBC9" />
+              </Trigger>
+              <Trigger Property="IsSelected"
+                       Value="False">
+                <Setter TargetName="Border"
+                        Property="Background"
+                        Value="#00747C" />
+              </Trigger>
+            </ControlTemplate.Triggers>
+          </ControlTemplate>
+        </Setter.Value>
+      </Setter>
+      <Setter Property="HeaderTemplate">
+        <Setter.Value>
+          <DataTemplate>
+            <Grid Margin="5"
+                  MouseDown="__MouseWheelClick">
+              <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+              </Grid.ColumnDefinitions>
 
-        </Border>
+              <TextBlock Text="{Binding Header}"
+                         Grid.Column="0"
+                         VerticalAlignment="Center" />
+              <mah:ProgressRing Grid.Column="1"
+                                IsActive="{Binding IsLoading, Mode=TwoWay, FallbackValue=False}"
+                                Width="16"
+                                Margin="5 0 0 0"
+                                Height="16" />
+              <controls:CrossButton Grid.Column="2"
+                                    Margin="5 0 0 0"
+                                    Command="{Binding [Close]}" />
+            </Grid>
+          </DataTemplate>
+        </Setter.Value>
+      </Setter>
+      <Setter Property="FontFamily"
+              Value="Arial" />
+      <Setter Property="FontSize"
+              Value="{DynamicResource GlobalFontSize}" />
+      <Style.Triggers>
+        <DataTrigger Binding="{Binding Setting}"
+                     Value="False">
+          <DataTrigger.Setters>
+            <Setter Property="Content">
+              <Setter.Value>
+                <local:ServerView Grid.Row="1" />
+              </Setter.Value>
+            </Setter>
+          </DataTrigger.Setters>
+        </DataTrigger>
+        <DataTrigger Binding="{Binding Setting}"
+                     Value="True">
+          <DataTrigger.Setters>
+            <Setter Property="Content">
+              <Setter.Value>
+                <local:SettingsTabView />
+              </Setter.Value>
+            </Setter>
+          </DataTrigger.Setters>
+        </DataTrigger>
+      </Style.Triggers>
+    </Style>
 
-        <GridSplitter ResizeDirection="Columns"
-                      Grid.Column="1"
-                      Width="5" />
+    <Style  TargetType="{x:Type controls:TabControlBase}">
+      <Setter Property="OverridesDefaultStyle"
+              Value="True" />
+      <Setter Property="SnapsToDevicePixels"
+              Value="True" />
+      <Setter Property="Template">
+        <Setter.Value>
+          <ControlTemplate TargetType="{x:Type controls:TabControlBase}">
+            <Grid KeyboardNavigation.TabNavigation="Local">
+              <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+              </Grid.RowDefinitions>
+              <TabPanel Name="HeaderPanel"
+                        Grid.Row="0"
+                        Panel.ZIndex="1"
+                        Margin="25,0,4,-1"
+                        IsItemsHost="True"
+                        KeyboardNavigation.TabIndex="1"
+                        Background="Transparent" />
+              <Border Name="Border"
+                      Grid.Row="1"
+                      Background="Transparent"
+                      BorderBrush="Transparent"
+                      BorderThickness="1"
+                      KeyboardNavigation.TabNavigation="Local"
+                      KeyboardNavigation.DirectionalNavigation="Contained"
+                      KeyboardNavigation.TabIndex="2">
+                <ContentPresenter Name="PART_SelectedContentHost"
+                                  Margin="0"
+                                  ContentSource="SelectedContent" />
+              </Border>
+            </Grid>
+          </ControlTemplate>
+        </Setter.Value>
+      </Setter>
+    </Style>
+  </UserControl.Resources>
 
-        <controls:TabControlBase ItemsSource="{Binding TabItems, Mode=OneWay}"
-                                 SelectedIndex="0"
-                                 SelectedItem="{Binding SelectedTabItem, Mode=TwoWay}"
-                                 Grid.Row="0"
-                                 Grid.RowSpan="2"
-                                 Grid.Column="2"
-                                 BorderBrush="Transparent"
-                                 BorderThickness="0" />
+  <Grid>
 
-    </Grid>
+    <Grid.ColumnDefinitions>
+      <ColumnDefinition Width="1*" />
+      <ColumnDefinition Width="Auto" />
+      <ColumnDefinition Width="5*" />
+    </Grid.ColumnDefinitions>
+
+    <Border Grid.Row="0"
+            CornerRadius="{StaticResource ControlCornerRadius}"
+            BorderBrush="#878787"
+            BorderThickness="2"
+            Padding="5"
+            Margin="0 0 5 0">
+
+      <Grid>
+        <Grid.RowDefinitions>
+          <RowDefinition Height="Auto" />
+          <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <Grid>
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="Auto" />
+          </Grid.ColumnDefinitions>
+
+          <TextBox Text="{Binding FilterText, Mode=TwoWay}"
+                   Grid.Column="0"
+                   Margin="0 0 2.5 0"
+                   VerticalAlignment="Center"
+                   mah:TextBoxHelper.Watermark="Search"
+                   TextChanged="__TextChanged"
+                   x:Name="tb"
+                   mah:ControlsHelper.CornerRadius="{StaticResource ControlCornerRadius}"
+                   helperobjects:TextBoxHelperExtension.AutoClearTextButton="True"
+                   FontSize="{DynamicResource GlobalFontSize}" />
+
+          <Button Grid.Column="1"
+                  Margin="2.5 0 2.5 0"
+                  Background="Transparent"
+                  Height="25"
+                  Width="25"
+                  Command="{Binding [AddServer]}">
+            <Button.Content>
+              <iconPacks:PackIconMaterial Kind="ServerNetwork"
+                                          Width="15"
+                                          Height="15" />
+            </Button.Content>
+          </Button>
+
+          <Button Grid.Column="2"
+                  Margin="2.5 0 2.5 0"
+                  Background="Transparent"
+                  Height="25"
+                  Width="25"
+                  HorizontalContentAlignment="Center"
+                  VerticalContentAlignment="Center"
+                  Command="{Binding [ToggleSettings]}">
+            <Button.Content>
+              <iconPacks:PackIconMaterial Kind="TuneVerticalVariant"
+                                          Width="15"
+                                          Height="15" />
+            </Button.Content>
+          </Button>
+        </Grid>
+
+        <controls:ServerInfoTreeView Grid.Row="1"
+                                     TreeView.SelectedItemChanged="__SelectedItemChanged" />
+
+      </Grid>
+
+    </Border>
+
+    <GridSplitter ResizeDirection="Columns"
+                  Grid.Column="1"
+                  Width="5" />
+
+    <controls:TabControlBase ItemsSource="{Binding TabItems, Mode=OneWay}"
+                             SelectedIndex="0"
+                             SelectedItem="{Binding SelectedTabItem, Mode=TwoWay}"
+                             Grid.Row="0"
+                             Grid.RowSpan="2"
+                             Grid.Column="2"
+                             BorderBrush="Transparent"
+                             BorderThickness="0" />
+
+  </Grid>
 </UserControl>
