@@ -33,6 +33,10 @@ public class PluginLoader
     public static PluginLoader Instance => m_Instance ??= new PluginLoader();
     #endregion
 
+    #region [ClearPluginLoader]
+    public static void ClearPluginLoader() => m_Instance = null;
+    #endregion
+
     #region [ContextMenuPlugins]
     public List<IContextMenuPlugin> ContextMenuPlugins { get; set; } = new();
     #endregion

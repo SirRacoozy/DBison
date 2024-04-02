@@ -2,6 +2,7 @@
 using DBison.Core.Attributes;
 using DBison.Core.Entities;
 using DBison.Core.Extender;
+using DBison.Core.PluginSystem;
 using DBison.Core.Utils.SettingsSystem;
 using DBison.Plugin.Entities;
 using DBison.WPF.ClientBaseClasses;
@@ -469,6 +470,11 @@ public class MainWindowViewModel : ClientViewModelBase
         else if (e.ChangedSettingName == nameof(Settings.FilterUpdateRate))
         {
             m_ExecutionTimer.Interval = TimeSpan.FromSeconds(Settings.FilterUpdateRate);
+        }
+        else if(e.ChangedSettingName == nameof(Settings.PluginPath))
+        {
+            //If the PluginPath changed, we need to refresh at runtime to execute the plugins in the new directory or no plugins
+            PluginLoader.ClearPluginLoader(); 
         }
     }
     #endregion
