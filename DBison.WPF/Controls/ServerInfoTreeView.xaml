@@ -61,7 +61,7 @@
             </ContentControl>
 
             <TextBlock Text="{Binding DatabaseObject.Name}"
-                       FontSize="20"
+                       FontSize="{DynamicResource GlobalFontSize}"
                        Grid.Column="1"
                        Margin="5 0 0 0">
               <TextBlock.ContextMenu>

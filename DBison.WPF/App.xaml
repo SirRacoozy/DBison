@@ -18,6 +18,8 @@
       </ResourceDictionary.MergedDictionaries>
 
       <CornerRadius x:Key="ControlCornerRadius">10</CornerRadius>
+      <sys:Double x:Key="GlobalFontSize">20</sys:Double>
+      <sys:Double x:Key="GlobalScaleFactor">1</sys:Double>
 
       <Style TargetType="Button">
         <Style.Resources>

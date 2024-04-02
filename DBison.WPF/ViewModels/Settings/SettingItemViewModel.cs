@@ -2,6 +2,7 @@
 using DBison.Core.Entities.Enums;
 using DBison.Core.Extender;
 using DBison.Core.Utils.Commands;
+using DBison.Core.Utils.SettingsSystem;
 using DBison.WPF.ClientBaseClasses;
 using System.ComponentModel.DataAnnotations;
 using System.Reflection;
@@ -14,7 +15,7 @@ public class SettingItemViewModel : ClientViewModelBase
     #region - needs -
     private bool m_Loaded = false;
 
-    private RelayCommand m_OpenFolderDialog; 
+    private RelayCommand m_OpenFolderDialog;
     #endregion
 
     #region - ctor -
@@ -89,7 +90,7 @@ public class SettingItemViewModel : ClientViewModelBase
             Set(value);
             if (SettingsPropertyInfo != null && m_Loaded)
             {
-                if (value.GetType() != SettingType)
+                if (value != null && value.GetType() != SettingType)
                     SettingsPropertyInfo.SetValue(SettingsPropertyInfo, Convert.ChangeType(value, SettingType));
                 else
                     SettingsPropertyInfo.SetValue(SettingsPropertyInfo, value);
@@ -108,6 +109,14 @@ public class SettingItemViewModel : ClientViewModelBase
 
     #region [Maximum]
     public double Maximum
+    {
+        get => Get<double>();
+        set => Set(value);
+    }
+    #endregion
+
+    #region [Interval]
+    public double Interval
     {
         get => Get<double>();
         set => Set(value);
@@ -180,6 +189,10 @@ public class SettingItemViewModel : ClientViewModelBase
             Minimum = 0;
             Maximum = double.MaxValue;
         }
+        if (propertyInfo.Name == nameof(Settings.UIScaling))
+            Interval = 0.1;
+        else
+            Interval = 1;
         m_Loaded = true;
     }
     #endregion

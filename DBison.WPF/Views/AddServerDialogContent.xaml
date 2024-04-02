@@ -13,7 +13,6 @@
              x:Name="this">
 
   <UserControl.Resources>
-    <sys:Double x:Key="MyFontSize">20</sys:Double>
     <sys:Double x:Key="InputControlHeight">30</sys:Double>
 
     <Brush x:Key="InputControlBackGroundBrush">#D9d9D9</Brush>
@@ -59,24 +58,25 @@
                Grid.Row="0"
                Text="{Binding ServerName, Mode=TwoWay}"
                Margin="0 10 0 0"
-               FontSize="{StaticResource MyFontSize}"
+               FontSize="{DynamicResource GlobalFontSize}"
                mah:TextBoxHelper.Watermark="Servername"
                Background="{StaticResource InputControlBackGroundBrush}"
                Foreground="{StaticResource InputControlForeGroundBrush}"
                Loaded="__Loaded"
                mah:ControlsHelper.CornerRadius="{StaticResource ControlCornerRadius}"
                helperobjects:TextBoxHelperExtension.AutoClearTextButton="True" />
-      
+
       <CheckBox Grid.Row="1"
                 Content="Integrated security"
                 IsChecked="{Binding IntegratedSecurity, Mode=TwoWay}"
-                Margin="0 10 0 0" />
+                Margin="0 10 0 0"
+                FontSize="{DynamicResource GlobalFontSize}" />
 
       <TextBox x:Name="tbUserName"
                Grid.Row="2"
                Text="{Binding UserName, Mode=TwoWay}"
                Margin="0 10 0 0"
-               FontSize="{StaticResource MyFontSize}"
+               FontSize="{DynamicResource GlobalFontSize}"
                mah:TextBoxHelper.Watermark="Username"
                Background="{StaticResource InputControlBackGroundBrush}"
                Foreground="{StaticResource InputControlForeGroundBrush}"
@@ -87,7 +87,7 @@
       <PasswordBox Grid.Row="3"
                    PasswordChanged="__PasswordChanged"
                    Margin="0 10 0 0"
-                   FontSize="{StaticResource MyFontSize}"
+                   FontSize="{DynamicResource GlobalFontSize}"
                    Visibility="{Binding CredentialsVisibility}"
                    PasswordChar="*"
                    VerticalAlignment="Center"
@@ -106,13 +106,15 @@
                 Command="{Binding [Ok]}"
                 Grid.Column="0"
                 Background="#00747C"
-                Height="{StaticResource InputControlHeight}" />
+                MinHeight="{StaticResource InputControlHeight}"
+                FontSize="{DynamicResource GlobalFontSize}" />
         <Button Content="Cancel"
                 Command="{Binding [Cancel]}"
                 Margin="20 0 0 0"
                 Grid.Column="1"
                 Background="#878787"
-                Height="{StaticResource InputControlHeight}" />
+                MinHeight="{StaticResource InputControlHeight}"
+                FontSize="{DynamicResource GlobalFontSize}" />
       </Grid>
 
     </Grid>

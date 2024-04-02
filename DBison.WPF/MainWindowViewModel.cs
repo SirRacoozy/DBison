@@ -2,6 +2,7 @@
 using DBison.Core.Attributes;
 using DBison.Core.Entities;
 using DBison.Core.Extender;
+using DBison.Core.PluginSystem;
 using DBison.Core.Utils.SettingsSystem;
 using DBison.Plugin.Entities;
 using DBison.WPF.ClientBaseClasses;
@@ -22,7 +23,7 @@ public class MainWindowViewModel : ClientViewModelBase
     #region - needs -
     bool m_HasAddServerError = false;
     bool m_WasAutoConnectError = true;
-    DispatcherTimer m_ExecutionTimer; 
+    DispatcherTimer m_ExecutionTimer;
     #endregion
 
     #region [Ctor]
@@ -128,6 +129,15 @@ public class MainWindowViewModel : ClientViewModelBase
     }
     #endregion
 
+    #region [Execute_ConnectParseConnect]
+    public void Execute_ConnectParseConnect()
+    {
+        var addServerVm = new AddServerDialogViewModel(null);
+        addServerVm.OkClicked += (x, connectInfo) => __AddServer(connectInfo);
+        addServerVm.Execute_Ok();
+    }
+    #endregion
+
     #region [Execute_AddServer]
     public void Execute_AddServer()
     {
@@ -212,7 +222,7 @@ public class MainWindowViewModel : ClientViewModelBase
         if (lastQueryPage != null)
             SelectedTabItem = (ServerQueryPageViewModel)lastQueryPage;
         else
-            SelectedTabItem = null;
+            SelectedTabItem = settingPage;
     }
     #endregion
 
@@ -242,6 +252,7 @@ public class MainWindowViewModel : ClientViewModelBase
     internal void CloseSettings()
     {
         TabItems = new(TabItems.Where(x => x is not SettingsTabViewModel));
+        SelectedTabItem = TabItems.LastOrDefault();
     }
     #endregion
 
@@ -249,6 +260,27 @@ public class MainWindowViewModel : ClientViewModelBase
     public void RefreshLastSelectedDataBaseState()
     {
         __CheckStateIfNeeded();
+    }
+    #endregion
+
+    #region [RemoveAllServer]
+    public void RemoveAllServer()
+    {
+        foreach (var serverItem in ServerItems)
+        {
+            serverItem.Dispose();
+        }
+        foreach (var serverTreeItem in ServerTreeItems)
+        {
+            serverTreeItem.Dispose();
+        }
+        ServerItems.Clear();
+        ServerTreeItems.Clear();
+        OnPropertyChanged(nameof(ServerTreeItems));
+        OnPropertyChanged(nameof(ServerItems));
+        SelectedServer = null;
+        TabItems.Clear();
+        OnPropertyChanged(nameof(TabItems));
     }
     #endregion
 
@@ -445,6 +477,8 @@ public class MainWindowViewModel : ClientViewModelBase
     #region [__HandleSettingsChanged]
     private void __HandleSettingsChanged()
     {
+        Application.Current.Resources["GlobalFontSize"] = Convert.ToDouble(Settings.FontSize);
+        Application.Current.Resources["GlobalScaleFactor"] = Settings.UIScaling;
         SettingsHandler.SettingChanged += __SettingsHandler_SettingChanged;
     }
     #endregion
@@ -452,14 +486,25 @@ public class MainWindowViewModel : ClientViewModelBase
     #region [__SettingsHandler_SettingChanged]
     private void __SettingsHandler_SettingChanged(object? sender, Core.EventArguments.SettingChangedEventArgs e)
     {
-        if (e.ChangedSettingName == nameof(Settings.UseDarkMode))
+        switch (e.ChangedSettingName)
         {
-            var baseTheme = Settings.UseDarkMode ? "Dark" : "Light";
-            _ = ThemeManager.Current.ChangeTheme(Application.Current, $"{baseTheme}.Purple");
-        }
-        else if (e.ChangedSettingName == nameof(Settings.FilterUpdateRate))
-        {
-            m_ExecutionTimer.Interval = TimeSpan.FromSeconds(Settings.FilterUpdateRate);
+            case nameof(Settings.UseDarkMode):
+                var baseTheme = Settings.UseDarkMode ? "Dark" : "Light";
+                _ = ThemeManager.Current.ChangeTheme(Application.Current, $"{baseTheme}.Purple");
+                break;
+            case nameof(Settings.FilterUpdateRate):
+                m_ExecutionTimer.Interval = TimeSpan.FromSeconds(Settings.FilterUpdateRate);
+                break;
+            case nameof(Settings.PluginPath):
+                //If the PluginPath changed, we need to refresh at runtime to execute the plugins in the new directory or no plugins
+                PluginLoader.ClearPluginLoader();
+                break;
+            case nameof(Settings.FontSize):
+                Application.Current.Resources["GlobalFontSize"] = Convert.ToDouble(Settings.FontSize);
+                break;
+            case nameof(Settings.UIScaling):
+                Application.Current.Resources["GlobalScaleFactor"] = Settings.UIScaling;
+                break;
         }
     }
     #endregion

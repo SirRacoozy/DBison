@@ -11,7 +11,7 @@ public static class Settings
     [Range(10, 100)]
     public static uint FontSize
     {
-        get => SettingsHandler.GetSetting("FontSize", 12u);
+        get => SettingsHandler.GetSetting("FontSize", 20u);
         set => SettingsHandler.SetSetting("FontSize", value.ToString());
     }
 
@@ -54,7 +54,7 @@ public static class Settings
     }
 
     [Setting("Visual", "UI Scaling", "Sets the UI scaling between 0.1 and 2.0", typeof(double))]
-    [Range(0.1, 2.0)]
+    [Range(0.1, 10.0)]
     public static double UIScaling
     {
         get => SettingsHandler.GetSetting("UIScaling", 1.0);

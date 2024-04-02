@@ -20,7 +20,7 @@
               <Grid.Resources>
                 <Style TargetType="TextBlock">
                   <Setter Property="FontSize"
-                          Value="16" />
+                          Value="{DynamicResource GlobalFontSize}" />
                 </Style>
               </Grid.Resources>
 
@@ -31,7 +31,6 @@
               <TextBlock Text="{Binding Name}"
                          ToolTip="{Binding Tooltip}"
                          Grid.Column="0"
-                         Height="20"
                          Foreground="{Binding ForeGround}" />
 
               <ContentControl Grid.Column="2"
@@ -55,7 +54,8 @@
                           <Setter.Value>
                             <DataTemplate>
                               <mah:ToggleSwitch IsOn="{Binding Value, Mode=TwoWay}"
-                                                DataContext="{Binding DataContext, ElementName=this}" />
+                                                DataContext="{Binding DataContext, ElementName=this}"
+                                                FontSize="{DynamicResource GlobalFontSize}" />
                             </DataTemplate>
                           </Setter.Value>
                         </Setter>
@@ -84,7 +84,8 @@
                                               <TextBox DataContext="{Binding DataContext, ElementName=this}"
                                                        Text="{Binding Value, Mode=TwoWay}"
                                                        mah:ControlsHelper.CornerRadius="{StaticResource ControlCornerRadius}"
-                                                       helperobjects:TextBoxHelperExtension.AutoClearTextButton="True"/>
+                                                       helperobjects:TextBoxHelperExtension.AutoClearTextButton="True"
+                                                       FontSize="{DynamicResource GlobalFontSize}" />
                                             </DataTemplate>
                                           </Setter.Value>
                                         </Setter>
@@ -108,7 +109,8 @@
                                                 <TextBlock Text="{Binding Value}"
                                                            Grid.Column="1"
                                                            VerticalAlignment="Center"
-                                                           Foreground="{Binding ForeGround}" />
+                                                           Foreground="{Binding ForeGround}"
+                                                           FontSize="{DynamicResource GlobalFontSize}" />
                                               </Grid>
                                             </DataTemplate>
                                           </Setter.Value>
@@ -123,7 +125,8 @@
                                               <PasswordBox DataContext="{Binding DataContext, ElementName=this}"
                                                            helperobjects:PasswordHelper.Attach="True"
                                                            helperobjects:PasswordHelper.Password="{Binding Value, ElementName=plain, Mode=TwoWay}"
-                                                           mah:ControlsHelper.CornerRadius="{StaticResource ControlCornerRadius}" />
+                                                           mah:ControlsHelper.CornerRadius="{StaticResource ControlCornerRadius}"
+                                                           FontSize="{DynamicResource GlobalFontSize}" />
                                             </DataTemplate>
                                           </Setter.Value>
                                         </Setter>
@@ -146,8 +149,10 @@
                               <mah:NumericUpDown Value="{Binding Value, Mode=TwoWay}"
                                                  Minimum="{Binding Minimum, Mode=OneWay}"
                                                  Maximum="{Binding Maximum, Mode=OneWay}"
+                                                 Interval="{Binding Interval, Mode=OneWay}"
                                                  DataContext="{Binding DataContext, ElementName=this}"
-                                                 mah:ControlsHelper.CornerRadius="{StaticResource ControlCornerRadius}" />
+                                                 mah:ControlsHelper.CornerRadius="{StaticResource ControlCornerRadius}"
+                                                 FontSize="{DynamicResource GlobalFontSize}" />
                             </DataTemplate>
                           </Setter.Value>
                         </Setter>
@@ -161,8 +166,10 @@
                               <mah:NumericUpDown Value="{Binding Value, Mode=TwoWay}"
                                                  Minimum="{Binding Minimum, Mode=OneWay}"
                                                  Maximum="{Binding Maximum, Mode=OneWay}"
+                                                 Interval="{Binding Interval, Mode=OneWay}"
                                                  DataContext="{Binding DataContext, ElementName=this}"
-                                                 mah:ControlsHelper.CornerRadius="{StaticResource ControlCornerRadius}" />
+                                                 mah:ControlsHelper.CornerRadius="{StaticResource ControlCornerRadius}"
+                                                 FontSize="{DynamicResource GlobalFontSize}" />
                             </DataTemplate>
                           </Setter.Value>
                         </Setter>
@@ -176,8 +183,10 @@
                               <mah:NumericUpDown Value="{Binding Value, Mode=TwoWay}"
                                                  Minimum="{Binding Minimum, Mode=OneWay}"
                                                  Maximum="{Binding Maximum, Mode=OneWay}"
+                                                 Interval="{Binding Interval, Mode=OneWay}"
                                                  DataContext="{Binding DataContext, ElementName=this}"
-                                                 mah:ControlsHelper.CornerRadius="{StaticResource ControlCornerRadius}" />
+                                                 mah:ControlsHelper.CornerRadius="{StaticResource ControlCornerRadius}"
+                                                 FontSize="{DynamicResource GlobalFontSize}" />
                             </DataTemplate>
                           </Setter.Value>
                         </Setter>
@@ -190,7 +199,8 @@
                             <DataTemplate>
                               <mah:DateTimePicker SelectedDateTime="{Binding Value, Mode=TwoWay}"
                                                   DataContext="{Binding DataContext, ElementName=this}"
-                                                  mah:ControlsHelper.CornerRadius="{StaticResource ControlCornerRadius}" />
+                                                  mah:ControlsHelper.CornerRadius="{StaticResource ControlCornerRadius}"
+                                                  FontSize="{DynamicResource GlobalFontSize}" />
                             </DataTemplate>
                           </Setter.Value>
                         </Setter>
@@ -204,7 +214,8 @@
                               <ComboBox SelectedValue="{Binding Value, Mode=TwoWay}"
                                         ItemsSource="{Binding ListValues}"
                                         DataContext="{Binding DataContext, ElementName=this}"
-                                        mah:ControlsHelper.CornerRadius="{StaticResource ControlCornerRadius}" />
+                                        mah:ControlsHelper.CornerRadius="{StaticResource ControlCornerRadius}"
+                                        FontSize="{DynamicResource GlobalFontSize}" />
                             </DataTemplate>
                           </Setter.Value>
                         </Setter>

@@ -99,7 +99,7 @@ public class AddServerDialogViewModel : ClientViewModelBase
             Password = Password,
         };
         OkClicked?.Invoke(this, pluginResult ?? connectInfo);
-        m_Window.Close();
+        m_Window?.Close();
     }
     #endregion
 

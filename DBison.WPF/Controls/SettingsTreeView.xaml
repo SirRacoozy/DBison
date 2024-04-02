@@ -12,7 +12,7 @@
     <TreeView.ItemTemplate>
       <DataTemplate>
         <TextBlock Text="{Binding Name}"
-                   FontSize="20"
+                   FontSize="{DynamicResource GlobalFontSize}"
                    Grid.Column="0" />
       </DataTemplate>
     </TreeView.ItemTemplate>

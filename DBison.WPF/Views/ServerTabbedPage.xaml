@@ -77,7 +77,7 @@
       <Setter Property="FontFamily"
               Value="Arial" />
       <Setter Property="FontSize"
-              Value="16" />
+              Value="{DynamicResource GlobalFontSize}" />
       <Style.Triggers>
         <DataTrigger Binding="{Binding Setting}"
                      Value="False">
@@ -176,9 +176,9 @@
                    mah:TextBoxHelper.Watermark="Search"
                    TextChanged="__TextChanged"
                    x:Name="tb"
-                   Height="25"
                    mah:ControlsHelper.CornerRadius="{StaticResource ControlCornerRadius}"
-                   helperobjects:TextBoxHelperExtension.AutoClearTextButton="True" />
+                   helperobjects:TextBoxHelperExtension.AutoClearTextButton="True"
+                   FontSize="{DynamicResource GlobalFontSize}" />
 
           <Button Grid.Column="1"
                   Margin="2.5 0 2.5 0"
