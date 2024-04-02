@@ -8,6 +8,7 @@
              mc:Ignorable="d"
              xmlns:sys="clr-namespace:System;assembly=mscorlib"
              xmlns:controls="clr-namespace:DBison.WPF.Controls"
+             xmlns:helperobjects="clr-namespace:DBison.WPF.HelperObjects"
              MinWidth="500"
              x:Name="this">
 
@@ -17,40 +18,6 @@
 
     <Brush x:Key="InputControlBackGroundBrush">#D9d9D9</Brush>
     <Brush x:Key="InputControlForeGroundBrush">#6C6666</Brush>
-
-    <Style TargetType="{x:Type controls:DBisonTextBox}">
-      <Setter Property="Foreground"
-              Value="#BDBDBD" />
-      <Setter Property="FontSize"
-              Value="16" />
-      <Setter Property="Padding"
-              Value="5 0 0 0" />
-      <Setter Property="Height"
-              Value="20" />
-      <Setter Property="Template">
-        <Setter.Value>
-          <ControlTemplate TargetType="{x:Type controls:DBisonTextBox}">
-            <Border Background="{StaticResource InputControlBackGroundBrush}"
-                    BorderBrush="{TemplateBinding BorderBrush}"
-                    CornerRadius="10">
-              <ScrollViewer x:Name="PART_ContentHost" />
-            </Border>
-          </ControlTemplate>
-        </Setter.Value>
-      </Setter>
-    </Style>
-
-    <ControlTemplate x:Key="passwordbox"
-                     TargetType="{x:Type PasswordBox}">
-      <Border Background="{StaticResource InputControlBackGroundBrush}"
-              x:Name="Bd"
-              BorderBrush="Transparent"
-              BorderThickness="{TemplateBinding BorderThickness}"
-              CornerRadius="10">
-        <ScrollViewer Name="PART_ContentHost"
-                      SnapsToDevicePixels="{TemplateBinding UIElement.SnapsToDevicePixels}" />
-      </Border>
-    </ControlTemplate>
 
   </UserControl.Resources>
 
@@ -88,35 +55,36 @@
         <RowDefinition Height="Auto" />
       </Grid.RowDefinitions>
 
-      <controls:DBisonTextBox x:Name="TBServerName"
-                              Grid.Row="0"
-                              Text="{Binding ServerName, Mode=TwoWay}"
-                              CharacterCasing="Upper"
-                              Margin="0 10 0 0"
-                              FontSize="{StaticResource MyFontSize}"
-                              mah:TextBoxHelper.Watermark="Servername"
-                              Background="{StaticResource InputControlBackGroundBrush}"
-                              Foreground="{StaticResource InputControlForeGroundBrush}"
-                              Height="{StaticResource InputControlHeight}"
-                              Loaded="__Loaded"/>
-
+      <TextBox x:Name="TBServerName"
+               Grid.Row="0"
+               Text="{Binding ServerName, Mode=TwoWay}"
+               Margin="0 10 0 0"
+               FontSize="{StaticResource MyFontSize}"
+               mah:TextBoxHelper.Watermark="Servername"
+               Background="{StaticResource InputControlBackGroundBrush}"
+               Foreground="{StaticResource InputControlForeGroundBrush}"
+               Loaded="__Loaded"
+               mah:ControlsHelper.CornerRadius="{StaticResource ControlCornerRadius}"
+               helperobjects:TextBoxHelperExtension.AutoClearTextButton="True" />
+      
       <CheckBox Grid.Row="1"
                 Content="Integrated security"
                 IsChecked="{Binding IntegratedSecurity, Mode=TwoWay}"
                 Margin="0 10 0 0" />
 
-      <controls:DBisonTextBox Grid.Row="2"
-                              mah:TextBoxHelper.Watermark="Username"
-                              Text="{Binding UserName, Mode=TwoWay}"
-                              Margin="0 10 0 0"
-                              FontSize="{StaticResource MyFontSize}"
-                              Background="{StaticResource InputControlBackGroundBrush}"
-                              Foreground="{StaticResource InputControlForeGroundBrush}"
-                              Visibility="{Binding CredentialsVisibility}"
-                              Height="{StaticResource InputControlHeight}" />
+      <TextBox x:Name="tbUserName"
+               Grid.Row="2"
+               Text="{Binding UserName, Mode=TwoWay}"
+               Margin="0 10 0 0"
+               FontSize="{StaticResource MyFontSize}"
+               mah:TextBoxHelper.Watermark="Username"
+               Background="{StaticResource InputControlBackGroundBrush}"
+               Foreground="{StaticResource InputControlForeGroundBrush}"
+               Visibility="{Binding CredentialsVisibility}"
+               mah:ControlsHelper.CornerRadius="{StaticResource ControlCornerRadius}"
+               helperobjects:TextBoxHelperExtension.AutoClearTextButton="True" />
 
-      <PasswordBox Template="{StaticResource passwordbox}"
-                   Grid.Row="3"
+      <PasswordBox Grid.Row="3"
                    PasswordChanged="__PasswordChanged"
                    Margin="0 10 0 0"
                    FontSize="{StaticResource MyFontSize}"
@@ -124,7 +92,9 @@
                    PasswordChar="*"
                    VerticalAlignment="Center"
                    VerticalContentAlignment="Center"
-                   Height="{StaticResource InputControlHeight}" />
+                   Background="{StaticResource InputControlBackGroundBrush}"
+                   Foreground="{StaticResource InputControlForeGroundBrush}"
+                   mah:ControlsHelper.CornerRadius="{StaticResource ControlCornerRadius}" />
 
       <Grid Grid.Row="4"
             Margin="0 10 0 0">
