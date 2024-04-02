@@ -7,104 +7,105 @@
              xmlns:controlzex="urn:controlzex"
              xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
              StartupUri="MainWindow.xaml">
-  <Application.Resources>
-    <ResourceDictionary>
-      <ResourceDictionary.MergedDictionaries>
-        <!-- MahApps.Metro resource dictionaries. Make sure that all file names are Case Sensitive! -->
-        <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Controls.xaml" />
-        <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Fonts.xaml" />
-        <!-- Theme setting -->
-        <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Themes/Light.Blue.xaml" />
-      </ResourceDictionary.MergedDictionaries>
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <!-- MahApps.Metro resource dictionaries. Make sure that all file names are Case Sensitive! -->
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Controls.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Fonts.xaml" />
+                <!-- Theme setting -->
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Themes/Light.Blue.xaml" />
+            </ResourceDictionary.MergedDictionaries>
 
-      <CornerRadius x:Key="ControlCornerRadius">10</CornerRadius>
+            <CornerRadius x:Key="ControlCornerRadius">10</CornerRadius>
+            <sys:Double x:Key="GlobalFontSize">20</sys:Double>
 
-      <Style TargetType="Button">
-        <Style.Resources>
-          <Style TargetType="Border">
-            <Setter Property="CornerRadius"
-                    Value="{StaticResource ControlCornerRadius}" />
-          </Style>
-        </Style.Resources>
-      </Style>
+            <Style TargetType="Button">
+                <Style.Resources>
+                    <Style TargetType="Border">
+                        <Setter Property="CornerRadius"
+                                Value="{StaticResource ControlCornerRadius}" />
+                    </Style>
+                </Style.Resources>
+            </Style>
 
-      <Style TargetType="{x:Type controls:LineNumberedTextBox}">
-        <Setter Property="Template">
-          <Setter.Value>
-            <ControlTemplate TargetType="{x:Type controls:LineNumberedTextBox}">
-              <Grid>
-                <Grid.ColumnDefinitions>
-                  <ColumnDefinition Width="Auto" />
-                  <ColumnDefinition Width="Auto" />
-                  <ColumnDefinition Width="*" />
-                </Grid.ColumnDefinitions>
+            <Style TargetType="{x:Type controls:LineNumberedTextBox}">
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type controls:LineNumberedTextBox}">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
 
-                <!-- ScrollViewer für Zeilennummern -->
-                <ScrollViewer x:Name="sv1"
-                              Grid.Column="0"
-                              VerticalScrollBarVisibility="Hidden"
-                              HorizontalScrollBarVisibility="Disabled"
-                              Loaded="__ScrollViewerLoaded">
-                  <TextBlock x:Name="PART_LineNumberTextBlock"
-                             VerticalAlignment="Top"
-                             HorizontalAlignment="Right"
-                             TextAlignment="Right"
-                             Padding="10 0 5 0" />
-                </ScrollViewer>
+                                <!-- ScrollViewer für Zeilennummern -->
+                                <ScrollViewer x:Name="sv1"
+                                              Grid.Column="0"
+                                              VerticalScrollBarVisibility="Hidden"
+                                              HorizontalScrollBarVisibility="Disabled"
+                                              Loaded="__ScrollViewerLoaded">
+                                    <TextBlock x:Name="PART_LineNumberTextBlock"
+                                               VerticalAlignment="Top"
+                                               HorizontalAlignment="Right"
+                                               TextAlignment="Right"
+                                               Padding="10 0 5 0" />
+                                </ScrollViewer>
 
-                <Rectangle Grid.Column="1"
-                           Width="1"
-                           Fill="White"
-                           Margin="5 0 5 0" />
+                                <Rectangle Grid.Column="1"
+                                           Width="1"
+                                           Fill="White"
+                                           Margin="5 0 5 0" />
 
-                <!-- ScrollViewer für TextBox-Inhalt -->
-                <ScrollViewer Grid.Column="2"
-                              x:Name="PART_ContentHost"
-                              VerticalScrollBarVisibility="Auto"
-                              HorizontalScrollBarVisibility="Auto"
-                              Loaded="__ScrollViewerLoaded" />
-              </Grid>
-            </ControlTemplate>
-          </Setter.Value>
-        </Setter>
-      </Style>
+                                <!-- ScrollViewer für TextBox-Inhalt -->
+                                <ScrollViewer Grid.Column="2"
+                                              x:Name="PART_ContentHost"
+                                              VerticalScrollBarVisibility="Auto"
+                                              HorizontalScrollBarVisibility="Auto"
+                                              Loaded="__ScrollViewerLoaded" />
+                            </Grid>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
 
-      <sys:Double x:Key="EllipseSize">18</sys:Double>
+            <sys:Double x:Key="EllipseSize">18</sys:Double>
 
-      <Style TargetType="Button"
-             x:Key="TitleBarBtnStyle">
-        <Setter Property="OverridesDefaultStyle"
-                Value="True" />
-        <Setter Property="Margin"
-                Value="5" />
-        <Setter Property="Template">
-          <Setter.Value>
-            <ControlTemplate TargetType="Button">
-              <Border Name="border"
-                      BorderThickness="1">
-                <ContentPresenter HorizontalAlignment="Center"
-                                  VerticalAlignment="Center" />
-              </Border>
-              <ControlTemplate.Triggers>
-                <Trigger Property="IsMouseOver"
-                         Value="True">
-                  <Setter TargetName="border"
-                          Property="Background"
-                          Value="Transparent" />
-                </Trigger>
-              </ControlTemplate.Triggers>
-            </ControlTemplate>
-          </Setter.Value>
-        </Setter>
-      </Style>
+            <Style TargetType="Button"
+                   x:Key="TitleBarBtnStyle">
+                <Setter Property="OverridesDefaultStyle"
+                        Value="True" />
+                <Setter Property="Margin"
+                        Value="5" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="Button">
+                            <Border Name="border"
+                                    BorderThickness="1">
+                                <ContentPresenter HorizontalAlignment="Center"
+                                                  VerticalAlignment="Center" />
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver"
+                                         Value="True">
+                                    <Setter TargetName="border"
+                                            Property="Background"
+                                            Value="Transparent" />
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
 
-      <Style TargetType="{x:Type TreeViewItem}">
-        <Setter Property="HorizontalContentAlignment"
-                Value="Left" />
-        <Setter Property="VerticalContentAlignment"
-                Value="Top" />
-      </Style>
+            <Style TargetType="{x:Type TreeViewItem}">
+                <Setter Property="HorizontalContentAlignment"
+                        Value="Left" />
+                <Setter Property="VerticalContentAlignment"
+                        Value="Top" />
+            </Style>
 
-    </ResourceDictionary>
-  </Application.Resources>
+        </ResourceDictionary>
+    </Application.Resources>
 </Application>

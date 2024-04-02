@@ -14,7 +14,7 @@ public class SettingItemViewModel : ClientViewModelBase
     #region - needs -
     private bool m_Loaded = false;
 
-    private RelayCommand m_OpenFolderDialog; 
+    private RelayCommand m_OpenFolderDialog;
     #endregion
 
     #region - ctor -
@@ -89,7 +89,7 @@ public class SettingItemViewModel : ClientViewModelBase
             Set(value);
             if (SettingsPropertyInfo != null && m_Loaded)
             {
-                if (value.GetType() != SettingType)
+                if (value != null && value.GetType() != SettingType)
                     SettingsPropertyInfo.SetValue(SettingsPropertyInfo, Convert.ChangeType(value, SettingType));
                 else
                     SettingsPropertyInfo.SetValue(SettingsPropertyInfo, value);

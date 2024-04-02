@@ -1,165 +1,166 @@
 ﻿<UserControl  x:Class="DBison.WPF.Controls.WindowChromedContent"
-                           xmlns:controls="clr-namespace:DBison.WPF.Controls"
-                           xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                           xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                           xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                           xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-                           mc:Ignorable="d"
-                           x:Name="xThis">
+              xmlns:controls="clr-namespace:DBison.WPF.Controls"
+              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+              mc:Ignorable="d"
+              x:Name="xThis">
 
-  <Grid x:Name="parentContainer"
-        Background="Transparent">
+    <Grid x:Name="parentContainer"
+          Background="Transparent">
 
-    <Grid.RowDefinitions>
-      <RowDefinition Height="Auto" />
-      <RowDefinition Height="*" />
-    </Grid.RowDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
 
         <Grid Grid.Row="0"
-              Height="30"
+              MinHeight="30"
               PreviewMouseLeftButtonDown="__MouseLeftButtonDown">
             <StackPanel Orientation="Horizontal"
                         HorizontalAlignment="Left"
                         VerticalAlignment="Center">
                 <Image Source="{Binding ImageSource}"
                        HorizontalAlignment="Left"
-                       VerticalAlignment="Center" />
+                       VerticalAlignment="Center"
+                       Height="30"/>
                 <TextBlock Text="{Binding Window.Title, ElementName=xThis}"
                            FontFamily="Arial"
-                           FontSize="20"
+                           FontSize="{DynamicResource GlobalFontSize}"
                            Margin="4 3 0 0" />
             </StackPanel>
 
-      <Grid HorizontalAlignment="Right">
-        <Grid.ColumnDefinitions>
-          <ColumnDefinition Width="Auto" />
-          <ColumnDefinition Width="Auto" />
-          <ColumnDefinition Width="Auto" />
-        </Grid.ColumnDefinitions>
+            <Grid HorizontalAlignment="Right">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
 
-        <Button x:Name="MinimizeButton"
-                WindowChrome.IsHitTestVisibleInChrome="True"
-                ToolTip="Minimize"
-                Command="{x:Static SystemCommands.MinimizeWindowCommand}"
-                Grid.Column="0"
-                Style="{StaticResource TitleBarBtnStyle}">
-          <Button.Content>
-            <Grid>
-              <Border CornerRadius="50"
-                      Background="#8EDB42"
-                      Width="{StaticResource EllipseSize}"
-                      Height="{StaticResource EllipseSize}">
-                <Path Data="M0,4 L8,4"
-                      Stroke="DarkGreen"
-                      StrokeThickness="2"
-                      VerticalAlignment="Center"
-                      HorizontalAlignment="Center" />
-              </Border>
+                <Button x:Name="MinimizeButton"
+                        WindowChrome.IsHitTestVisibleInChrome="True"
+                        ToolTip="Minimize"
+                        Command="{x:Static SystemCommands.MinimizeWindowCommand}"
+                        Grid.Column="0"
+                        Style="{StaticResource TitleBarBtnStyle}">
+                    <Button.Content>
+                        <Grid>
+                            <Border CornerRadius="50"
+                                    Background="#8EDB42"
+                                    Width="{StaticResource EllipseSize}"
+                                    Height="{StaticResource EllipseSize}">
+                                <Path Data="M0,4 L8,4"
+                                      Stroke="DarkGreen"
+                                      StrokeThickness="2"
+                                      VerticalAlignment="Center"
+                                      HorizontalAlignment="Center" />
+                            </Border>
+                        </Grid>
+                    </Button.Content>
+                </Button>
+
+                <Button x:Name="MaximizeButton"
+                        Command="{x:Static SystemCommands.MaximizeWindowCommand}"
+                        WindowChrome.IsHitTestVisibleInChrome="True"
+                        ToolTip="Maximize"
+                        Grid.Column="1"
+                        Style="{StaticResource TitleBarBtnStyle}">
+                    <Button.Content>
+                        <Grid>
+                            <Border CornerRadius="50"
+                                    Background="#DBB042"
+                                    Width="{StaticResource EllipseSize}"
+                                    Height="{StaticResource EllipseSize}">
+
+                                <Viewbox Width="10"
+                                         HorizontalAlignment="Center"
+                                         VerticalAlignment="Center">
+                                    <Grid>
+                                        <Path Data='M64 0 L64 48 L16 0 Z'
+                                              Fill="#914f0d"
+                                              StrokeThickness="2"
+                                              HorizontalAlignment="Center"
+                                              VerticalAlignment="Center" />
+
+                                        <Path Data='M0 64 L48 64 L0 16 Z'
+                                              Fill="#914f0d"
+                                              StrokeThickness="2"
+                                              HorizontalAlignment="Center"
+                                              VerticalAlignment="Center" />
+                                    </Grid>
+                                </Viewbox>
+
+                            </Border>
+                        </Grid>
+                    </Button.Content>
+                </Button>
+
+                <Button x:Name="RestoreButton"
+                        Visibility="Collapsed"
+                        Command="{x:Static SystemCommands.RestoreWindowCommand}"
+                        WindowChrome.IsHitTestVisibleInChrome="True"
+                        ToolTip="Restore"
+                        Grid.Column="1"
+                        Style="{StaticResource TitleBarBtnStyle}">
+                    <Button.Content>
+                        <Grid>
+                            <Border CornerRadius="50"
+                                    Background="#DBB042"
+                                    Width="{StaticResource EllipseSize}"
+                                    Height="{StaticResource EllipseSize}">
+
+                                <Viewbox Width="10"
+                                         HorizontalAlignment="Center"
+                                         VerticalAlignment="Center">
+                                    <Grid>
+                                        <Path Data='M64 0 L64 48 L16 0 Z'
+                                              Fill="#914f0d"
+                                              StrokeThickness="2"
+                                              HorizontalAlignment="Center"
+                                              VerticalAlignment="Center" />
+
+                                        <Path Data='M0 64 L48 64 L0 16 Z'
+                                              Fill="#914f0d"
+                                              StrokeThickness="2"
+                                              HorizontalAlignment="Center"
+                                              VerticalAlignment="Center" />
+                                    </Grid>
+                                </Viewbox>
+
+                            </Border>
+                        </Grid>
+                    </Button.Content>
+                </Button>
+
+                <Button x:Name="CloseButton"
+                        Command="{x:Static SystemCommands.CloseWindowCommand}"
+                        WindowChrome.IsHitTestVisibleInChrome="True"
+                        ToolTip="Close"
+                        Grid.Column="2"
+                        Style="{StaticResource TitleBarBtnStyle}">
+                    <Button.Content>
+                        <Grid>
+                            <Border CornerRadius="50"
+                                    Background="#C93B3B"
+                                    Width="{StaticResource EllipseSize}"
+                                    Height="{StaticResource EllipseSize}">
+                                <Path Data="M0,0 L8,8 M8,0 L0,8"
+                                      Stroke="#7e0508"
+                                      StrokeThickness="1"
+                                      VerticalAlignment="Center"
+                                      HorizontalAlignment="Center" />
+                            </Border>
+                        </Grid>
+                    </Button.Content>
+                </Button>
+
             </Grid>
-          </Button.Content>
-        </Button>
 
-        <Button x:Name="MaximizeButton"
-                Command="{x:Static SystemCommands.MaximizeWindowCommand}"
-                WindowChrome.IsHitTestVisibleInChrome="True"
-                ToolTip="Maximize"
-                Grid.Column="1"
-                Style="{StaticResource TitleBarBtnStyle}">
-          <Button.Content>
-            <Grid>
-              <Border CornerRadius="50"
-                      Background="#DBB042"
-                      Width="{StaticResource EllipseSize}"
-                      Height="{StaticResource EllipseSize}">
+        </Grid>
 
-                <Viewbox Width="10"
-                         HorizontalAlignment="Center"
-                         VerticalAlignment="Center">
-                  <Grid>
-                    <Path Data='M64 0 L64 48 L16 0 Z'
-                          Fill="#914f0d"
-                          StrokeThickness="2"
-                          HorizontalAlignment="Center"
-                          VerticalAlignment="Center" />
-
-                    <Path Data='M0 64 L48 64 L0 16 Z'
-                          Fill="#914f0d"
-                          StrokeThickness="2"
-                          HorizontalAlignment="Center"
-                          VerticalAlignment="Center" />
-                  </Grid>
-                </Viewbox>
-
-              </Border>
-            </Grid>
-          </Button.Content>
-        </Button>
-
-        <Button x:Name="RestoreButton"
-                Visibility="Collapsed"
-                Command="{x:Static SystemCommands.RestoreWindowCommand}"
-                WindowChrome.IsHitTestVisibleInChrome="True"
-                ToolTip="Restore"
-                Grid.Column="1"
-                Style="{StaticResource TitleBarBtnStyle}">
-          <Button.Content>
-            <Grid>
-              <Border CornerRadius="50"
-                      Background="#DBB042"
-                      Width="{StaticResource EllipseSize}"
-                      Height="{StaticResource EllipseSize}">
-
-                <Viewbox Width="10"
-                         HorizontalAlignment="Center"
-                         VerticalAlignment="Center">
-                  <Grid>
-                    <Path Data='M64 0 L64 48 L16 0 Z'
-                          Fill="#914f0d"
-                          StrokeThickness="2"
-                          HorizontalAlignment="Center"
-                          VerticalAlignment="Center" />
-
-                    <Path Data='M0 64 L48 64 L0 16 Z'
-                          Fill="#914f0d"
-                          StrokeThickness="2"
-                          HorizontalAlignment="Center"
-                          VerticalAlignment="Center" />
-                  </Grid>
-                </Viewbox>
-
-              </Border>
-            </Grid>
-          </Button.Content>
-        </Button>
-
-        <Button x:Name="CloseButton"
-                Command="{x:Static SystemCommands.CloseWindowCommand}"
-                WindowChrome.IsHitTestVisibleInChrome="True"
-                ToolTip="Close"
-                Grid.Column="2"
-                Style="{StaticResource TitleBarBtnStyle}">
-          <Button.Content>
-            <Grid>
-              <Border CornerRadius="50"
-                      Background="#C93B3B"
-                      Width="{StaticResource EllipseSize}"
-                      Height="{StaticResource EllipseSize}">
-                <Path Data="M0,0 L8,8 M8,0 L0,8"
-                      Stroke="#7e0508"
-                      StrokeThickness="1"
-                      VerticalAlignment="Center"
-                      HorizontalAlignment="Center" />
-              </Border>
-            </Grid>
-          </Button.Content>
-        </Button>
-
-      </Grid>
+        <ContentControl Content="{Binding Content, ElementName=xThis}"
+                        Grid.Row="1" />
 
     </Grid>
-
-    <ContentControl Content="{Binding Content, ElementName=xThis}"
-                    Grid.Row="1" />
-
-  </Grid>
 </UserControl>

@@ -1,156 +1,155 @@
 ﻿<UserControl x:Class="DBison.WPF.Views.ServerView"
-                          xmlns:controls="clr-namespace:DBison.WPF.Controls"
-                          xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                          xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                          xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                          xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
-                          xmlns:d="http://schemas.microsoft.com/expression/blend/2008">
+             xmlns:controls="clr-namespace:DBison.WPF.Controls"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008">
 
-  <UserControl.InputBindings>
-    <KeyBinding Key="F5"
-                Command="{Binding [ExecuteSQL]}" />
-  </UserControl.InputBindings>
-  
+    <UserControl.InputBindings>
+        <KeyBinding Key="F5"
+                    Command="{Binding [ExecuteSQL]}" />
+    </UserControl.InputBindings>
 
-  <Border CornerRadius="{StaticResource ControlCornerRadius}"
-          BorderBrush="#00747C"
-          BorderThickness="2">
-    <Grid>
-      <Grid.RowDefinitions>
-        <RowDefinition Height="*" />
-        <RowDefinition Height="Auto" />
-        <RowDefinition Height="*" />
-      </Grid.RowDefinitions>
+    <Border CornerRadius="{StaticResource ControlCornerRadius}"
+            BorderBrush="#00747C"
+            BorderThickness="2">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
 
-      <Grid Grid.Row="0">
-        <Grid.RowDefinitions>
-          <RowDefinition Height="*" />
-        </Grid.RowDefinitions>
+            <Grid Grid.Row="0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
 
-        <controls:LineNumberedTextBox x:Name="QueryTextBox"
-                                      FontSize="15"
-                                      Text="{Binding QueryText, Mode=TwoWay}"
-                                      AcceptsReturn="True"
-                                      SelectionChanged="__SelectionChanged"
-                                      LostFocus="__LostTextBoxFocus"
-                                      BorderThickness="0"
-                                      HorizontalScrollBarVisibility="Auto"
-                                      VerticalScrollBarVisibility="Auto"
-                                      CaretBrush="Gray"
-                                      Margin="0 5 0 5"
-                                      Foreground="{Binding ForeGround}" />
+                <controls:LineNumberedTextBox x:Name="QueryTextBox"
+                                              FontSize="{DynamicResource GlobalFontSize}"
+                                              Text="{Binding QueryText, Mode=TwoWay}"
+                                              AcceptsReturn="True"
+                                              SelectionChanged="__SelectionChanged"
+                                              LostFocus="__LostTextBoxFocus"
+                                              BorderThickness="0"
+                                              HorizontalScrollBarVisibility="Auto"
+                                              VerticalScrollBarVisibility="Auto"
+                                              CaretBrush="Gray"
+                                              Margin="0 5 0 5"
+                                              Foreground="{Binding ForeGround}" />
 
-        <StackPanel Orientation="Horizontal"
-                    Margin="0 10 15 10"
-                    HorizontalAlignment="Right"
-                    VerticalAlignment="Bottom">
+                <StackPanel Orientation="Horizontal"
+                            Margin="0 10 15 10"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Bottom">
 
-          <controls:CrossButton Command="{Binding [ClearResult]}"
-                                Height="20"
-                                Width="20"
-                                ToolTip="Clear result">
+                    <controls:CrossButton Command="{Binding [ClearResult]}"
+                                          Height="20"
+                                          Width="20"
+                                          ToolTip="Clear result">
 
-          </controls:CrossButton>
+                    </controls:CrossButton>
 
-          <Button Command="{Binding [CancelQuery]}"
-                  Margin="5 0 0 0"
-                  Height="20"
-                  Width="20"
-                  ToolTip="Cancel executing query">
-            <Button.Template>
-              <ControlTemplate TargetType="Button">
-                <Border>
-                  <Border x:Name="Btn"
+                    <Button Command="{Binding [CancelQuery]}"
+                            Margin="5 0 0 0"
+                            Height="20"
+                            Width="20"
+                            ToolTip="Cancel executing query">
+                        <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                                <Border>
+                                    <Border x:Name="Btn"
+                                            Background="#00747C"
+                                            CornerRadius="5">
+                                        <Rectangle x:Name="PathContent"
+                                                   Fill="DarkRed"
+                                                   Width="12"
+                                                   Height="12" />
+                                    </Border>
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsMouseOver"
+                                             Value="True">
+                                        <Setter TargetName="PathContent"
+                                                Property="Fill"
+                                                Value="Gray" />
+                                    </Trigger>
+                                    <Trigger Property="IsEnabled"
+                                             Value="False">
+                                        <Setter TargetName="Btn"
+                                                Property="Background"
+                                                Value="Gray" />
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Button.Template>
+                    </Button>
+
+                    <Button Command="{Binding [ExecuteSQL]}"
+                            Margin="5 0 5 0"
+                            Height="20"
+                            Width="20"
+                            ToolTip="Execute SQL">
+                        <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                                <Viewbox>
+                                    <Grid Width="24"
+                                          Height="24">
+                                        <Border x:Name="Btn"
+                                                Background="#00747C"
+                                                CornerRadius="5">
+                                            <Path x:Name="PathContent"
+                                                  Data="M8 5v14l11-7z"
+                                                  Fill="LightGreen" />
+                                        </Border>
+                                    </Grid>
+                                </Viewbox>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsMouseOver"
+                                             Value="True">
+                                        <Setter TargetName="PathContent"
+                                                Property="Fill"
+                                                Value="Gray" />
+                                    </Trigger>
+                                    <Trigger Property="IsEnabled"
+                                             Value="False">
+                                        <Setter TargetName="Btn"
+                                                Property="Background"
+                                                Value="Gray" />
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Button.Template>
+                    </Button>
+                </StackPanel>
+
+            </Grid>
+
+            <GridSplitter ResizeDirection="Rows"
+                          Grid.Row="1"
+                          Height="5"
                           Background="#00747C"
-                          CornerRadius="5">
-                    <Rectangle x:Name="PathContent"
-                               Fill="DarkRed"
-                               Width="12"
-                               Height="12" />
-                  </Border>
-                </Border>
-                <ControlTemplate.Triggers>
-                  <Trigger Property="IsMouseOver"
-                           Value="True">
-                    <Setter TargetName="PathContent"
-                            Property="Fill"
-                            Value="Gray" />
-                  </Trigger>
-                  <Trigger Property="IsEnabled"
-                           Value="False">
-                    <Setter TargetName="Btn"
-                            Property="Background"
-                            Value="Gray" />
-                  </Trigger>
-                </ControlTemplate.Triggers>
-              </ControlTemplate>
-            </Button.Template>
-          </Button>
+                          Focusable="False" />
 
-          <Button Command="{Binding [ExecuteSQL]}"
-                  Margin="5 0 5 0"
-                  Height="20"
-                  Width="20"
-                  ToolTip="Execute SQL">
-            <Button.Template>
-              <ControlTemplate TargetType="Button">
-                <Viewbox>
-                  <Grid Width="24"
-                        Height="24">
-                    <Border x:Name="Btn"
-                            Background="#00747C"
-                            CornerRadius="5">
-                      <Path x:Name="PathContent"
-                            Data="M8 5v14l11-7z"
-                            Fill="LightGreen" />
-                    </Border>
-                  </Grid>
-                </Viewbox>
-                <ControlTemplate.Triggers>
-                  <Trigger Property="IsMouseOver"
-                           Value="True">
-                    <Setter TargetName="PathContent"
-                            Property="Fill"
-                            Value="Gray" />
-                  </Trigger>
-                  <Trigger Property="IsEnabled"
-                           Value="False">
-                    <Setter TargetName="Btn"
-                            Property="Background"
-                            Value="Gray" />
-                  </Trigger>
-                </ControlTemplate.Triggers>
-              </ControlTemplate>
-            </Button.Template>
-          </Button>
-        </StackPanel>
+            <Grid Grid.Row="2">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
 
-      </Grid>
+                <DataGrid Grid.Row="0"
+                          ItemsSource="{Binding ResultSets[0].ResultLines, Mode=TwoWay}"
+                          AutoGeneratingColumn="__AutoGeneratingColumn"
+                          VerticalAlignment="Stretch" />
 
-      <GridSplitter ResizeDirection="Rows"
-                    Grid.Row="1"
-                    Height="5"
-                    Background="#00747C"
-                    Focusable="False" />
+                <TextBlock Text="{Binding QueryStatisticText, Mode=TwoWay}"
+                           Grid.Row="1"
+                           HorizontalAlignment="Right"
+                           Margin="0 5 10 5"
+                           Foreground="{Binding ForeGround}" />
 
-      <Grid Grid.Row="2">
-        <Grid.RowDefinitions>
-          <RowDefinition Height="*" />
-          <RowDefinition Height="Auto" />
-        </Grid.RowDefinitions>
-
-        <DataGrid Grid.Row="0"
-                  ItemsSource="{Binding ResultSets[0].ResultLines, Mode=TwoWay}"
-                  AutoGeneratingColumn="__AutoGeneratingColumn"
-                  VerticalAlignment="Stretch" />
-
-        <TextBlock Text="{Binding QueryStatisticText, Mode=TwoWay}"
-                   Grid.Row="1"
-                   HorizontalAlignment="Right"
-                   Margin="0 5 10 5" 
-                   Foreground="{Binding ForeGround}"/>
-
-      </Grid>
-    </Grid>
-  </Border>
+            </Grid>
+        </Grid>
+    </Border>
 </UserControl>

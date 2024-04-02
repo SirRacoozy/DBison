@@ -476,6 +476,7 @@ public class MainWindowViewModel : ClientViewModelBase
     #region [__HandleSettingsChanged]
     private void __HandleSettingsChanged()
     {
+        Application.Current.Resources["GlobalFontSize"] = Convert.ToDouble(Settings.FontSize);
         SettingsHandler.SettingChanged += __SettingsHandler_SettingChanged;
     }
     #endregion
@@ -496,6 +497,10 @@ public class MainWindowViewModel : ClientViewModelBase
         {
             //If the PluginPath changed, we need to refresh at runtime to execute the plugins in the new directory or no plugins
             PluginLoader.ClearPluginLoader();
+        }
+        else if (e.ChangedSettingName == nameof(Settings.FontSize))
+        {
+            Application.Current.Resources["GlobalFontSize"] = Convert.ToDouble(Settings.FontSize);
         }
     }
     #endregion

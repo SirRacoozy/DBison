@@ -11,7 +11,7 @@ public static class Settings
     [Range(10, 100)]
     public static uint FontSize
     {
-        get => SettingsHandler.GetSetting("FontSize", 12u);
+        get => SettingsHandler.GetSetting("FontSize", 20u);
         set => SettingsHandler.SetSetting("FontSize", value.ToString());
     }
 
