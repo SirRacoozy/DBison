@@ -262,6 +262,27 @@ public class MainWindowViewModel : ClientViewModelBase
     }
     #endregion
 
+    #region [RemoveAllServer]
+    public void RemoveAllServer()
+    {
+        foreach (var serverItem in ServerItems)
+        {
+            serverItem.Dispose();
+        }
+        foreach (var serverTreeItem in ServerTreeItems)
+        {
+            serverTreeItem.Dispose();
+        }
+        ServerItems.Clear();
+        ServerTreeItems.Clear();
+        OnPropertyChanged(nameof(ServerTreeItems));
+        OnPropertyChanged(nameof(ServerItems));
+        SelectedServer = null;
+        TabItems.Clear();
+        OnPropertyChanged(nameof(TabItems));
+    }
+    #endregion
+
     #endregion
 
     #region - private methods -
@@ -471,10 +492,10 @@ public class MainWindowViewModel : ClientViewModelBase
         {
             m_ExecutionTimer.Interval = TimeSpan.FromSeconds(Settings.FilterUpdateRate);
         }
-        else if(e.ChangedSettingName == nameof(Settings.PluginPath))
+        else if (e.ChangedSettingName == nameof(Settings.PluginPath))
         {
             //If the PluginPath changed, we need to refresh at runtime to execute the plugins in the new directory or no plugins
-            PluginLoader.ClearPluginLoader(); 
+            PluginLoader.ClearPluginLoader();
         }
     }
     #endregion

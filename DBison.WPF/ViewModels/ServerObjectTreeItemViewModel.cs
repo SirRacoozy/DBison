@@ -24,11 +24,11 @@ public class ServerObjectTreeItemViewModel : ClientViewModelBase
     readonly ServerQueryHelper m_ServerQueryHelper;
     readonly ServerViewModel m_ServerVm;
     readonly MainWindowViewModel m_MainWindowViewModel;
-    private readonly string m_MSSQLDriver = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\WOW6432Node\ODBC\ODBCINST.INI\SQL Server").GetValue("Driver").ToStringValue(); 
+    private readonly string m_MSSQLDriver = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\WOW6432Node\ODBC\ODBCINST.INI\SQL Server").GetValue("Driver").ToStringValue();
     #endregion
 
     #region - Icons -
-    private readonly PackIconMaterial m_RestoreIcon = new () { Kind = PackIconMaterialKind.Restore, Width = 20, Height = 20, };
+    private readonly PackIconMaterial m_RestoreIcon = new() { Kind = PackIconMaterialKind.Restore, Width = 20, Height = 20, };
     private readonly PackIconMaterial m_CloneIcon = new() { Kind = PackIconMaterialKind.ContentDuplicate, Width = 20, Height = 20, };
     private readonly PackIconMaterial m_DeleteIcon = new() { Kind = PackIconMaterialKind.DeleteOutline, Width = 20, Height = 20, };
     private readonly PackIconMaterial m_RenameIcon = new() { Kind = PackIconMaterialKind.FormTextbox, Width = 20, Height = 20, };
@@ -39,6 +39,7 @@ public class ServerObjectTreeItemViewModel : ClientViewModelBase
     private readonly PackIconMaterial m_BackupIcon = new() { Kind = PackIconMaterialKind.DatabaseRefresh, Width = 20, Height = 20, };
     private readonly PackIconMaterial m_RefreshIcon = new() { Kind = PackIconMaterialKind.Refresh, Width = 20, Height = 20, };
     private readonly PackIconMaterial m_TableDataIcon = new() { Kind = PackIconMaterialKind.TableHeadersEye, Width = 20, Height = 20, };
+    private readonly PackIconMaterial m_DisconnectIcon = new() { Kind = PackIconMaterialKind.LanDisconnect, Width = 20, Height = 20, };
     #endregion
 
     #region [Ctor]
@@ -409,7 +410,7 @@ public class ServerObjectTreeItemViewModel : ClientViewModelBase
             var mode = Settings.DSNArchitecture;
             if (mode == eDSNArchitecture.x86 || mode == eDSNArchitecture.x86x64)
                 __SetDSNEntry(true);
-            if(mode == eDSNArchitecture.x64 || mode == eDSNArchitecture.x86x64)
+            if (mode == eDSNArchitecture.x64 || mode == eDSNArchitecture.x86x64)
                 __SetDSNEntry(false);
         }
         catch (Exception ex)
@@ -434,6 +435,19 @@ public class ServerObjectTreeItemViewModel : ClientViewModelBase
         catch (Exception ex)
         {
             ShowExceptionMessage(ex);
+        }
+    }
+    #endregion
+
+    #region [Execute_DisconnectAll]
+    public void Execute_DisconnectAll()
+    {
+        try
+        {
+            m_MainWindowViewModel.RemoveAllServer();
+        }
+        catch (Exception)
+        {
         }
     }
     #endregion
@@ -530,6 +544,7 @@ public class ServerObjectTreeItemViewModel : ClientViewModelBase
             if (DatabaseObject is ServerInfo)
             {
                 MenuItems.Add(new MenuItem { Header = $"Refresh Server ", Command = this["RefreshServer"] as ICommand, Icon = m_RefreshIcon });
+                MenuItems.Add(new MenuItem { Header = "Disconnect all Server", Command = this["DisconnectAll"] as ICommand, Icon = m_DisconnectIcon });
             }
             //Menus on database nodes
             else if (DatabaseObject is DatabaseInfo dbInfo)
@@ -552,11 +567,11 @@ public class ServerObjectTreeItemViewModel : ClientViewModelBase
     private void __AddDataBaseMenuItems(DatabaseInfo dbInfo)
     {
         var tmpMenuItems = new List<MenuItem>();
-        
+
         if (dbInfo.DataBaseState == eDataBaseState.OFFLINE)
         {
-            tmpMenuItems.Add(new MenuItem { Header = $"Take [{DatabaseObject.Name}] online", Command = this["SwitchState"] as ICommand , Icon = m_OnlineIcon});
-            tmpMenuItems.Add(new MenuItem { Header = $"Delete database [{DatabaseObject.Name}]", Command = this["DeleteDataBase"] as ICommand , Icon = m_DeleteIcon});
+            tmpMenuItems.Add(new MenuItem { Header = $"Take [{DatabaseObject.Name}] online", Command = this["SwitchState"] as ICommand, Icon = m_OnlineIcon });
+            tmpMenuItems.Add(new MenuItem { Header = $"Delete database [{DatabaseObject.Name}]", Command = this["DeleteDataBase"] as ICommand, Icon = m_DeleteIcon });
         }
         else
         {
@@ -598,8 +613,8 @@ public class ServerObjectTreeItemViewModel : ClientViewModelBase
                 Command = this["Rename"] as ICommand,
                 Icon = m_RenameIcon,
             });
-            tmpMenuItems.Add(new MenuItem 
-            { 
+            tmpMenuItems.Add(new MenuItem
+            {
                 Header = $"Delete database [{DatabaseObject.Name}]",
                 Command = this["DeleteDataBase"] as ICommand,
                 Icon = m_DeleteIcon,
