@@ -222,7 +222,7 @@ public class MainWindowViewModel : ClientViewModelBase
         if (lastQueryPage != null)
             SelectedTabItem = (ServerQueryPageViewModel)lastQueryPage;
         else
-            SelectedTabItem = null;
+            SelectedTabItem = settingPage;
     }
     #endregion
 
@@ -252,6 +252,7 @@ public class MainWindowViewModel : ClientViewModelBase
     internal void CloseSettings()
     {
         TabItems = new(TabItems.Where(x => x is not SettingsTabViewModel));
+        SelectedTabItem = TabItems.LastOrDefault();
     }
     #endregion
 
