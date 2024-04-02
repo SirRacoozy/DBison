@@ -467,15 +467,21 @@ EXEC(@killstmt);";
     #region [__GetServerDefaultProperties]
     private void __GetServerDefaultProperties()
     {
-        using var access = new DataConnection(new DatabaseInfo("master", m_Server, null));
-        var reader = access.GetReader(@"SELECT SERVERPROPERTY('InstanceDefaultDataPath') AS InstanceDefaultDataPath");
+        try
         {
-            if (reader != null && reader.HasRows)
+            using var access = new DataConnection(new DatabaseInfo("master", m_Server, null));
+            var reader = access.GetReader(@"SELECT SERVERPROPERTY('InstanceDefaultDataPath') AS InstanceDefaultDataPath");
             {
-                while (reader.Read())
-                    m_DefaultDataPath = reader["InstanceDefaultDataPath"].ToStringValue();
-                reader.Close();
+                if (reader != null && reader.HasRows)
+                {
+                    while (reader.Read())
+                        m_DefaultDataPath = reader["InstanceDefaultDataPath"].ToStringValue();
+                    reader.Close();
+                }
             }
+        }
+        catch (Exception)
+        {
         }
     }
     #endregion
