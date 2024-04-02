@@ -22,7 +22,7 @@ public class MainWindowViewModel : ClientViewModelBase
     #region - needs -
     bool m_HasAddServerError = false;
     bool m_WasAutoConnectError = true;
-    DispatcherTimer m_ExecutionTimer; 
+    DispatcherTimer m_ExecutionTimer;
     #endregion
 
     #region [Ctor]
@@ -125,6 +125,15 @@ public class MainWindowViewModel : ClientViewModelBase
         string assemblyPath = Path.ChangeExtension(Assembly.GetEntryAssembly().Location, "exe");
         Process.Start(assemblyPath);
         Application.Current.Shutdown();
+    }
+    #endregion
+
+    #region [Execute_ConnectParseConnect]
+    public void Execute_ConnectParseConnect()
+    {
+        var addServerVm = new AddServerDialogViewModel(null);
+        addServerVm.OkClicked += (x, connectInfo) => __AddServer(connectInfo);
+        addServerVm.Execute_Ok();
     }
     #endregion
 
