@@ -12,113 +12,113 @@
              MinWidth="500"
              x:Name="this">
 
-    <UserControl.Resources>
-        <sys:Double x:Key="InputControlHeight">30</sys:Double>
+  <UserControl.Resources>
+    <sys:Double x:Key="InputControlHeight">30</sys:Double>
 
-        <Brush x:Key="InputControlBackGroundBrush">#D9d9D9</Brush>
-        <Brush x:Key="InputControlForeGroundBrush">#6C6666</Brush>
+    <Brush x:Key="InputControlBackGroundBrush">#D9d9D9</Brush>
+    <Brush x:Key="InputControlForeGroundBrush">#6C6666</Brush>
 
-    </UserControl.Resources>
+  </UserControl.Resources>
 
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
-        </Grid.RowDefinitions>
+  <Grid>
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="*" />
+    </Grid.RowDefinitions>
 
-        <Grid HorizontalAlignment="Stretch"
-              Grid.Row="0">
-            <Canvas HorizontalAlignment="Stretch"
-                    VerticalAlignment="Top"
-                    Height="50">
-                <Path Data="M 0,50 A 50,50 0 0 0 100,50 H 0 Z"
-                      Fill="#00BBC9"
-                      Stretch="Fill"
-                      Width="{Binding ActualWidth, ElementName=this}" />
-            </Canvas>
+    <Grid HorizontalAlignment="Stretch"
+          Grid.Row="0">
+      <Canvas HorizontalAlignment="Stretch"
+              VerticalAlignment="Top"
+              Height="50">
+        <Path Data="M 0,50 A 50,50 0 0 0 100,50 H 0 Z"
+              Fill="#00BBC9"
+              Stretch="Fill"
+              Width="{Binding ActualWidth, ElementName=this}" />
+      </Canvas>
 
-            <TextBlock HorizontalAlignment="Center"
-                       VerticalAlignment="Center"
-                       FontSize="30"
-                       Text="Connect to Server" />
-        </Grid>
+      <TextBlock HorizontalAlignment="Center"
+                 VerticalAlignment="Center"
+                 FontSize="30"
+                 Text="Connect to Server" />
+    </Grid>
 
-        <Grid Grid.Row="1"
-              Margin="10">
+    <Grid Grid.Row="1"
+          Margin="10">
 
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-            </Grid.RowDefinitions>
+      <Grid.RowDefinitions>
+        <RowDefinition Height="Auto" />
+        <RowDefinition Height="Auto" />
+        <RowDefinition Height="Auto" />
+        <RowDefinition Height="Auto" />
+        <RowDefinition Height="Auto" />
+      </Grid.RowDefinitions>
 
-            <TextBox x:Name="TBServerName"
-                     Grid.Row="0"
-                     Text="{Binding ServerName, Mode=TwoWay}"
-                     Margin="0 10 0 0"
-                     FontSize="{DynamicResource GlobalFontSize}"
-                     mah:TextBoxHelper.Watermark="Servername"
-                     Background="{StaticResource InputControlBackGroundBrush}"
-                     Foreground="{StaticResource InputControlForeGroundBrush}"
-                     Loaded="__Loaded"
-                     mah:ControlsHelper.CornerRadius="{StaticResource ControlCornerRadius}"
-                     helperobjects:TextBoxHelperExtension.AutoClearTextButton="True" />
+      <TextBox x:Name="TBServerName"
+               Grid.Row="0"
+               Text="{Binding ServerName, Mode=TwoWay}"
+               Margin="0 10 0 0"
+               FontSize="{DynamicResource GlobalFontSize}"
+               mah:TextBoxHelper.Watermark="Servername"
+               Background="{StaticResource InputControlBackGroundBrush}"
+               Foreground="{StaticResource InputControlForeGroundBrush}"
+               Loaded="__Loaded"
+               mah:ControlsHelper.CornerRadius="{StaticResource ControlCornerRadius}"
+               helperobjects:TextBoxHelperExtension.AutoClearTextButton="True" />
 
-            <CheckBox Grid.Row="1"
-                      Content="Integrated security"
-                      IsChecked="{Binding IntegratedSecurity, Mode=TwoWay}"
-                      Margin="0 10 0 0"
-                      FontSize="{DynamicResource GlobalFontSize}"/>
+      <CheckBox Grid.Row="1"
+                Content="Integrated security"
+                IsChecked="{Binding IntegratedSecurity, Mode=TwoWay}"
+                Margin="0 10 0 0"
+                FontSize="{DynamicResource GlobalFontSize}" />
 
-            <TextBox x:Name="tbUserName"
-                     Grid.Row="2"
-                     Text="{Binding UserName, Mode=TwoWay}"
-                     Margin="0 10 0 0"
-                     FontSize="{DynamicResource GlobalFontSize}"
-                     mah:TextBoxHelper.Watermark="Username"
-                     Background="{StaticResource InputControlBackGroundBrush}"
-                     Foreground="{StaticResource InputControlForeGroundBrush}"
-                     Visibility="{Binding CredentialsVisibility}"
-                     mah:ControlsHelper.CornerRadius="{StaticResource ControlCornerRadius}"
-                     helperobjects:TextBoxHelperExtension.AutoClearTextButton="True" />
+      <TextBox x:Name="tbUserName"
+               Grid.Row="2"
+               Text="{Binding UserName, Mode=TwoWay}"
+               Margin="0 10 0 0"
+               FontSize="{DynamicResource GlobalFontSize}"
+               mah:TextBoxHelper.Watermark="Username"
+               Background="{StaticResource InputControlBackGroundBrush}"
+               Foreground="{StaticResource InputControlForeGroundBrush}"
+               Visibility="{Binding CredentialsVisibility}"
+               mah:ControlsHelper.CornerRadius="{StaticResource ControlCornerRadius}"
+               helperobjects:TextBoxHelperExtension.AutoClearTextButton="True" />
 
-            <PasswordBox Grid.Row="3"
-                         PasswordChanged="__PasswordChanged"
-                         Margin="0 10 0 0"
-                         FontSize="{DynamicResource GlobalFontSize}"
-                         Visibility="{Binding CredentialsVisibility}"
-                         PasswordChar="*"
-                         VerticalAlignment="Center"
-                         VerticalContentAlignment="Center"
-                         Background="{StaticResource InputControlBackGroundBrush}"
-                         Foreground="{StaticResource InputControlForeGroundBrush}"
-                         mah:ControlsHelper.CornerRadius="{StaticResource ControlCornerRadius}" />
+      <PasswordBox Grid.Row="3"
+                   PasswordChanged="__PasswordChanged"
+                   Margin="0 10 0 0"
+                   FontSize="{DynamicResource GlobalFontSize}"
+                   Visibility="{Binding CredentialsVisibility}"
+                   PasswordChar="*"
+                   VerticalAlignment="Center"
+                   VerticalContentAlignment="Center"
+                   Background="{StaticResource InputControlBackGroundBrush}"
+                   Foreground="{StaticResource InputControlForeGroundBrush}"
+                   mah:ControlsHelper.CornerRadius="{StaticResource ControlCornerRadius}" />
 
-            <Grid Grid.Row="4"
-                  Margin="0 10 0 0">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition />
-                    <ColumnDefinition />
-                </Grid.ColumnDefinitions>
-                <Button Content="Connect"
-                        Command="{Binding [Ok]}"
-                        Grid.Column="0"
-                        Background="#00747C"
-                        MinHeight="{StaticResource InputControlHeight}"
-                        FontSize="{DynamicResource GlobalFontSize}" />
-                <Button Content="Cancel"
-                        Command="{Binding [Cancel]}"
-                        Margin="20 0 0 0"
-                        Grid.Column="1"
-                        Background="#878787"
-                        MinHeight="{StaticResource InputControlHeight}"
-                        FontSize="{DynamicResource GlobalFontSize}"/>
-            </Grid>
-
-        </Grid>
+      <Grid Grid.Row="4"
+            Margin="0 10 0 0">
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition />
+          <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+        <Button Content="Connect"
+                Command="{Binding [Ok]}"
+                Grid.Column="0"
+                Background="#00747C"
+                MinHeight="{StaticResource InputControlHeight}"
+                FontSize="{DynamicResource GlobalFontSize}" />
+        <Button Content="Cancel"
+                Command="{Binding [Cancel]}"
+                Margin="20 0 0 0"
+                Grid.Column="1"
+                Background="#878787"
+                MinHeight="{StaticResource InputControlHeight}"
+                FontSize="{DynamicResource GlobalFontSize}" />
+      </Grid>
 
     </Grid>
+
+  </Grid>
 
 </UserControl>
