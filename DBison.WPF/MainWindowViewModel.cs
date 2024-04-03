@@ -486,27 +486,25 @@ public class MainWindowViewModel : ClientViewModelBase
     #region [__SettingsHandler_SettingChanged]
     private void __SettingsHandler_SettingChanged(object? sender, Core.EventArguments.SettingChangedEventArgs e)
     {
-        if (e.ChangedSettingName == nameof(Settings.UseDarkMode))
+        switch (e.ChangedSettingName)
         {
-            var baseTheme = Settings.UseDarkMode ? "Dark" : "Light";
-            _ = ThemeManager.Current.ChangeTheme(Application.Current, $"{baseTheme}.Purple");
-        }
-        else if (e.ChangedSettingName == nameof(Settings.FilterUpdateRate))
-        {
-            m_ExecutionTimer.Interval = TimeSpan.FromSeconds(Settings.FilterUpdateRate);
-        }
-        else if (e.ChangedSettingName == nameof(Settings.PluginPath))
-        {
-            //If the PluginPath changed, we need to refresh at runtime to execute the plugins in the new directory or no plugins
-            PluginLoader.ClearPluginLoader();
-        }
-        else if (e.ChangedSettingName == nameof(Settings.FontSize))
-        {
-            Application.Current.Resources["GlobalFontSize"] = Convert.ToDouble(Settings.FontSize);
-        }
-        else if (e.ChangedSettingName == nameof(Settings.UIScaling))
-        {
-            Application.Current.Resources["GlobalScaleFactor"] = Settings.UIScaling;
+            case nameof(Settings.UseDarkMode):
+                var baseTheme = Settings.UseDarkMode ? "Dark" : "Light";
+                _ = ThemeManager.Current.ChangeTheme(Application.Current, $"{baseTheme}.Purple");
+                break;
+            case nameof(Settings.FilterUpdateRate):
+                m_ExecutionTimer.Interval = TimeSpan.FromSeconds(Settings.FilterUpdateRate);
+                break;
+            case nameof(Settings.PluginPath):
+                //If the PluginPath changed, we need to refresh at runtime to execute the plugins in the new directory or no plugins
+                PluginLoader.ClearPluginLoader();
+                break;
+            case nameof(Settings.FontSize):
+                Application.Current.Resources["GlobalFontSize"] = Convert.ToDouble(Settings.FontSize);
+                break;
+            case nameof(Settings.UIScaling):
+                Application.Current.Resources["GlobalScaleFactor"] = Settings.UIScaling;
+                break;
         }
     }
     #endregion
