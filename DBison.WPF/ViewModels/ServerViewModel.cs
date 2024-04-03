@@ -159,7 +159,7 @@ public class ServerViewModel : ClientViewModelBase
         {
             Name = $"Table Data TOP {top} ({DatabaseObject.Name}.{serverObjectTreeItemViewModel.DatabaseObject.Name})",
             QueryText = $"SELECT TOP {top} * FROM {serverObjectTreeItemViewModel.DatabaseObject.Name}",
-            DataBaseObject = serverObjectTreeItemViewModel.DatabaseObject,
+            DataBaseObject = serverObjectTreeItemViewModel.DatabaseObject.DataBase,
             ExtendedDatabaseRef = serverObjectTreeItemViewModel.ExtendedDatabaseRef,
         };
         __AddQueryPage(req);

@@ -1,9 +1,7 @@
 ﻿using DBison.Core.Attributes;
 using DBison.Core.Entities;
-using DBison.Core.Entities.Enums;
 using DBison.Core.Extender;
 using DBison.Core.Helper;
-using DBison.Core.Helper.Sql;
 using DBison.WPF.ClientBaseClasses;
 using DBison.WPF.HelperObjects;
 using Microsoft.Win32;
@@ -23,7 +21,7 @@ public class ServerQueryPageViewModel : TabItemViewModelBase
     #endregion
 
     #region Ctor
-    public ServerQueryPageViewModel(QueryPageCreationReq req /*string name, ServerViewModel serverViewModel, DatabaseObjectBase databaseObject, ServerQueryHelper serverQueryHelper*/)
+    public ServerQueryPageViewModel(QueryPageCreationReq req)
         : base(false)
     {
         DatabaseObject = req.DataBaseObject;
@@ -31,7 +29,7 @@ public class ServerQueryPageViewModel : TabItemViewModelBase
         Header = req.Name;
         ResultSets = new ObservableCollection<ResultSetViewModel>();
         m_ServerQueryHelper = req.ServerQueryHelper;
-        if(req.QueryText.IsNotNullOrEmpty())
+        if (req.QueryText.IsNotNullOrEmpty())
         {
             QueryText = req.QueryText;
             FillDataTable(QueryText, DatabaseObject.DataBase);

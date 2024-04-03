@@ -6,7 +6,7 @@ using System.Windows.Media;
 
 namespace DBison.WPF.Controls
 {
-    public class LineNumberedTextBox : RichTextBox
+    public class LineNumberedTextBox : DBison.WPF.Controls.RichTextBox
     {
         private bool m_SkipHighliting;
 
@@ -15,18 +15,11 @@ namespace DBison.WPF.Controls
         {
             DefaultStyleKeyProperty.OverrideMetadata(typeof(LineNumberedTextBox), new FrameworkPropertyMetadata(typeof(LineNumberedTextBox)));
         }
-        #endregion
 
-        #region [Text]
-        public string Text
+        public LineNumberedTextBox()
         {
-            get { return (string)GetValue(TextProperty); }
-            set { SetValue(TextProperty, value); }
+            TextFormatter = new PlainTextFormatter();
         }
-
-        // Using a DependencyProperty as the backing store for Text.  This enables animation, styling, binding, etc...
-        public static readonly DependencyProperty TextProperty =
-            DependencyProperty.Register("Text", typeof(string), typeof(LineNumberedTextBox));
         #endregion
 
         #region [OnApplyTemplate]
@@ -41,9 +34,9 @@ namespace DBison.WPF.Controls
         protected override void OnTextChanged(TextChangedEventArgs e)
         {
             base.OnTextChanged(e);
+            __UpdateLineNumber();
             if (!m_SkipHighliting)
             {
-                __UpdateLineNumber();
                 __HighlightSQLKeyWords();
             }
         }
@@ -98,53 +91,50 @@ namespace DBison.WPF.Controls
                 return;
             }
 
-            else
+            for (TextPointer startPointer = rich.Document.ContentStart; startPointer.CompareTo(rich.Document.ContentEnd) <= 0; startPointer = startPointer?.GetNextContextPosition(LogicalDirection.Forward))
             {
-                for (TextPointer startPointer = rich.Document.ContentStart; startPointer.CompareTo(rich.Document.ContentEnd) <= 0; startPointer = startPointer?.GetNextContextPosition(LogicalDirection.Forward))
+                if (startPointer == null)
+                    break;
+                if (startPointer.CompareTo(rich.Document.ContentEnd) == 0)
                 {
-                    if (startPointer == null)
-                        break;
-                    if (startPointer.CompareTo(rich.Document.ContentEnd) == 0)
-                    {
-                        break;
-                    }
+                    break;
+                }
 
-                    string parsedString = startPointer.GetTextInRun(LogicalDirection.Forward);
-                    var allIndexesOf = parsedString.AllIndexesOf(searchText, StringComparison.InvariantCultureIgnoreCase);
+                string parsedString = startPointer.GetTextInRun(LogicalDirection.Forward);
+                var allIndexesOf = parsedString.AllIndexesOf(searchText, StringComparison.InvariantCultureIgnoreCase);
 
-                    foreach (var indexOf in allIndexesOf)
+                foreach (var indexOf in allIndexesOf)
+                {
+                    if (parsedString.IsNullOrEmpty())
+                        continue;
+
+                    if (indexOf >= 0)
                     {
-                        if (parsedString.IsNullOrEmpty())
+                        string charBefore = string.Empty;
+                        string charAfter = string.Empty;
+                        var charBeforeIndex = indexOf - 1;
+                        var charAfterIndex = indexOf + searchText.Length;
+                        if (charBeforeIndex != -1)
+                            charBefore = parsedString.Substring(charBeforeIndex, 1);
+                        if (charAfterIndex < parsedString.Length)
+                            charAfter = parsedString.Substring(charAfterIndex, 1);
+
+                        startPointer = startPointer.GetPositionAtOffset(indexOf);
+
+                        if (charBefore.IsNotNullOrEmpty() && charBefore.IsNotEquals(" "))
+                            continue;
+                        if (charAfter.IsNotNullOrEmpty() && charAfter.IsNotEquals(" "))
                             continue;
 
-                        if (indexOf >= 0)
+                        if (startPointer != null)
                         {
-                            string charBefore = string.Empty;
-                            string charAfter = string.Empty;
-                            var charBeforeIndex = indexOf - 1;
-                            var charAfterIndex = indexOf + searchText.Length;
-                            if (charBeforeIndex != -1)
-                                charBefore = parsedString.Substring(charBeforeIndex, 1);
-                            if (charAfterIndex < parsedString.Length)
-                                charAfter = parsedString.Substring(charAfterIndex, 1);
-
-                            startPointer = startPointer.GetPositionAtOffset(indexOf);
-
-                            if (charBefore.IsNotNullOrEmpty() && charBefore.IsNotEquals(" "))
+                            TextPointer nextPointer = startPointer.GetPositionAtOffset(searchText.Length);
+                            if (nextPointer == null)
                                 continue;
-                            if (charAfter.IsNotNullOrEmpty() && charAfter.IsNotEquals(" "))
-                                continue;
-
-                            if (startPointer != null)
-                            {
-                                TextPointer nextPointer = startPointer.GetPositionAtOffset(searchText.Length);
-                                if (nextPointer == null)
-                                    continue;
-                                TextRange searchedTextRange = new TextRange(startPointer, nextPointer);
-                                m_SkipHighliting = true;
-                                searchedTextRange.ApplyPropertyValue(TextElement.ForegroundProperty, new SolidColorBrush(Colors.Blue));
-                                m_SkipHighliting = false;
-                            }
+                            TextRange searchedTextRange = new TextRange(startPointer, nextPointer);
+                            m_SkipHighliting = true;
+                            searchedTextRange.ApplyPropertyValue(TextElement.ForegroundProperty, new SolidColorBrush(Colors.Blue));
+                            m_SkipHighliting = false;
                         }
                     }
                 }

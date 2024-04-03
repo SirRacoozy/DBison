@@ -28,7 +28,8 @@
         <TextBlock Text="{Binding Window.Title, ElementName=xThis}"
                    FontFamily="Arial"
                    FontSize="{DynamicResource GlobalFontSize}"
-                   Margin="4 3 0 0" />
+                   Margin="4 3 0 0"
+                   VerticalAlignment="Center" />
       </StackPanel>
 
       <Grid HorizontalAlignment="Right">

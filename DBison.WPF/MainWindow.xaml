@@ -52,6 +52,10 @@
                 Key="K"
                 Command="{Binding [ConnectParseConnect]}" />
 
+    <KeyBinding Modifiers="Ctrl"
+                Key="D0"
+                Command="{Binding [ResetUIScaling]}" />
+
   </mah:MetroWindow.InputBindings>
 
   <WindowChrome.WindowChrome>

@@ -8,7 +8,7 @@ namespace DBison.Core.Utils.SettingsSystem;
 public static class Settings
 {
     [Setting("Visual", "Font Size", "Changes the font size", typeof(uint))]
-    [Range(10, 100)]
+    [Range(10, 1000)]
     public static uint FontSize
     {
         get => SettingsHandler.GetSetting("FontSize", 20u);
