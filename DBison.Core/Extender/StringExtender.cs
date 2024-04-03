@@ -53,6 +53,10 @@ public static class StringExtender
     }
     #endregion
 
+    #region [IsNotEquals]
+    public static bool IsNotEquals(this string value, string valueToCompare) => !IsEquals(value, valueToCompare);
+    #endregion
+
     #region [IsNullEmptyOrWhitespace]
     public static bool IsNullEmptyOrWhitespace(this string value)
     {
@@ -64,6 +68,22 @@ public static class StringExtender
     public static bool IsNotNullEmptyOrWhitespace(this string value)
     {
         return !IsNullEmptyOrWhitespace(value);
+    }
+    #endregion
+
+    #region [AllIndexesOf]
+    public static List<int> AllIndexesOf(this string str, string value, StringComparison comparisonType)
+    {
+        if (value.IsNullOrEmpty())
+            throw new ArgumentException("The string to find may not be empty", "value");
+        List<int> indexes = new List<int>();
+        for (int index = 0; ; index += value.Length)
+        {
+            index = str.IndexOf(value, index, comparisonType);
+            if (index == -1)
+                return indexes;
+            indexes.Add(index);
+        }
     }
     #endregion
 

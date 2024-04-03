@@ -138,6 +138,15 @@ public class MainWindowViewModel : ClientViewModelBase
     }
     #endregion
 
+    #region [Execute_ResetUIScaling]
+    public void Execute_ResetUIScaling()
+    {
+        Settings.UIScaling = 1;
+        Settings.FontSize = 20;
+        //TODO: Refresh Settingspage if open, but do it later
+    }
+    #endregion
+
     #region [Execute_AddServer]
     public void Execute_AddServer()
     {

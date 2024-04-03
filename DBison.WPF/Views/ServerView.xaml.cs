@@ -3,6 +3,7 @@ using DBison.WPF.Converter;
 using DBison.WPF.ViewModels;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Documents;
 using System.Windows.Input;
 
 namespace DBison.WPF.Views;
@@ -30,18 +31,11 @@ public partial class ServerView : UserControl
     #region [__SelectionChanged]
     private void __SelectionChanged(object sender, System.Windows.RoutedEventArgs e)
     {
-        if (sender is TextBox tb && DataContext is ServerQueryPageViewModel vm)
+        if (sender is LineNumberedTextBox tb && DataContext is ServerQueryPageViewModel vm)
         {
-            vm.SelectedQueryText = tb.SelectedText;
+            vm.SelectedQueryText = tb.Selection.Text;
             vm.QueryText = tb.Text;
         }
-    }
-    #endregion
-
-    #region [__LostTextBoxFocus]
-    private void __LostTextBoxFocus(object sender, System.Windows.RoutedEventArgs e)
-    {
-        e.Handled = true;
     }
     #endregion
 
