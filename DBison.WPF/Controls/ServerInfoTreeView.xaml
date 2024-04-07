@@ -28,6 +28,10 @@
               <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
 
+            <Grid.ContextMenu>
+              <ContextMenu ItemsSource="{Binding MenuItems, Mode=TwoWay}" />
+            </Grid.ContextMenu>
+
             <ContentControl Grid.Column="0"
                             Visibility="{Binding StateVisibility}">
               <ContentControl.Style>
@@ -64,9 +68,6 @@
                        FontSize="{DynamicResource GlobalFontSize}"
                        Grid.Column="1"
                        Margin="5 0 0 0">
-              <TextBlock.ContextMenu>
-                <ContextMenu ItemsSource="{Binding MenuItems, Mode=TwoWay}" />
-              </TextBlock.ContextMenu>
             </TextBlock>
             <local:CrossButton Grid.Column="2"
                                Margin="5 0 0 0"
