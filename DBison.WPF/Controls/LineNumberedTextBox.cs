@@ -1,4 +1,5 @@
 ﻿using DBison.Core.Extender;
+using DBison.Core.Utils.SettingsSystem;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
@@ -83,6 +84,7 @@ namespace DBison.WPF.Controls
         #region [__ExecuteHighlight]
         private void __ExecuteHighlight(string searchText, TextRange textRange)
         {
+            Brush highlightBrush = Settings.UseDarkMode ? (Brush)new BrushConverter().ConvertFrom("#00BBC9") : Brushes.Blue;
             var rich = this;
             string textBoxText = textRange.Text;
 
@@ -133,7 +135,7 @@ namespace DBison.WPF.Controls
                                 continue;
                             TextRange searchedTextRange = new TextRange(startPointer, nextPointer);
                             m_SkipHighliting = true;
-                            searchedTextRange.ApplyPropertyValue(TextElement.ForegroundProperty, new SolidColorBrush(Colors.Blue));
+                            searchedTextRange.ApplyPropertyValue(TextElement.ForegroundProperty, highlightBrush);
                             m_SkipHighliting = false;
                         }
                     }
