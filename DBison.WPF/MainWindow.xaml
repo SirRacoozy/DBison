@@ -8,13 +8,11 @@
                  xmlns:views="clr-namespace:DBison.WPF.Views"
                  xmlns:controls="clr-namespace:DBison.WPF.Controls"
                  Title="DBison"
-                 ShowTitleBar="False"
-                 ShowCloseButton="False"
-                 ShowMaxRestoreButton="False"
-                 ShowMinButton="False"
-                 WindowState="Maximized"
                  x:Name="this"
-                 Icon="{Binding IconSource}">
+                 Icon="{Binding ImageSource}"
+                 TitleCharacterCasing="Normal"
+                 WindowTitleBrush="Transparent"
+                 TitleForeground="{Binding ForeGround}">
 
   <mah:MetroWindow.LayoutTransform>
     <ScaleTransform ScaleX="{DynamicResource GlobalScaleFactor}"
@@ -58,18 +56,6 @@
 
   </mah:MetroWindow.InputBindings>
 
-  <WindowChrome.WindowChrome>
-    <WindowChrome UseAeroCaptionButtons="False" />
-  </WindowChrome.WindowChrome>
-
-  <Border x:Name="MainWindowBorder"
-          BorderBrush="DarkRed"
-          BorderThickness="0">
-    <controls:WindowChromedContent Window="{Binding ElementName=this}">
-      <controls:WindowChromedContent.Content>
-        <views:ServerTabbedPage Grid.Row="1" />
-      </controls:WindowChromedContent.Content>
-    </controls:WindowChromedContent>
-  </Border>
+  <views:ServerTabbedPage Grid.Row="1" />
 </mah:MetroWindow>
   
