@@ -14,9 +14,13 @@ public class AddServerDialog
     #region [ShowDialog]
     public void ShowDialog()
     {
-        var window = new MetroWindow();
-        window.ResizeMode = ResizeMode.NoResize;
-        window.ShowCloseButton = false;
+        var window = new MetroWindow
+        {
+            ResizeMode = ResizeMode.NoResize,
+            ShowCloseButton = false,
+            WindowTitleBrush = Brushes.Transparent,
+            NonActiveWindowTitleBrush = Brushes.Transparent,
+        };
         var viewModel = new AddServerDialogViewModel(window);
         viewModel.OkClicked += (sender, e) => { ServerConnectRequested?.Invoke(null, e); };
 

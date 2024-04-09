@@ -12,6 +12,7 @@
                  Icon="{Binding ImageSource}"
                  TitleCharacterCasing="Normal"
                  WindowTitleBrush="Transparent"
+                 NonActiveWindowTitleBrush="Transparent"
                  TitleForeground="{Binding ForeGround}">
 
   <mah:MetroWindow.LayoutTransform>
