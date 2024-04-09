@@ -9,8 +9,10 @@
                  xmlns:controls="clr-namespace:DBison.WPF.Controls"
                  Title="DBison"
                  x:Name="this"
-                 Icon="{Binding IconSource}"
-                 TitleCharacterCasing="Normal">
+                 Icon="{Binding ImageSource}"
+                 TitleCharacterCasing="Normal"
+                 WindowTitleBrush="Transparent"
+                 TitleForeground="{Binding ForeGround}">
 
   <mah:MetroWindow.LayoutTransform>
     <ScaleTransform ScaleX="{DynamicResource GlobalScaleFactor}"
