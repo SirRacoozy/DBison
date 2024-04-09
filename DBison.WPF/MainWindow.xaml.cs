@@ -1,7 +1,6 @@
-﻿using DBison.Core.PluginSystem;
+﻿using DBison.WPF.HelperObjects;
 using MahApps.Metro.Controls;
 using System.Windows;
-using System.Windows.Input;
 
 namespace DBison.WPF;
 /// <summary>
@@ -12,6 +11,13 @@ public partial class MainWindow : MetroWindow
     public MainWindow()
     {
         InitializeComponent();
+        Loaded += __MainWindow_Loaded;
         DataContext = new MainWindowViewModel();
+    }
+
+    private void __MainWindow_Loaded(object sender, RoutedEventArgs e)
+    {
+        if (sender is MetroWindow wnd)
+            wnd.SetButtons();
     }
 }
