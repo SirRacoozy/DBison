@@ -3,10 +3,6 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:controls="clr-namespace:DBison.WPF.Controls"
              xmlns:sys="clr-namespace:System;assembly=mscorlib"
-             xmlns:settingssystem="clr-namespace:DBison.Core.Utils.SettingsSystem;assembly=DBison.Core"
-             xmlns:controlzex="urn:controlzex"
-             xmlns:converters="http://metro.mahapps.com/winfx/xaml/shared"
-             xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
              StartupUri="MainWindow.xaml">
   <Application.Resources>
     <ResourceDictionary>
