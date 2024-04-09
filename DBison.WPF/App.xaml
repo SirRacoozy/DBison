@@ -27,11 +27,6 @@
         </Style.Resources>
       </Style>
 
-      <Style x:Key="TitleBarButtonStyle"
-             TargetType="Button">
-        <!--Let it empty-->
-      </Style>
-
       <Style TargetType="{x:Type Paragraph}">
         <Setter Property="Margin"
                 Value="0" />
@@ -85,15 +80,14 @@
              x:Key="TitleBarBtnStyle">
         <Setter Property="OverridesDefaultStyle"
                 Value="True" />
-        <Setter Property="Margin"
-                Value="5" />
         <Setter Property="Template">
           <Setter.Value>
             <ControlTemplate TargetType="Button">
               <Border Name="border"
-                      BorderThickness="1">
-                <ContentPresenter HorizontalAlignment="Center"
-                                  VerticalAlignment="Center" />
+                      BorderThickness="1"
+                      HorizontalAlignment="Center"
+                      VerticalAlignment="Center">
+                <ContentPresenter />
               </Border>
               <ControlTemplate.Triggers>
                 <Trigger Property="IsMouseOver"
@@ -101,6 +95,15 @@
                   <Setter TargetName="border"
                           Property="Background"
                           Value="Transparent" />
+                  <Setter TargetName="border"
+                          Property="RenderTransform">
+                    <Setter.Value>
+                      <ScaleTransform ScaleX="1.5"
+                                      ScaleY="1.5"
+                                      CenterX="0.5"
+                                      CenterY="0.5" />
+                    </Setter.Value>
+                  </Setter>
                 </Trigger>
               </ControlTemplate.Triggers>
             </ControlTemplate>
