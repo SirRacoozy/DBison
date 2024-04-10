@@ -35,35 +35,33 @@ internal static class MetroWindowHelper
     #region [__ButtonEvents]
     private static void __ButtonEvents(Button btn)
     {
-        var width = btn.Width;
         btn.Width = 25;
-        btn.MouseEnter += (sender, e) =>
-        {
-            var border = btn.FindChild<Border>("ButtonBorder");
-            if (border != null && border.Child is UIElement uiElem)
-                uiElem.Visibility = Visibility.Visible;
-        };
-        btn.MouseLeave += (sender, e) => __ClearButtonContent(btn);
-    }
-    #endregion
-
-    #region [__ClearButtonContent]
-    private static void __ClearButtonContent(Button btn)
-    {
-        var border = btn.FindChild<Border>("ButtonBorder");
-        if (border != null && border.Child is UIElement uiElem)
-            uiElem.Visibility = Visibility.Hidden;
+        btn.MouseEnter += (sender, e) => __ChangeTitleButtonBorderContentVisibility(btn, Visibility.Visible);
+        btn.MouseLeave += (sender, e) => __ChangeTitleButtonBorderContentVisibility(btn, Visibility.Hidden);
     }
     #endregion
 
     #region [__GetButtonInitContent]
     private static UIElement __GetButtonInitContent(string baseContentResourceName)
     {
-        var Content = Application.Current.Resources[baseContentResourceName] as UIElement;
-        var border = Content.FindChild<Border>("ButtonBorder");
-        if (border != null && border.Child is UIElement uiElem)
-            uiElem.Visibility = Visibility.Hidden;
-        return Content;
+        if (Application.Current.Resources[baseContentResourceName] is UIElement Content)
+        {
+            __ChangeTitleButtonBorderContentVisibility(Content, Visibility.Hidden);
+            return Content;
+        }
+        return null;
     }
     #endregion
+
+    #region [__ChangeTitleButtonBorderContentVisibility]
+    private static void __ChangeTitleButtonBorderContentVisibility(UIElement content, Visibility visibility)
+    {
+        if (content == null)
+            return;
+        var border = content.FindChild<Border>("ButtonBorder");
+        if (border != null && border.Child is UIElement uiElem)
+            uiElem.Visibility = visibility;
+    }
+    #endregion
+
 }
