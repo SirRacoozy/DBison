@@ -44,6 +44,15 @@ namespace DBison.WPF.ViewModels
         }
         #endregion
 
+        #region [RefreshSettings]
+        public void RefreshSettings()
+        {
+            SettingsHandler.SettingChanged -= __SettingsHandler_SettingChanged;
+            __ReadAndGenerateSettings();
+            SettingsHandler.SettingChanged += __SettingsHandler_SettingChanged;
+        }
+        #endregion
+
         #region [__ReadAndGenerateSettings]
         private void __ReadAndGenerateSettings()
         {

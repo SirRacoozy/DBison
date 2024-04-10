@@ -12,8 +12,9 @@
                  Icon="{Binding ImageSource}"
                  TitleCharacterCasing="Normal"
                  WindowTitleBrush="Transparent"
+                 NonActiveWindowTitleBrush="Transparent"
                  TitleForeground="{Binding ForeGround}"
-                 FontSize="{DynamicResource GlobalFontSize}">
+                 Mouse.MouseWheel="__MouseWheel">
 
   <mah:MetroWindow.LayoutTransform>
     <ScaleTransform ScaleX="{DynamicResource GlobalScaleFactor}"
@@ -54,6 +55,22 @@
     <KeyBinding Modifiers="Ctrl"
                 Key="D0"
                 Command="{Binding [ResetUIScaling]}" />
+
+    <KeyBinding Modifiers="Ctrl"
+                Key="OemPlus"
+                Command="{Binding [IncreaseScaling]}" />
+
+    <KeyBinding Modifiers="Ctrl"
+                Key="Add"
+                Command="{Binding [IncreaseScaling]}" />
+
+    <KeyBinding Modifiers="Ctrl"
+                Key="OemMinus"
+                Command="{Binding [DecreaseScaling]}" />
+
+    <KeyBinding Modifiers="Ctrl"
+                Key="Subtract"
+                Command="{Binding [DecreaseScaling]}" />
 
   </mah:MetroWindow.InputBindings>
 
