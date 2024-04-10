@@ -18,7 +18,8 @@ public class ServerViewModel : ClientViewModelBase
     private string m_Filter;
     private ServerInfo m_Server;
     private ServerObjectTreeItemViewModel m_DataBaseNode;
-    private ObservableCollection<ServerObjectTreeItemViewModel> m_OriginalDataBaseNodes; 
+    private ObservableCollection<ServerObjectTreeItemViewModel> m_OriginalDataBaseNodes;
+    private Dictionary<DatabaseInfo, DataBaseObjectCache> m_DataBaseObjectCaches = new Dictionary<DatabaseInfo, DataBaseObjectCache>();
     #endregion
 
     #region [Ctor]
@@ -211,7 +212,9 @@ public class ServerViewModel : ClientViewModelBase
             {
                 var filterText = m_Filter.Substring(filterDatabasesPrefix.Length);
                 if (filterText.IsNullOrEmpty())
+                {
                     m_DataBaseNode.ServerObjects = m_OriginalDataBaseNodes;
+                }
                 else
                 {
                     m_DataBaseNode.ServerObjects = new(m_OriginalDataBaseNodes.Where(so => so.DatabaseObject.Name.Contains(filterText, StringComparison.InvariantCultureIgnoreCase)));
@@ -329,7 +332,20 @@ public class ServerViewModel : ClientViewModelBase
         if (req == null || req.DataBaseObject == null || !req.DataBaseObject.DataBase.IsRealDataBaseNode || req.DataBaseObject.DataBase.DataBaseState != eDataBaseState.ONLINE)
             return;
 
-        var dataBaseName = req.DataBaseObject.Name;
+        var dataBase = req.DataBaseObject.DataBase;
+        DataBaseObjectCache cache = null;
+
+        if (!m_DataBaseObjectCaches.ContainsKey(dataBase))
+        {
+            cache = new DataBaseObjectCache(dataBase, m_ServerQueryHelper);
+            m_DataBaseObjectCaches[dataBase] = cache;
+        }
+        else
+        {
+            cache = m_DataBaseObjectCaches[dataBase];
+        }
+
+        var dataBaseName = dataBase.Name;
 
         req.ServerQueryHelper = m_ServerQueryHelper;
         req.ServerViewModel = this;
@@ -337,7 +353,7 @@ public class ServerViewModel : ClientViewModelBase
         if (req.Name.IsNullOrEmpty())
             req.Name = $"Query {ServerQueryPages.Count + 1} - [{ServerNode.TreeItemHeader}].[{dataBaseName}]";
 
-        ServerQueryPages.Add(new ServerQueryPageViewModel(req));
+        ServerQueryPages.Add(new ServerQueryPageViewModel(req, cache));
         m_MainWindowViewModel.QueryPagesChanged();
     }
     #endregion

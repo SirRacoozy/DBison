@@ -32,12 +32,13 @@ public class ServerQueryHelper
     #endregion
 
     #region [LoadTables]
-    public void LoadTables(DatabaseInfo databaseInfo, string filter)
+    public List<DBisonTable> LoadTables(DatabaseInfo databaseInfo, string filter)
     {
+        var resultList = new List<DBisonTable>();
         try
         {
             if (databaseInfo == null || databaseInfo.DataBaseState != eDataBaseState.ONLINE)
-                return;
+                return resultList;
             if (databaseInfo is ExtendedDatabaseInfo extendedDatabase)
             {
                 extendedDatabase.Tables.Clear();
@@ -53,24 +54,28 @@ public class ServerQueryHelper
                     while (reader.Read())
                     {
                         var name = reader[0].ToStringValue();
-                        extendedDatabase.Tables.Add(new DBisonTable(name, m_Server, extendedDatabase));
+                        resultList.Add(new DBisonTable(name, m_Server, extendedDatabase));
                     }
                 }
+                extendedDatabase.Tables.AddRange(resultList);
             }
+            return resultList;
         }
         catch (Exception)
         {
+            return resultList;
         }
     }
     #endregion
 
     #region [LoadViews]
-    public void LoadViews(DatabaseInfo databaseInfo, string filter)
+    public List<DBisonView> LoadViews(DatabaseInfo databaseInfo, string filter)
     {
+        var resultList = new List<DBisonView>();
         try
         {
             if (databaseInfo == null || databaseInfo.DataBaseState != eDataBaseState.ONLINE)
-                return;
+                return resultList;
             if (databaseInfo is ExtendedDatabaseInfo extendedDatabase)
             {
                 extendedDatabase.Views.Clear();
@@ -86,24 +91,28 @@ public class ServerQueryHelper
                     while (reader.Read())
                     {
                         var name = reader[0].ToStringValue();
-                        extendedDatabase.Views.Add(new DBisonView(name, m_Server, extendedDatabase));
+                        resultList.Add(new DBisonView(name, m_Server, extendedDatabase));
                     }
                 }
+                extendedDatabase.Views.AddRange(resultList);
             }
+            return resultList;
         }
         catch (Exception)
         {
+            return resultList;
         }
     }
     #endregion
 
     #region [LoadTrigger]
-    public void LoadTrigger(DatabaseInfo databaseInfo, string filter)
+    public List<DBisonTrigger> LoadTrigger(DatabaseInfo databaseInfo, string filter)
     {
+        var resultList = new List<DBisonTrigger>();
         try
         {
             if (databaseInfo == null || databaseInfo.DataBaseState != eDataBaseState.ONLINE)
-                return;
+                return resultList;
             if (databaseInfo is ExtendedDatabaseInfo extendedDatabase)
             {
                 extendedDatabase.Triggers.Clear();
@@ -119,24 +128,28 @@ public class ServerQueryHelper
                     while (reader.Read())
                     {
                         var name = reader[0].ToStringValue();
-                        extendedDatabase.Triggers.Add(new DBisonTrigger(name, m_Server, extendedDatabase));
+                        resultList.Add(new DBisonTrigger(name, m_Server, extendedDatabase));
                     }
                 }
+                extendedDatabase.Triggers.AddRange(resultList);
             }
+            return resultList;
         }
         catch (Exception)
         {
+            return resultList;
         }
     }
     #endregion
 
     #region [LoadProcedures]
-    public void LoadProcedures(DatabaseInfo databaseInfo, string filter)
+    public List<DBisonStoredProcedure> LoadProcedures(DatabaseInfo databaseInfo, string filter)
     {
+        var resultList = new List<DBisonStoredProcedure>();
         try
         {
             if (databaseInfo == null || databaseInfo.DataBaseState != eDataBaseState.ONLINE)
-                return;
+                return resultList;
             if (databaseInfo is ExtendedDatabaseInfo extendedDatabase)
             {
                 extendedDatabase.Procedures.Clear();
@@ -152,13 +165,16 @@ public class ServerQueryHelper
                     while (reader.Read())
                     {
                         var name = reader[0].ToStringValue();
-                        extendedDatabase.Procedures.Add(new DBisonStoredProcedure(name, m_Server, extendedDatabase));
+                        resultList.Add(new DBisonStoredProcedure(name, m_Server, extendedDatabase));
                     }
                 }
+                extendedDatabase.Procedures.AddRange(resultList);
             }
+            return resultList;
         }
         catch (Exception)
         {
+            return resultList;
         }
     }
     #endregion
@@ -327,6 +343,25 @@ ALTER DATABASE [{databaseInfo.Name}]
 REMOVE FILE [{fileName}];";
         using var access = new DataConnection(__GetMasterDataBaseInfo());
         access.ExecuteNonQuery(sql);
+    }
+    #endregion
+
+    #region [GetAllObjects]
+    public List<DatabaseObjectBase> GetAllObjects(DatabaseInfo databaseInfo)
+    {
+        var objects = new List<DatabaseObjectBase>();
+        try
+        {
+            objects.AddRange(LoadTables(databaseInfo, string.Empty));
+            objects.AddRange(LoadViews(databaseInfo, string.Empty));
+            objects.AddRange(LoadProcedures(databaseInfo, string.Empty));
+            objects.AddRange(LoadTrigger(databaseInfo, string.Empty));
+            return objects;
+        }
+        catch (Exception)
+        {
+            return objects;
+        }
     }
     #endregion
 

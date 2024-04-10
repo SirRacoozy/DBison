@@ -18,12 +18,15 @@ public class ServerQueryPageViewModel : TabItemViewModelBase
     ServerQueryHelper m_ServerQueryHelper;
     DispatcherTimer m_ExecutionTimer;
     Stopwatch m_Stopwatch = new Stopwatch();
+    DataBaseObjectCache m_DataBaseObjectCache;
     #endregion
 
     #region Ctor
-    public ServerQueryPageViewModel(QueryPageCreationReq req)
+    public ServerQueryPageViewModel(QueryPageCreationReq req, DataBaseObjectCache cache)
         : base(false)
     {
+        m_DataBaseObjectCache = cache;
+        SuggestionSource = new(cache?.GetObjectsWithContains(string.Empty));
         DatabaseObject = req.DataBaseObject;
         m_ServerViewModel = req.ServerViewModel;
         Header = req.Name;
@@ -52,7 +55,12 @@ public class ServerQueryPageViewModel : TabItemViewModelBase
     public string QueryText
     {
         get => Get<string>();
-        set => Set(value);
+        set
+        {
+            Set(value);
+            IsSuggestionVisible = false;
+            IsSuggestionVisible = true;
+        }
     }
     #endregion
 
@@ -84,6 +92,22 @@ public class ServerQueryPageViewModel : TabItemViewModelBase
     public string QueryStatisticText
     {
         get => Get<string>();
+        set => Set(value);
+    }
+    #endregion
+
+    #region [SuggestionSource]
+    public ObservableCollection<DatabaseObjectBase> SuggestionSource
+    {
+        get => Get<ObservableCollection<DatabaseObjectBase>>();
+        set => Set(value);
+    }
+    #endregion
+
+    #region [IsSuggestionVisible]
+    public bool IsSuggestionVisible
+    {
+        get => Get<bool>();
         set => Set(value);
     }
     #endregion

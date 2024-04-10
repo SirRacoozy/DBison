@@ -10,6 +10,10 @@ namespace DBison.WPF.Controls
     public class LineNumberedTextBox : DBison.WPF.Controls.RichTextBox
     {
         private bool m_SkipHighliting;
+        private Popup m_Popup;
+        private ListBox m_SuggestionListBox;
+
+        public event EventHandler<object> SuggestionChoosed;
 
         #region - ctor -
         static LineNumberedTextBox()
@@ -20,6 +24,7 @@ namespace DBison.WPF.Controls
         public LineNumberedTextBox()
         {
             TextFormatter = new PlainTextFormatter();
+            __AddPopUp();
         }
         #endregion
 
@@ -28,6 +33,44 @@ namespace DBison.WPF.Controls
         {
             base.OnApplyTemplate();
             __UpdateLineNumber();
+        }
+        #endregion
+
+        #region [SuggestionSource]
+        public IEnumerable<object> SuggestionSource
+        {
+            get
+            {
+                return (IEnumerable<object>)GetValue(SuggestionSourceProperty);
+            }
+            set
+            {
+                SetValue(SuggestionSourceProperty, value);
+            }
+        }
+
+        public static readonly DependencyProperty SuggestionSourceProperty =
+                DependencyProperty.Register("SuggestionSource", typeof(IEnumerable<object>), typeof(LineNumberedTextBox), new PropertyMetadata(null, __SuggestionSourceChanged));
+
+        private static void __SuggestionSourceChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            ((LineNumberedTextBox)d).__UpdatePopup();
+        }
+        #endregion
+
+        #region [SuggestionDisplayMemberPath]
+        public string SuggestionDisplayMemberPath
+        {
+            get => (string)GetValue(SuggestionDisplayMemberPathProperty);
+            set => SetValue(SuggestionDisplayMemberPathProperty, value);
+        }
+
+        public static readonly DependencyProperty SuggestionDisplayMemberPathProperty =
+                DependencyProperty.Register("SuggestionDisplayMemberPath", typeof(string), typeof(LineNumberedTextBox), new PropertyMetadata(null, __SuggestionDisplayMemberPathChanged));
+
+        private static void __SuggestionDisplayMemberPathChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            ((LineNumberedTextBox)d).__AdjustSuggestionListBoxProperties();
         }
         #endregion
 
@@ -40,6 +83,7 @@ namespace DBison.WPF.Controls
             {
                 __HighlightSQLKeyWords();
             }
+            __UpdatePopup();
         }
         #endregion
 
@@ -93,7 +137,7 @@ namespace DBison.WPF.Controls
                 return;
             }
 
-            for (TextPointer startPointer = rich.Document.ContentStart; startPointer.CompareTo(rich.Document.ContentEnd) <= 0; startPointer = startPointer?.GetNextContextPosition(LogicalDirection.Forward))
+            for (TextPointer startPointer = rich.Document.ContentStart; startPointer?.CompareTo(rich.Document.ContentEnd) <= 0; startPointer = startPointer?.GetNextContextPosition(LogicalDirection.Forward))
             {
                 if (startPointer == null)
                     break;
@@ -141,6 +185,123 @@ namespace DBison.WPF.Controls
                     }
                 }
             }
+        }
+        #endregion
+
+        #region [__AddPopUp]
+        private void __AddPopUp()
+        {
+            m_Popup = new Popup();
+            m_Popup.Placement = PlacementMode.Relative;
+            m_Popup.StaysOpen = false;
+            m_Popup.AllowsTransparency = true;
+            m_Popup.Child = new Border
+            {
+                Background = System.Windows.Media.Brushes.LightYellow,
+                BorderBrush = System.Windows.Media.Brushes.Black,
+                BorderThickness = new Thickness(1),
+                Child = new ContentPresenter()
+            };
+        }
+        #endregion
+
+        #region [__UpdatePopup]
+        private void __UpdatePopup()
+        {
+            if (!IsLoaded) return;
+            if (m_Popup != null)
+            {
+                m_Popup.DataContext = this.DataContext;
+                var border = (Border)m_Popup.Child;
+                var contentPresenter = (ContentPresenter)border.Child;
+                var PopupContent = SuggestionSource;
+                m_SuggestionListBox = new ListBox()
+                {
+                    ItemsSource = SuggestionSource,
+                    SelectedIndex = 0,
+                };
+                __HandleListBoxEvents();
+                contentPresenter.Content = m_SuggestionListBox;
+                Rect positionRect = CaretPosition.GetCharacterRect(LogicalDirection.Backward);
+                Point point = PointToScreen(positionRect.BottomRight);
+                m_Popup.HorizontalOffset = point.X;
+                m_Popup.VerticalOffset = point.Y;
+                __AdjustSuggestionListBoxProperties();
+
+                if (PopupContent != null)
+                {
+                    if (!m_Popup.IsOpen)
+                    {
+                        m_Popup.IsOpen = true;
+                    }
+                }
+                else
+                {
+                    if (m_Popup.IsOpen)
+                    {
+                        m_Popup.IsOpen = false;
+                    }
+                }
+                Keyboard.Focus(m_SuggestionListBox);
+            }
+        }
+        #endregion
+
+        #region [__AdjustSuggestionListBoxProperties]
+        private void __AdjustSuggestionListBoxProperties()
+        {
+            if (m_SuggestionListBox == null)
+                return;
+
+            m_SuggestionListBox.DisplayMemberPath = SuggestionDisplayMemberPath;
+        }
+        #endregion
+
+        #region [__HandleListBoxEvents]
+        private void __HandleListBoxEvents()
+        {
+            if (m_SuggestionListBox == null)
+                return;
+            m_SuggestionListBox.MouseDoubleClick += __SuggestionListBox_MouseDoubleClick;
+            m_SuggestionListBox.KeyDown += __SuggestionListBox_KeyUp;
+        }
+        #endregion
+
+        #region [__SuggestionListBox_KeyUp]
+        private void __SuggestionListBox_KeyUp(object sender, KeyEventArgs e)
+        {
+            //if (Keyboard.Modifiers != ModifierKeys.None)
+            //    return;
+            if (e.Key == Key.Enter || e.Key == Key.Tab)
+            {
+                m_SuggestionListBox.KeyDown -= __SuggestionListBox_KeyUp;
+                __TakeSuggestionSelection();
+            }
+            else
+            {
+                Keyboard.Focus(this);
+                return;
+            }
+        }
+        #endregion
+
+        #region [__SuggestionListBox_MouseDoubleClick]
+        private void __SuggestionListBox_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            m_SuggestionListBox.MouseDoubleClick -= __SuggestionListBox_MouseDoubleClick;
+            __TakeSuggestionSelection();
+        }
+        #endregion
+
+        #region [__TakeSuggestionSelection]
+        private void __TakeSuggestionSelection()
+        {
+            //SuggestionChoosed?.Invoke(this, m_SuggestionListBox?.SelectedItem);
+
+            //__ReplaceIncompleteWordWithSelection();
+
+            if (m_Popup != null)
+                m_Popup.IsOpen = false;
         }
         #endregion
 

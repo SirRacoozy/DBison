@@ -12,7 +12,8 @@
                  Icon="{Binding ImageSource}"
                  TitleCharacterCasing="Normal"
                  WindowTitleBrush="Transparent"
-                 TitleForeground="{Binding ForeGround}">
+                 TitleForeground="{Binding ForeGround}"
+                 FontSize="{DynamicResource GlobalFontSize}">
 
   <mah:MetroWindow.LayoutTransform>
     <ScaleTransform ScaleX="{DynamicResource GlobalScaleFactor}"

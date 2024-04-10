@@ -24,7 +24,7 @@ public class DatabaseInfo : DatabaseObjectBase
     /// Gets the hash code of the object.
     /// </summary>
     /// <returns>The hash code.</returns>
-    public override int GetHashCode() => HashCode.Combine(Name, Server.Name, Server.Username, Server.Password, Server.UseIntegratedSecurity);
+    //public override int GetHashCode() => HashCode.Combine(Name, Server.Name, Server.Username, Server.Password, Server.UseIntegratedSecurity);
     #endregion
 
     #region [Equals]
@@ -33,7 +33,7 @@ public class DatabaseInfo : DatabaseObjectBase
     /// </summary>
     /// <param name="obj">The object to check.</param>
     /// <returns>True if the objects are equal; otherwise false.</returns>
-    public override bool Equals(object? obj) => obj is not null || obj is not DatabaseInfo ? false : GetHashCode() == (obj as DatabaseInfo)!.GetHashCode();
+    //public override bool Equals(object? obj) => obj is not null || obj is not DatabaseInfo ? false : GetHashCode() == (obj as DatabaseInfo)!.GetHashCode();
     #endregion
 
     #endregion
