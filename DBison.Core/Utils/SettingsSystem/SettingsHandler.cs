@@ -16,7 +16,7 @@ public static class SettingsHandler
     #region [SettingsHandler]
     static SettingsHandler()
     {
-        if(!Directory.Exists(m_ConfigDirectory))
+        if (!Directory.Exists(m_ConfigDirectory))
             Directory.CreateDirectory(m_ConfigDirectory);
         m_Config = ConfigurationManager.OpenMappedExeConfiguration(new ExeConfigurationFileMap { ExeConfigFilename = m_ConfigPath }, ConfigurationUserLevel.None);
     }
@@ -75,6 +75,11 @@ public static class SettingsHandler
         {
             if (m_Config == null)
                 return false;
+
+            if (key == nameof(Settings.UIScaling) && Convert.ToDouble(value) < 0.1)
+            {
+                return false;
+            }
 
             if (m_Config.AppSettings.Settings[key] == null)
                 m_Config.AppSettings.Settings.Add(key, value);

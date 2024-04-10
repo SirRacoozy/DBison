@@ -143,7 +143,20 @@ public class MainWindowViewModel : ClientViewModelBase
     {
         Settings.UIScaling = 1;
         Settings.FontSize = 20;
-        //TODO: Refresh Settingspage if open, but do it later
+    }
+    #endregion
+
+    #region [Execute_IncreaseScaling]
+    public void Execute_IncreaseScaling()
+    {
+        Settings.UIScaling += 0.1;
+    }
+    #endregion
+
+    #region [Execute_DecreaseScaling]
+    public void Execute_DecreaseScaling()
+    {
+        Settings.UIScaling -= 0.1;
     }
     #endregion
 
@@ -514,6 +527,11 @@ public class MainWindowViewModel : ClientViewModelBase
             case nameof(Settings.UIScaling):
                 Application.Current.Resources["GlobalScaleFactor"] = Settings.UIScaling;
                 break;
+        }
+        var settingsTab = TabItems.LastOrDefault(s => s is SettingsTabViewModel);
+        if (settingsTab is SettingsTabViewModel settingsTabVm)
+        {
+            settingsTabVm.RefreshSettings();
         }
     }
     #endregion
