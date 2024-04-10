@@ -8,13 +8,13 @@
                  xmlns:views="clr-namespace:DBison.WPF.Views"
                  xmlns:controls="clr-namespace:DBison.WPF.Controls"
                  Title="DBison"
-                 ShowTitleBar="False"
-                 ShowCloseButton="False"
-                 ShowMaxRestoreButton="False"
-                 ShowMinButton="False"
-                 WindowState="Maximized"
                  x:Name="this"
-                 Icon="{Binding IconSource}">
+                 Icon="{Binding ImageSource}"
+                 TitleCharacterCasing="Normal"
+                 WindowTitleBrush="Transparent"
+                 NonActiveWindowTitleBrush="Transparent"
+                 TitleForeground="{Binding ForeGround}"
+                 Mouse.MouseWheel="__MouseWheel">
 
   <mah:MetroWindow.LayoutTransform>
     <ScaleTransform ScaleX="{DynamicResource GlobalScaleFactor}"
@@ -56,20 +56,24 @@
                 Key="D0"
                 Command="{Binding [ResetUIScaling]}" />
 
+    <KeyBinding Modifiers="Ctrl"
+                Key="OemPlus"
+                Command="{Binding [IncreaseScaling]}" />
+
+    <KeyBinding Modifiers="Ctrl"
+                Key="Add"
+                Command="{Binding [IncreaseScaling]}" />
+
+    <KeyBinding Modifiers="Ctrl"
+                Key="OemMinus"
+                Command="{Binding [DecreaseScaling]}" />
+
+    <KeyBinding Modifiers="Ctrl"
+                Key="Subtract"
+                Command="{Binding [DecreaseScaling]}" />
+
   </mah:MetroWindow.InputBindings>
 
-  <WindowChrome.WindowChrome>
-    <WindowChrome UseAeroCaptionButtons="False" />
-  </WindowChrome.WindowChrome>
-
-  <Border x:Name="MainWindowBorder"
-          BorderBrush="DarkRed"
-          BorderThickness="0">
-    <controls:WindowChromedContent Window="{Binding ElementName=this}">
-      <controls:WindowChromedContent.Content>
-        <views:ServerTabbedPage Grid.Row="1" />
-      </controls:WindowChromedContent.Content>
-    </controls:WindowChromedContent>
-  </Border>
+  <views:ServerTabbedPage Grid.Row="1" />
 </mah:MetroWindow>
   

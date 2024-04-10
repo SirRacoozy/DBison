@@ -3,9 +3,6 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:controls="clr-namespace:DBison.WPF.Controls"
              xmlns:sys="clr-namespace:System;assembly=mscorlib"
-             xmlns:settingssystem="clr-namespace:DBison.Core.Utils.SettingsSystem;assembly=DBison.Core"
-             xmlns:controlzex="urn:controlzex"
-             xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
              StartupUri="MainWindow.xaml">
   <Application.Resources>
     <ResourceDictionary>
@@ -83,24 +80,15 @@
              x:Key="TitleBarBtnStyle">
         <Setter Property="OverridesDefaultStyle"
                 Value="True" />
-        <Setter Property="Margin"
-                Value="5" />
         <Setter Property="Template">
           <Setter.Value>
             <ControlTemplate TargetType="Button">
               <Border Name="border"
-                      BorderThickness="1">
-                <ContentPresenter HorizontalAlignment="Center"
-                                  VerticalAlignment="Center" />
+                      BorderThickness="1"
+                      HorizontalAlignment="Center"
+                      VerticalAlignment="Center">
+                <ContentPresenter />
               </Border>
-              <ControlTemplate.Triggers>
-                <Trigger Property="IsMouseOver"
-                         Value="True">
-                  <Setter TargetName="border"
-                          Property="Background"
-                          Value="Transparent" />
-                </Trigger>
-              </ControlTemplate.Triggers>
             </ControlTemplate>
           </Setter.Value>
         </Setter>
@@ -113,6 +101,63 @@
                 Value="Top" />
       </Style>
 
+      <Grid x:Key="MinButtonContent">
+        <Border x:Name="ButtonBorder"
+                CornerRadius="50"
+                Background="#8EDB42"
+                Width="{StaticResource EllipseSize}"
+                Height="{StaticResource EllipseSize}">
+          <Path Data="M0,4 L8,4"
+                Stroke="DarkGreen"
+                StrokeThickness="2"
+                VerticalAlignment="Center"
+                HorizontalAlignment="Center" />
+        </Border>
+      </Grid>
+
+      <Grid x:Key="MaxButtonContent">
+        <Border x:Name="ButtonBorder"
+                CornerRadius="50"
+                Background="#DBB042"
+                Width="{StaticResource EllipseSize}"
+                Height="{StaticResource EllipseSize}">
+          
+          <Viewbox Width="10"
+                   HorizontalAlignment="Center"
+                   VerticalAlignment="Center">
+            <Grid>
+              <Path Data='M64 0 L64 48 L16 0 Z'
+                    Fill="#914f0d"
+                    StrokeThickness="2"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center" />
+
+              <Path Data='M0 64 L48 64 L0 16 Z'
+                    Fill="#914f0d"
+                    StrokeThickness="2"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center" />
+            </Grid>
+          </Viewbox>
+          
+        </Border>
+      </Grid>
+
+      <Grid x:Key="CloseButtonContent">
+        <Border x:Name="ButtonBorder"
+                CornerRadius="50"
+                Background="#C93B3B"
+                Width="{StaticResource EllipseSize}"
+                Height="{StaticResource EllipseSize}">
+          <Path Data="M0,0 L8,8 M8,0 L0,8"
+                Stroke="#7e0508"
+                StrokeThickness="1"
+                VerticalAlignment="Center"
+                HorizontalAlignment="Center" />
+        </Border>
+      </Grid>
+
     </ResourceDictionary>
+
   </Application.Resources>
 </Application>
