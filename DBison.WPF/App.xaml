@@ -89,23 +89,6 @@
                       VerticalAlignment="Center">
                 <ContentPresenter />
               </Border>
-              <ControlTemplate.Triggers>
-                <Trigger Property="IsMouseOver"
-                         Value="True">
-                  <Setter TargetName="border"
-                          Property="Background"
-                          Value="Transparent" />
-                  <Setter TargetName="border"
-                          Property="RenderTransform">
-                    <Setter.Value>
-                      <ScaleTransform ScaleX="1.5"
-                                      ScaleY="1.5"
-                                      CenterX="0.5"
-                                      CenterY="0.5" />
-                    </Setter.Value>
-                  </Setter>
-                </Trigger>
-              </ControlTemplate.Triggers>
             </ControlTemplate>
           </Setter.Value>
         </Setter>
@@ -119,7 +102,8 @@
       </Style>
 
       <Grid x:Key="MinButtonContent">
-        <Border CornerRadius="50"
+        <Border x:Name="ButtonBorder"
+                CornerRadius="50"
                 Background="#8EDB42"
                 Width="{StaticResource EllipseSize}"
                 Height="{StaticResource EllipseSize}">
@@ -132,11 +116,12 @@
       </Grid>
 
       <Grid x:Key="MaxButtonContent">
-        <Border CornerRadius="50"
+        <Border x:Name="ButtonBorder"
+                CornerRadius="50"
                 Background="#DBB042"
                 Width="{StaticResource EllipseSize}"
                 Height="{StaticResource EllipseSize}">
-
+          
           <Viewbox Width="10"
                    HorizontalAlignment="Center"
                    VerticalAlignment="Center">
@@ -154,12 +139,13 @@
                     VerticalAlignment="Center" />
             </Grid>
           </Viewbox>
-
+          
         </Border>
       </Grid>
 
       <Grid x:Key="CloseButtonContent">
-        <Border CornerRadius="50"
+        <Border x:Name="ButtonBorder"
+                CornerRadius="50"
                 Background="#C93B3B"
                 Width="{StaticResource EllipseSize}"
                 Height="{StaticResource EllipseSize}">
