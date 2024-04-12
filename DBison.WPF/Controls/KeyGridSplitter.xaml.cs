@@ -27,6 +27,17 @@ public partial class KeyGridSplitter : UserControl
             DependencyProperty.RegisterAttached("ContentPanel1", typeof(object), typeof(KeyGridSplitter), new PropertyMetadata(null));
     #endregion
 
+    #region ContentPanel1Size
+    public GridLength ContentPanel1Size
+    {
+        get { return (GridLength)GetValue(ContentPanel1SizeProperty); }
+        set { SetValue(ContentPanel1SizeProperty, value); }
+    }
+
+    public static readonly DependencyProperty ContentPanel1SizeProperty =
+            DependencyProperty.Register("ContentPanel1Size", typeof(GridLength), typeof(KeyGridSplitter), new PropertyMetadata(new GridLength(1, GridUnitType.Star)));
+    #endregion
+
     #region ContentPanel2
     public object ContentPanel2
     {
@@ -38,6 +49,17 @@ public partial class KeyGridSplitter : UserControl
             DependencyProperty.RegisterAttached("ContentPanel2", typeof(object), typeof(KeyGridSplitter), new PropertyMetadata(null));
     #endregion
 
+    #region ContentPanel2Size
+    public GridLength ContentPanel2Size
+    {
+        get { return (GridLength)GetValue(ContentPanel2SizeProperty); }
+        set { SetValue(ContentPanel2SizeProperty, value); }
+    }
+
+    public static readonly DependencyProperty ContentPanel2SizeProperty =
+            DependencyProperty.Register("ContentPanel2Size", typeof(GridLength), typeof(KeyGridSplitter), new PropertyMetadata(new GridLength(1, GridUnitType.Star)));
+    #endregion
+
     #region ResizeDirection
     public Orientation ResizeDirection
     {
@@ -46,7 +68,7 @@ public partial class KeyGridSplitter : UserControl
     }
 
     public static readonly DependencyProperty ResizeDirectionProperty =
-            DependencyProperty.RegisterAttached("ResizeDirection", typeof(Orientation), typeof(KeyGridSplitter), new PropertyMetadata(Orientation.Vertical));
+            DependencyProperty.Register("ResizeDirection", typeof(Orientation), typeof(KeyGridSplitter), new PropertyMetadata(Orientation.Vertical));
 
     #endregion
 

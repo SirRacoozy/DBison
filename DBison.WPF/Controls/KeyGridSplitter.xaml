@@ -184,9 +184,9 @@
                   <Grid x:Name="PanelsGrid"
                         DataContext="{Binding Data.DataContext, Source={StaticResource DataContextBinding}}">
                     <Grid.ColumnDefinitions>
-                      <ColumnDefinition Width="*" />
+                      <ColumnDefinition Width="{Binding Data.ContentPanel1Size, Source={StaticResource DataContextBinding}}" />
                       <ColumnDefinition Width="Auto" />
-                      <ColumnDefinition Width="*" />
+                      <ColumnDefinition Width="{Binding Data.ContentPanel2Size, Source={StaticResource DataContextBinding}}" />
                     </Grid.ColumnDefinitions>
 
                     <Grid.RowDefinitions>
@@ -227,9 +227,9 @@
                   <Grid x:Name="PanelsGrid"
                         DataContext="{Binding Data.DataContext, Source={StaticResource DataContextBinding}}">
                     <Grid.RowDefinitions>
-                      <RowDefinition Height="*" />
+                      <RowDefinition Height="{Binding Data.ContentPanel1Size, Source={StaticResource DataContextBinding}}" />
                       <RowDefinition Height="Auto" />
-                      <RowDefinition Height="*" />
+                      <RowDefinition Height="{Binding Data.ContentPanel2Size, Source={StaticResource DataContextBinding}}" />
                     </Grid.RowDefinitions>
 
                     <Grid.ColumnDefinitions>

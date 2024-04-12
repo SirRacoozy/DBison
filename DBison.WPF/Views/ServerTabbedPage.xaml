@@ -8,7 +8,9 @@
              xmlns:helperobjects="clr-namespace:DBison.WPF.HelperObjects"
              Margin="5">
 
-  <controls:KeyGridSplitter ResizeDirection="Horizontal">
+  <controls:KeyGridSplitter ResizeDirection="Horizontal"
+                            ContentPanel1Size="1*"
+                            ContentPanel2Size="5*">
     <controls:KeyGridSplitter.ContentPanel1>
       <Border Grid.Row="0"
               CornerRadius="{StaticResource ControlCornerRadius}"
