@@ -12,7 +12,7 @@ public partial class KeyGridSplitter : UserControl
 {
     public KeyGridSplitter()
     {
-        KeyDown += __KeyGridSplitter_KeyDown;
+        PreviewKeyDown += __KeyGridSplitter_KeyDown;
         InitializeComponent();
     }
 
@@ -82,10 +82,12 @@ public partial class KeyGridSplitter : UserControl
                 case Key.Left:
                 case Key.Up:
                     __MoveSplitter(-1);
+                    e.Handled = true;
                     break;
                 case Key.Right:
                 case Key.Down:
                     __MoveSplitter(1);
+                    e.Handled = true;
                     break;
             }
         }
