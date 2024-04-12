@@ -102,7 +102,7 @@ public partial class KeyGridSplitter : UserControl
 
         if (GetResizeDirection(this) == Orientation.Horizontal)
         {
-            var firstColumn = grid.ColumnDefinitions[0];
+            var firstColumn = grid.ColumnDefinitions.FirstOrDefault();
             if (firstColumn != null)
             {
                 double newWidth = firstColumn.ActualWidth;
@@ -116,7 +116,7 @@ public partial class KeyGridSplitter : UserControl
         }
         else
         {
-            var firstRow = grid.RowDefinitions[0];
+            var firstRow = grid.RowDefinitions.FirstOrDefault();
             if (firstRow != null)
             {
                 double newHeight = firstRow.ActualHeight;
