@@ -75,7 +75,7 @@ public partial class KeyGridSplitter : UserControl
     #region [__KeyGridSplitter_KeyDown]
     private void __KeyGridSplitter_KeyDown(object sender, KeyEventArgs e)
     {
-        if (Keyboard.Modifiers == ModifierKeys.Control)
+        if (Keyboard.Modifiers == (ModifierKeys.Control | ModifierKeys.Alt))
         {
             switch (e.Key)
             {
