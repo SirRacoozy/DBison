@@ -11,12 +11,18 @@ public partial class SettingsTreeView : UserControl
     #region [SettingsTreeView]
     public SettingsTreeView()
     {
+        Loaded += __SettingsTreeView_Loaded;
         InitializeComponent();
     }
+
     #endregion
 
-    #region [TreeView]
-    public TreeView TreeView => ThisTreeView;
+    #region [__SettingsTreeView_Loaded]
+    private void __SettingsTreeView_Loaded(object sender, RoutedEventArgs e)
+    {
+        if (DataContext is SettingsTabViewModel vm)
+            vm.TreeView = ThisTreeView;
+    }
     #endregion
 
     #region [__SelectedItemChanged]

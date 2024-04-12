@@ -5,6 +5,7 @@ using DBison.Core.Utils.SettingsSystem;
 using DBison.WPF.ClientBaseClasses;
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
+using System.Windows.Controls;
 
 namespace DBison.WPF.ViewModels
 {
@@ -37,6 +38,14 @@ namespace DBison.WPF.ViewModels
         }
         #endregion
 
+        #region [TreeView]
+        public TreeView TreeView
+        {
+            get => Get<TreeView>();
+            set => Set(value);
+        }
+        #endregion
+
         #region [Execute_Close]
         public override void Execute_Close()
         {
@@ -47,9 +56,16 @@ namespace DBison.WPF.ViewModels
         #region [RefreshSettings]
         public void RefreshSettings()
         {
+            var selectedGroup = SelectedSettingsGroup.Name;
             SettingsHandler.SettingChanged -= __SettingsHandler_SettingChanged;
             __ReadAndGenerateSettings();
             SettingsHandler.SettingChanged += __SettingsHandler_SettingChanged;
+            var newOldSelectedGroup = SettingGroups.FirstOrDefault(g => g.Name.IsEquals(selectedGroup));
+            if(newOldSelectedGroup != null)
+            {
+                if (TreeView.ItemContainerGenerator.ContainerFromItem(newOldSelectedGroup) is TreeViewItem tvi)
+                    tvi.IsSelected = true;
+            }
         }
         #endregion
 
