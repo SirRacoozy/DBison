@@ -1,11 +1,12 @@
 ﻿using DBison.Core.Attributes;
+using DBison.Core.Database;
 using DBison.Core.Entities;
 using DBison.Core.Extender;
-using DBison.Core.Helper;
 using DBison.WPF.ClientBaseClasses;
 using DBison.WPF.HelperObjects;
 using Microsoft.Win32;
 using System.Collections.ObjectModel;
+using System.Data;
 using System.Diagnostics;
 using System.IO;
 using System.Windows.Threading;
@@ -15,7 +16,6 @@ public class ServerQueryPageViewModel : TabItemViewModelBase
 {
     #region - needs -
     ServerViewModel m_ServerViewModel;
-    ServerQueryHelper m_ServerQueryHelper;
     DispatcherTimer m_ExecutionTimer;
     Stopwatch m_Stopwatch = new Stopwatch();
     #endregion
@@ -28,7 +28,7 @@ public class ServerQueryPageViewModel : TabItemViewModelBase
         m_ServerViewModel = req.ServerViewModel;
         Header = req.Name;
         ResultSets = new ObservableCollection<ResultSetViewModel>();
-        m_ServerQueryHelper = req.ServerQueryHelper;
+
         if (req.QueryText.IsNotNullOrEmpty())
         {
             QueryText = req.QueryText;
@@ -245,7 +245,15 @@ public class ServerQueryPageViewModel : TabItemViewModelBase
     {
         __PrepareTimer(() =>
         {
-            var dataTable = m_ServerQueryHelper.FillDataTable(databaseInfo, singleSql.ToStringValue(), __Error);
+            DataTable? dataTable = null;
+            using(MSSQLDatabaseAccess dbAccess = new(databaseInfo.Server))
+            {
+                var result = dbAccess.GetDataTable(singleSql.ToStringValue(), null);
+                if (!result.Validate())
+                    __Error(result.Exception ?? new Exception("Unexpected exception"));
+                else
+                    dataTable = result.Result;
+            }
 
             ExecuteOnDispatcher(() => IsLoading = false);
 

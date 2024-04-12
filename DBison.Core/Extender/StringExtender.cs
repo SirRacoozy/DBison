@@ -87,6 +87,16 @@ public static class StringExtender
     }
     #endregion
 
+    #region [Format]
+    public static string Format(this string value, params string[] parameters)
+    {
+        if (IsNullEmptyOrWhitespace(value))
+            return string.Empty;
+
+        return string.Format(value, parameters);
+    }
+    #endregion
+
     #region [ConvertToSelectStatement]
     public static (string, eDMLOperator) ConvertToSelectStatement(this string value)
     {

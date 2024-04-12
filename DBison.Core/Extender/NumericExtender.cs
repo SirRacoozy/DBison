@@ -11,4 +11,5 @@ public static class NumericExtender
         return casted;
     }
     #endregion
+
 }
