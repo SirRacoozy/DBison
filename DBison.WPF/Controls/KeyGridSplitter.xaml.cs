@@ -17,14 +17,10 @@ public partial class KeyGridSplitter : UserControl
     }
 
     #region ContentPanel1
-    public static object GetContentPanel1(DependencyObject obj)
+    public object ContentPanel1
     {
-        return (object)obj.GetValue(ContentPanel1Property);
-    }
-
-    public static void SetContentPanel1(DependencyObject obj, object value)
-    {
-        obj.SetValue(ContentPanel1Property, value);
+        get { return (object)GetValue(ContentPanel1Property); }
+        set { SetValue(ContentPanel1Property, value); }
     }
 
     public static readonly DependencyProperty ContentPanel1Property =
@@ -32,14 +28,10 @@ public partial class KeyGridSplitter : UserControl
     #endregion
 
     #region ContentPanel2
-    public static object GetContentPanel2(DependencyObject obj)
+    public object ContentPanel2
     {
-        return (object)obj.GetValue(ContentPanel2Property);
-    }
-
-    public static void SetContentPanel2(DependencyObject obj, object value)
-    {
-        obj.SetValue(ContentPanel2Property, value);
+        get { return (object)GetValue(ContentPanel2Property); }
+        set { SetValue(ContentPanel2Property, value); }
     }
 
     public static readonly DependencyProperty ContentPanel2Property =
@@ -47,14 +39,10 @@ public partial class KeyGridSplitter : UserControl
     #endregion
 
     #region ResizeDirection
-    public static Orientation GetResizeDirection(DependencyObject obj)
+    public Orientation ResizeDirection
     {
-        return (Orientation)obj.GetValue(ResizeDirectionProperty);
-    }
-
-    public static void SetResizeDirection(DependencyObject obj, Orientation value)
-    {
-        obj.SetValue(ResizeDirectionProperty, value);
+        get { return (Orientation)GetValue(ResizeDirectionProperty); }
+        set { SetValue(ResizeDirectionProperty, value); }
     }
 
     public static readonly DependencyProperty ResizeDirectionProperty =
@@ -100,7 +88,7 @@ public partial class KeyGridSplitter : UserControl
         var grid = this.FindChild<Grid>("PanelsGrid");
         if (grid == null) return;
 
-        if (GetResizeDirection(this) == Orientation.Horizontal)
+        if (ResizeDirection == Orientation.Horizontal)
         {
             var firstColumn = grid.ColumnDefinitions.FirstOrDefault();
             if (firstColumn != null)
