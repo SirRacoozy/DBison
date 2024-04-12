@@ -81,12 +81,12 @@ public partial class KeyGridSplitter : UserControl
             {
                 case Key.Left:
                 case Key.Up:
-                    __MoveSplitter(-1);
+                    __MoveSplitter(-10);
                     e.Handled = true;
                     break;
                 case Key.Right:
                 case Key.Down:
-                    __MoveSplitter(1);
+                    __MoveSplitter(10);
                     e.Handled = true;
                     break;
             }
@@ -97,10 +97,6 @@ public partial class KeyGridSplitter : UserControl
     #region [__MoveSplitter]
     private void __MoveSplitter(int direction)
     {
-        if (direction < 0)
-            direction = -10;
-        else direction = 10;
-
         var grid = this.FindChild<Grid>("PanelsGrid");
         if (grid == null) return;
 
