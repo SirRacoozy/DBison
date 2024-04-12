@@ -31,14 +31,4 @@ public partial class ServerTabbedPage : UserControl
             mainVm.SetSelectedServerIfNeeded(tv.TreeView.SelectedItem);
     }
     #endregion
-
-    #region [__MouseWheelClick]
-    private void __MouseWheelClick(object sender, MouseButtonEventArgs e)
-    {
-        if (e.ChangedButton == MouseButton.Middle && sender is Grid grd && grd.DataContext is TabItemViewModelBase tabItemBase)
-        {
-            tabItemBase.Execute_Close();
-        }
-    }
-    #endregion
 }

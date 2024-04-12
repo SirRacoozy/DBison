@@ -1,0 +1,267 @@
+﻿<UserControl x:Class="DBison.WPF.Controls.KeyGridSplitter"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:DBison.WPF.Controls"
+             xmlns:helperobjects="clr-namespace:DBison.WPF.HelperObjects"
+             xmlns:controls="clr-namespace:DBison.WPF.Controls"
+             xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
+             xmlns:views="clr-namespace:DBison.WPF.Views"
+             xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+             mc:Ignorable="d"
+             x:Name="This">
+
+  <UserControl.Resources>
+    <Style x:Key="PanelBorderStyle"
+           TargetType="Border">
+      <Setter Property="BorderBrush"
+              Value="Gray" />
+      <Setter Property="BorderThickness"
+              Value="1" />
+    </Style>
+    <helperobjects:DataBindingHelper x:Key="DataContextBinding"
+                                     Data="{Binding ElementName=This}" />
+
+    <BooleanToVisibilityConverter x:Key="VisibilityConverter" />
+
+    <Style TargetType="{x:Type TabItem}">
+      <Setter Property="Template">
+        <Setter.Value>
+          <ControlTemplate TargetType="{x:Type TabItem}">
+            <Grid>
+              <Border Name="Border"
+                      Margin="0 0 5 0"
+                      BorderThickness="1 1 1 0"
+                      CornerRadius="10 10 0 0"
+                      Focusable="False">
+                <ContentPresenter x:Name="ContentSite"
+                                  ContentSource="Header"
+                                  VerticalAlignment="Center"
+                                  HorizontalAlignment="Center"
+                                  RecognizesAccessKey="True" />
+              </Border>
+
+            </Grid>
+            <ControlTemplate.Triggers>
+              <Trigger Property="IsSelected"
+                       Value="True">
+                <Setter Property="FontWeight"
+                        Value="Bold" />
+                <Setter Property="FontStyle"
+                        Value="Italic" />
+                <Setter TargetName="Border"
+                        Property="Background"
+                        Value="#00BBC9" />
+              </Trigger>
+              <Trigger Property="IsSelected"
+                       Value="False">
+                <Setter TargetName="Border"
+                        Property="Background"
+                        Value="#00747C" />
+              </Trigger>
+            </ControlTemplate.Triggers>
+          </ControlTemplate>
+        </Setter.Value>
+      </Setter>
+      <Setter Property="HeaderTemplate">
+        <Setter.Value>
+          <DataTemplate>
+            <Grid Margin="5"
+                  MouseDown="__MouseWheelClick">
+              <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+              </Grid.ColumnDefinitions>
+
+              <TextBlock Text="{Binding Header}"
+                         Grid.Column="0"
+                         VerticalAlignment="Center" />
+              <mah:ProgressRing Grid.Column="1"
+                                IsActive="{Binding IsLoading, Mode=TwoWay, FallbackValue=False}"
+                                Width="16"
+                                Margin="5 0 0 0"
+                                Height="16"
+                                Visibility="{Binding IsLoading, Converter={StaticResource BooleanToVisibilityConverter}}" />
+              <controls:CrossButton Grid.Column="2"
+                                    Margin="5 0 0 0"
+                                    Command="{Binding [Close]}" />
+            </Grid>
+          </DataTemplate>
+        </Setter.Value>
+      </Setter>
+      <Setter Property="FontFamily"
+              Value="Arial" />
+      <Setter Property="FontSize"
+              Value="{DynamicResource GlobalFontSize}" />
+      <Style.Triggers>
+        <DataTrigger Binding="{Binding Setting}"
+                     Value="False">
+          <DataTrigger.Setters>
+            <Setter Property="Content">
+              <Setter.Value>
+                <views:ServerView Grid.Row="1" />
+              </Setter.Value>
+            </Setter>
+          </DataTrigger.Setters>
+        </DataTrigger>
+        <DataTrigger Binding="{Binding Setting}"
+                     Value="True">
+          <DataTrigger.Setters>
+            <Setter Property="Content">
+              <Setter.Value>
+                <views:SettingsTabView />
+              </Setter.Value>
+            </Setter>
+          </DataTrigger.Setters>
+        </DataTrigger>
+      </Style.Triggers>
+    </Style>
+
+    <Style  TargetType="{x:Type controls:TabControlBase}">
+      <Setter Property="OverridesDefaultStyle"
+              Value="True" />
+      <Setter Property="SnapsToDevicePixels"
+              Value="True" />
+      <Setter Property="Template">
+        <Setter.Value>
+          <ControlTemplate TargetType="{x:Type controls:TabControlBase}">
+            <Grid KeyboardNavigation.TabNavigation="Local">
+              <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+              </Grid.RowDefinitions>
+              <TabPanel Name="HeaderPanel"
+                        Grid.Row="0"
+                        Panel.ZIndex="1"
+                        Margin="25,0,4,-1"
+                        IsItemsHost="True"
+                        KeyboardNavigation.TabIndex="1"
+                        Background="Transparent" />
+              <Border Name="Border"
+                      Grid.Row="1"
+                      Background="Transparent"
+                      BorderBrush="Transparent"
+                      BorderThickness="1"
+                      KeyboardNavigation.TabNavigation="Local"
+                      KeyboardNavigation.DirectionalNavigation="Contained"
+                      KeyboardNavigation.TabIndex="2">
+                <ContentPresenter Name="PART_SelectedContentHost"
+                                  Margin="0"
+                                  ContentSource="SelectedContent" />
+              </Border>
+            </Grid>
+          </ControlTemplate>
+        </Setter.Value>
+      </Setter>
+    </Style>
+
+  </UserControl.Resources>
+
+  <ContentControl>
+    <ContentControl.Style>
+      <Style TargetType="ContentControl">
+        <Setter Property="Focusable"
+                Value="False" />
+        <Setter Property="ContentTemplate">
+          <Setter.Value>
+            <DataTemplate>
+
+              <Ellipse Width="100"
+                       Height="100"
+                       Fill="Red"
+                       StrokeThickness="2" />
+            </DataTemplate>
+          </Setter.Value>
+        </Setter>
+        <Style.Triggers>
+          <DataTrigger Value="{x:Static Orientation.Horizontal}"
+                       Binding="{Binding Data.ResizeDirection, Source={StaticResource DataContextBinding}}">
+            <Setter Property="ContentTemplate">
+              <Setter.Value>
+                <DataTemplate>
+                  <Grid x:Name="PanelsGrid"
+                        DataContext="{Binding Data.DataContext, Source={StaticResource DataContextBinding}}">
+                    <Grid.ColumnDefinitions>
+                      <ColumnDefinition Width="*" />
+                      <ColumnDefinition Width="Auto" />
+                      <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <Grid.RowDefinitions>
+                      <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+
+                    <Border Grid.Column="0"
+                            Grid.Row="0"
+                            x:Name="ContentBorderHorizontalLeft"
+                            Style="{StaticResource PanelBorderStyle}">
+                      <ContentControl Content="{Binding Data.ContentPanel1, Source={StaticResource DataContextBinding}}" />
+                    </Border>
+
+                    <GridSplitter ResizeDirection="Columns"
+                                  Grid.Column="1"
+                                  Margin="5 0 5 0"
+                                  Width="5" />
+
+                    <Border Grid.Column="2"
+                            Grid.Row="0"
+                            Height="Auto"
+                            x:Name="ContentBorderHorizontalRight"
+                            Style="{StaticResource PanelBorderStyle}">
+                      <ContentControl Content="{Binding Data.ContentPanel2, Source={StaticResource DataContextBinding}}" />
+                    </Border>
+
+                  </Grid>
+                </DataTemplate>
+              </Setter.Value>
+            </Setter>
+
+          </DataTrigger>
+          <DataTrigger Value="{x:Static Orientation.Vertical}"
+                       Binding="{Binding Data.ResizeDirection, Source={StaticResource DataContextBinding}}">
+            <Setter Property="ContentTemplate">
+              <Setter.Value>
+                <DataTemplate>
+                  <Grid x:Name="PanelsGrid"
+                        DataContext="{Binding Data.DataContext, Source={StaticResource DataContextBinding}}">
+                    <Grid.RowDefinitions>
+                      <RowDefinition Height="*" />
+                      <RowDefinition Height="Auto" />
+                      <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+
+                    <Grid.ColumnDefinitions>
+                      <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <Border Grid.Row="0"
+                            Grid.Column="0"
+                            x:Name="ContentBorderVerticalTop"
+                            Style="{StaticResource PanelBorderStyle}">
+                      <ContentControl Content="{Binding Data.ContentPanel1, Source={StaticResource DataContextBinding}}" />
+                    </Border>
+
+                    <GridSplitter ResizeDirection="Rows"
+                                  Grid.Row="1"
+                                  Margin="0 5 0 5"
+                                  Height="5" />
+
+                    <Border Grid.Row="2"
+                            Grid.Column="0"
+                            x:Name="ContentBorderVerticalBottom"
+                            Style="{StaticResource PanelBorderStyle}">
+                      <ContentControl Content="{Binding Data.ContentPanel2, Source={StaticResource DataContextBinding}}" />
+                    </Border>
+
+                  </Grid>
+                </DataTemplate>
+              </Setter.Value>
+            </Setter>
+          </DataTrigger>
+        </Style.Triggers>
+      </Style>
+    </ContentControl.Style>
+  </ContentControl>
+</UserControl>
