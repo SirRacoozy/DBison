@@ -59,8 +59,16 @@ internal static class MetroWindowHelper
         if (content == null)
             return;
         var border = content.FindChild<Border>("ButtonBorder");
-        if (border != null && border.Child is UIElement uiElem)
+        if (border == null)
+            return;
+        if (visibility == Visibility.Visible)
+            border.Opacity = 1;
+        else
+            border.Opacity = 0.2;
+        if (border.Child is UIElement uiElem)
+        {
             uiElem.Visibility = visibility;
+        }
     }
     #endregion
 
