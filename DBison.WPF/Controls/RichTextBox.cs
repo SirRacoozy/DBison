@@ -155,9 +155,10 @@ public class RichTextBox : System.Windows.Controls.RichTextBox
     private void __RichTextBox_Loaded(object sender, RoutedEventArgs e)
     {
         Loaded -= __RichTextBox_Loaded;
-        KeyBinding keyBinding = new KeyBinding(ApplicationCommands.NotACommand, Key.T,
-                                                         ModifierKeys.Control);
-        InputBindings.Add(keyBinding);
+        InputBindings.Add(new KeyBinding(ApplicationCommands.NotACommand, Key.T,
+                                                         ModifierKeys.Control));
+        InputBindings.Add(new KeyBinding(ApplicationCommands.NotACommand, Key.R,
+                                                         ModifierKeys.Control));
     }
     #endregion
 
