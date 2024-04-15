@@ -133,6 +133,7 @@ public class MainWindowViewModel : ClientViewModelBase
     public void Execute_ConnectParseConnect()
     {
         var addServerVm = new AddServerDialogViewModel(null);
+        addServerVm.ServerName = Clipboard.GetText();
         addServerVm.OkClicked += (x, connectInfo) => __AddServer(connectInfo);
         addServerVm.Execute_Ok();
     }
