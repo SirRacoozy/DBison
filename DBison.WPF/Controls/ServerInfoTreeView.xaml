@@ -12,6 +12,7 @@
     <TreeView Background="Transparent"
               ItemsSource="{Binding ServerTreeItems, Mode=TwoWay}"
               PreviewMouseRightButtonDown="__PreviewMouseButtonDown"
+              Loaded="__Loaded"
               x:Name="ThisTreeView">
       <TreeView.Resources>
         <Style TargetType="TreeViewItem">

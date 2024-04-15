@@ -15,6 +15,7 @@ using System.IO;
 using System.Net.NetworkInformation;
 using System.Reflection;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Threading;
 
 namespace DBison.WPF;
@@ -105,6 +106,14 @@ public class MainWindowViewModel : ClientViewModelBase
     public string FilterText
     {
         get => Get<string>();
+        set => Set(value);
+    }
+    #endregion
+
+    #region [ServerItemsTreeView]
+    public TreeView ServerItemsTreeView
+    {
+        get => Get<TreeView>();
         set => Set(value);
     }
     #endregion
@@ -373,6 +382,15 @@ public class MainWindowViewModel : ClientViewModelBase
     {
         if (ServerItems == null)
             ServerItems = new ObservableCollection<ServerViewModel>();
+
+        var alreadyExistingServer = ServerItems.FirstOrDefault(s => s.DatabaseObject is ServerInfo serverInfo && serverInfo.Name.IsEquals(server.ServerName));
+        if (alreadyExistingServer != null)
+        {
+            if (ServerItemsTreeView.ItemContainerGenerator.ContainerFromItem(alreadyExistingServer.ServerNode) is TreeViewItem tvi)
+                tvi.IsSelected = true;
+            SelectedServer = alreadyExistingServer;
+            return;
+        }
 
         if (!__PingServer(server.ServerName))
         {
