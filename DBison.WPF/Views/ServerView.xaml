@@ -137,19 +137,7 @@
           <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <ScrollViewer x:Name="sv">
-          <ItemsControl ItemsSource="{Binding ResultSets}">
-            <ItemsControl.ItemTemplate>
-              <DataTemplate>
-                <DataGrid MaxHeight="{Binding DataContext.MaxHeight, ElementName=sv,UpdateSourceTrigger=PropertyChanged}"
-                          ItemsSource="{Binding ResultLines, Mode=TwoWay}"
-                          AutoGeneratingColumn="__AutoGeneratingColumn"
-                          VerticalAlignment="Stretch" />
-              </DataTemplate>
-            </ItemsControl.ItemTemplate>
-          </ItemsControl>
-
-        </ScrollViewer>
+        <controls:MultiplePanelControl ItemsSource="{Binding ResultSets}" />
 
         <TextBlock Text="{Binding QueryStatisticText, Mode=TwoWay}"
                    Grid.Row="1"

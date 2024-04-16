@@ -3,11 +3,14 @@ using DBison.Core.Entities;
 using DBison.Core.Extender;
 using DBison.Core.Helper;
 using DBison.WPF.ClientBaseClasses;
+using DBison.WPF.Converter;
 using DBison.WPF.HelperObjects;
 using Microsoft.Win32;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
+using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Threading;
 
 namespace DBison.WPF.ViewModels;
@@ -27,7 +30,7 @@ public class ServerQueryPageViewModel : TabItemViewModelBase
         DatabaseObject = req.DataBaseObject;
         m_ServerViewModel = req.ServerViewModel;
         Header = req.Name;
-        ResultSets = new ObservableCollection<ResultSetViewModel>();
+        ResultSets = new ObservableCollection<DataGrid>();
         m_ServerQueryHelper = req.ServerQueryHelper;
         if (req.QueryText.IsNotNullOrEmpty())
         {
@@ -73,9 +76,9 @@ public class ServerQueryPageViewModel : TabItemViewModelBase
     #endregion
 
     #region [ResultSets]
-    public ObservableCollection<ResultSetViewModel> ResultSets
+    public ObservableCollection<DataGrid> ResultSets
     {
-        get => Get<ObservableCollection<ResultSetViewModel>>();
+        get => Get<ObservableCollection<DataGrid>>();
         set => Set(value);
     }
     #endregion
@@ -158,7 +161,7 @@ public class ServerQueryPageViewModel : TabItemViewModelBase
     [DependsUpon(nameof(ResultSets))]
     public bool CanExecute_ClearResult()
     {
-        return !IsLoading && ResultSets.Any(r => r.ResultLines.Count != 0);
+        return !IsLoading && ResultSets.IsNotEmpty();
     }
     #endregion
 
@@ -254,6 +257,8 @@ public class ServerQueryPageViewModel : TabItemViewModelBase
 
             ExecuteOnDispatcher(() => IsLoading = false);
 
+            var resultList = new ObservableCollection<DataGrid>();
+
             foreach (var dataTable in dataTables)
             {
                 if (dataTable == null)
@@ -262,16 +267,23 @@ public class ServerQueryPageViewModel : TabItemViewModelBase
                     return;
                 }
                 ExecuteOnDispatcher(() =>
-                 ResultSets.Add(new ResultSetViewModel()
-                 {
-                     ResultLines = dataTable.DefaultView
-                 }));
-                OnPropertyChanged(nameof(MaxHeight));
+                {
+                    var dataGrid = new DataGrid
+                    {
+                        ItemsSource = dataTable.DefaultView
+                    };
+                    dataGrid.AutoGeneratingColumn += __AutoGeneratingColumn;
+                    resultList.Add(dataGrid);
+                    OnPropertyChanged(nameof(MaxHeight));
+                    OnPropertyChanged(nameof(ResultSets));
+                    if (resultList.Count == dataTables.Count)
+                        ResultSets = resultList;
+                });
             }
 
             OnPropertyChanged(nameof(ResultSets));
             __CleanTimer();
-            QueryStatisticText = $"Query executed in {m_Stopwatch.Elapsed.ToString(@"m\:ss\.ffff")} minutes - {dataTables.Sum(dt => dt.Rows.Count).ToString("N0")} Rows on {dataTables.Count()} ResultSets";
+            QueryStatisticText = $"Query executed in {m_Stopwatch.Elapsed:m\\:ss\\.ffff} minutes - {dataTables.Sum(dt => dt.Rows.Count):N0} Rows on {dataTables.Count()} ResultSets";
         });
     }
 
@@ -325,6 +337,29 @@ public class ServerQueryPageViewModel : TabItemViewModelBase
         m_ServerViewModel.ExecuteError(ex);
     }
     #endregion
+
+    #region [__AutoGeneratingColumn]
+    private void __AutoGeneratingColumn(object sender, DataGridAutoGeneratingColumnEventArgs e)
+    {
+        if (e.PropertyType == typeof(string))
+        {
+            var templateColumn = new DataGridTemplateColumn();
+            templateColumn.Header = e.Column.Header;
+
+            var cellTemplate = new DataTemplate();
+            var textBlockFactory = new FrameworkElementFactory(typeof(TextBlock));
+            var textBinding = new System.Windows.Data.Binding(e.PropertyName);
+            textBinding.Converter = new SingleLineTextConverter();
+            textBlockFactory.SetBinding(TextBlock.TextProperty, textBinding);
+            cellTemplate.VisualTree = textBlockFactory;
+
+            templateColumn.CellTemplate = cellTemplate;
+
+            e.Column = templateColumn;
+        }
+    }
+    #endregion
+
     #endregion
 
     protected override void Dispose(bool disposing)

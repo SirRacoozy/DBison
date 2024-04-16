@@ -20,8 +20,6 @@
       <Setter Property="BorderThickness"
               Value="1" />
     </Style>
-    <helperobjects:DataBindingHelper x:Key="DataContextBinding"
-                                     Data="{Binding ElementName=This}" />
 
     <BooleanToVisibilityConverter x:Key="VisibilityConverter" />
 
@@ -177,16 +175,16 @@
         </Setter>
         <Style.Triggers>
           <DataTrigger Value="{x:Static Orientation.Horizontal}"
-                       Binding="{Binding Data.ResizeDirection, Source={StaticResource DataContextBinding}}">
+                       Binding="{Binding ResizeDirection, ElementName=This}">
             <Setter Property="ContentTemplate">
               <Setter.Value>
                 <DataTemplate>
                   <Grid x:Name="PanelsGrid"
-                        DataContext="{Binding Data.DataContext, Source={StaticResource DataContextBinding}}">
+                        DataContext="{Binding DataContext, ElementName=This}">
                     <Grid.ColumnDefinitions>
-                      <ColumnDefinition Width="{Binding Data.ContentPanel1Size, Source={StaticResource DataContextBinding}}" />
+                      <ColumnDefinition Width="{Binding ContentPanel1Size, ElementName=This}" />
                       <ColumnDefinition Width="Auto" />
-                      <ColumnDefinition Width="{Binding Data.ContentPanel2Size, Source={StaticResource DataContextBinding}}" />
+                      <ColumnDefinition Width="{Binding ContentPanel2Size, ElementName=This}" />
                     </Grid.ColumnDefinitions>
 
                     <Grid.RowDefinitions>
@@ -195,7 +193,7 @@
 
                     <ContentControl Grid.Column="0"
                                     Grid.Row="0"
-                                    Content="{Binding Data.ContentPanel1, Source={StaticResource DataContextBinding}}" />
+                                    Content="{Binding ContentPanel1, ElementName=This}" />
 
                     <GridSplitter ResizeDirection="Columns"
                                   Grid.Column="1"
@@ -204,7 +202,7 @@
 
                     <ContentControl Grid.Column="2"
                                     Grid.Row="0"
-                                    Content="{Binding Data.ContentPanel2, Source={StaticResource DataContextBinding}}" />
+                                    Content="{Binding ContentPanel2, ElementName=This}" />
 
                   </Grid>
                 </DataTemplate>
@@ -213,16 +211,16 @@
 
           </DataTrigger>
           <DataTrigger Value="{x:Static Orientation.Vertical}"
-                       Binding="{Binding Data.ResizeDirection, Source={StaticResource DataContextBinding}}">
+                       Binding="{Binding ResizeDirection, ElementName=This}">
             <Setter Property="ContentTemplate">
               <Setter.Value>
                 <DataTemplate>
                   <Grid x:Name="PanelsGrid"
-                        DataContext="{Binding Data.DataContext, Source={StaticResource DataContextBinding}}">
+                        DataContext="{Binding DataContext, ElementName=This}">
                     <Grid.RowDefinitions>
-                      <RowDefinition Height="{Binding Data.ContentPanel1Size, Source={StaticResource DataContextBinding}}" />
+                      <RowDefinition Height="{Binding ContentPanel1Size, ElementName=This}" />
                       <RowDefinition Height="Auto" />
-                      <RowDefinition Height="{Binding Data.ContentPanel2Size, Source={StaticResource DataContextBinding}}" />
+                      <RowDefinition Height="{Binding ContentPanel2Size, ElementName=This}" />
                     </Grid.RowDefinitions>
 
                     <Grid.ColumnDefinitions>
@@ -231,7 +229,7 @@
 
                     <ContentControl Grid.Row="0"
                                     Grid.Column="0"
-                                    Content="{Binding Data.ContentPanel1, Source={StaticResource DataContextBinding}}" />
+                                    Content="{Binding ContentPanel1, ElementName=This}" />
 
                     <GridSplitter ResizeDirection="Rows"
                                   Grid.Row="1"
@@ -240,7 +238,7 @@
 
                     <ContentControl Grid.Row="2"
                                     Grid.Column="0"
-                                    Content="{Binding Data.ContentPanel2, Source={StaticResource DataContextBinding}}" />
+                                    Content="{Binding ContentPanel2, ElementName=This}" />
                   </Grid>
                 </DataTemplate>
               </Setter.Value>

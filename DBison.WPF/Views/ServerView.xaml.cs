@@ -38,26 +38,4 @@ public partial class ServerView : UserControl
         }
     }
     #endregion
-
-    #region [__AutoGeneratingColumn]
-    private void __AutoGeneratingColumn(object sender, DataGridAutoGeneratingColumnEventArgs e)
-    {
-        if (e.PropertyType == typeof(string))
-        {
-            var templateColumn = new DataGridTemplateColumn();
-            templateColumn.Header = e.Column.Header;
-
-            var cellTemplate = new DataTemplate();
-            var textBlockFactory = new FrameworkElementFactory(typeof(TextBlock));
-            var textBinding = new System.Windows.Data.Binding(e.PropertyName);
-            textBinding.Converter = new SingleLineTextConverter();
-            textBlockFactory.SetBinding(TextBlock.TextProperty, textBinding);
-            cellTemplate.VisualTree = textBlockFactory;
-
-            templateColumn.CellTemplate = cellTemplate;
-
-            e.Column = templateColumn;
-        }
-    }
-    #endregion
 }
