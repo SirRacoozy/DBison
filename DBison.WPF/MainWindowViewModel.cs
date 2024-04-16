@@ -246,15 +246,11 @@ public class MainWindowViewModel : ClientViewModelBase
         if (SelectedServer == null)
             return;
         var settingPage = TabItems.FirstOrDefault(q => q is SettingsTabViewModel);
-        TabItems = new(SelectedServer?.ServerQueryPages);
+        TabItems = new(SelectedServer.ServerQueryPages);
         if (settingPage != null)
             TabItems.Add(settingPage);
         OnPropertyChanged(nameof(TabItems));
-        var lastQueryPage = TabItems.LastOrDefault(x => x is ServerQueryPageViewModel);
-        if (lastQueryPage != null)
-            SelectedTabItem = (ServerQueryPageViewModel)lastQueryPage;
-        else
-            SelectedTabItem = settingPage;
+        SelectedTabItem = TabItems.LastOrDefault(x => x is ServerQueryPageViewModel) ?? settingPage;
     }
     #endregion
 
