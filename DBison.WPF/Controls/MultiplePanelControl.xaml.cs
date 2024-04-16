@@ -63,7 +63,7 @@ public partial class MultiplePanelControl : UserControl
 
     private void __UpdateItemsSource()
     {
-        Content = new TextBlock { Text = "No Itemssource", FontSize = 40, Foreground = Brushes.Red, HorizontalAlignment = HorizontalAlignment.Center, VerticalAlignment = VerticalAlignment.Center };
+        Content = new TextBlock { Text = "EMPTY", FontSize = 40, Foreground = Brushes.Red, HorizontalAlignment = HorizontalAlignment.Center, VerticalAlignment = VerticalAlignment.Center };
         if (ItemsSource.IsEmpty())
         {
             return;
@@ -111,7 +111,8 @@ public partial class MultiplePanelControl : UserControl
                     currentContentItem++;
                     if (itemsSourceItem != null && itemsSourceItem is FrameworkElement elem)
                     {
-                        elem.MaxHeight = 200;
+                        if (itemsSourceCount != 1)
+                            elem.MaxHeight = 200;
                         mainGrid.Children.Add(elem);
                         Grid.SetRow(elem, i);
                     }
