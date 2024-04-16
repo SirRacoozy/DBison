@@ -88,6 +88,11 @@ public class ServerQueryPageViewModel : TabItemViewModelBase
     }
     #endregion
 
+    #region [MaxHeight]
+    [DependsUpon(nameof(ResultSets))]
+    public double MaxHeight => ResultSets.Count > 1 ? 100 : double.MaxValue;
+    #endregion
+
     #endregion
     #endregion
 
@@ -245,23 +250,28 @@ public class ServerQueryPageViewModel : TabItemViewModelBase
     {
         __PrepareTimer(() =>
         {
-            var dataTable = m_ServerQueryHelper.FillDataTable(databaseInfo, singleSql.ToStringValue(), __Error);
+            var dataTables = m_ServerQueryHelper.FillDataTable(databaseInfo, singleSql.ToStringValue(), __Error);
 
             ExecuteOnDispatcher(() => IsLoading = false);
 
-            if (dataTable == null)
+            foreach (var dataTable in dataTables)
             {
-                __CleanTimer();
-                return;
+                if (dataTable == null)
+                {
+                    __CleanTimer();
+                    return;
+                }
+                ExecuteOnDispatcher(() =>
+                 ResultSets.Add(new ResultSetViewModel()
+                 {
+                     ResultLines = dataTable.DefaultView
+                 }));
+                OnPropertyChanged(nameof(MaxHeight));
             }
-            ExecuteOnDispatcher(() =>
-             ResultSets.Add(new ResultSetViewModel()
-             {
-                 ResultLines = dataTable.DefaultView
-             }));
+
             OnPropertyChanged(nameof(ResultSets));
             __CleanTimer();
-            QueryStatisticText = $"Query executed in {m_Stopwatch.Elapsed.ToString(@"m\:ss\.ffff")} minutes - {dataTable.Rows.Count.ToString("N0")} Rows";
+            QueryStatisticText = $"Query executed in {m_Stopwatch.Elapsed.ToString(@"m\:ss\.ffff")} minutes - {dataTables.Sum(dt => dt.Rows.Count).ToString("N0")} Rows on {dataTables.Count()} ResultSets";
         });
     }
 

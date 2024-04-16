@@ -164,11 +164,16 @@ public class ServerQueryHelper
     #endregion
 
     #region [FillDataTable]
-    public DataTable FillDataTable(DatabaseInfo databaseInfo, string sql, Action<Exception> errorCallback)
+    public List<DataTable> FillDataTable(DatabaseInfo databaseInfo, string sql, Action<Exception> errorCallback)
     {
         if (sql.IsNullOrEmpty() || databaseInfo.DataBaseState != eDataBaseState.ONLINE)
             return null;
 
+        return new(sql.ExtractStatements().Select(s => __GetDataTableForSingleSQLStatement(databaseInfo, s, errorCallback)));
+    }
+
+    private DataTable __GetDataTableForSingleSQLStatement(DatabaseInfo databaseInfo, string sql, Action<Exception> errorCallback)
+    {
         try
         {
             using var access = new DataConnection(databaseInfo);
