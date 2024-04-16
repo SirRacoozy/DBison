@@ -22,6 +22,15 @@ namespace DBison.WPF.Controls
             TextFormatter = new PlainTextFormatter();
             DataObject.AddPastingHandler(this, __Pasting);
             DataObject.AddCopyingHandler(this, __Copy);
+            SettingsHandler.SettingChanged += (sender, e) =>
+            {
+                if (e.ChangedSettingName == nameof(Settings.FontSize))
+                {
+                    if (GetTemplateChild("PART_LineNumberTextBlock") is TextBlock lineNumberTextBlock)
+                        lineNumberTextBlock.FontSize = Settings.FontSize;
+                    FontSize = Settings.FontSize;
+                }
+            };
         }
         #endregion
 
