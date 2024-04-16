@@ -20,6 +20,8 @@ namespace DBison.WPF.Controls
         public LineNumberedTextBox()
         {
             TextFormatter = new PlainTextFormatter();
+            DataObject.AddPastingHandler(this, __Pasting);
+            DataObject.AddCopyingHandler(this, __Copy);
         }
         #endregion
 
@@ -42,6 +44,8 @@ namespace DBison.WPF.Controls
             }
         }
         #endregion
+
+        #region - private methods -
 
         #region [__UpdateLineNumber]
         private void __UpdateLineNumber()
@@ -142,6 +146,35 @@ namespace DBison.WPF.Controls
                 }
             }
         }
+        #endregion
+
+        #region [__Pasting]
+        private void __Pasting(object sender, DataObjectPastingEventArgs e)
+        {
+            try
+            {
+                if (e.FormatToApply != "UnicodeText")
+                {
+                    Clipboard.SetText(e.DataObject.GetData("UnicodeText").ToStringValue(), TextDataFormat.UnicodeText);
+                    e.CancelCommand();
+                    Paste();
+                }
+            }
+            catch (Exception)
+            {
+                //
+            }
+        }
+        #endregion
+
+        #region [__Copy]
+        private void __Copy(object sender, DataObjectEventArgs e)
+        {
+            //do stuff if needed
+            //Default is still called
+        }
+        #endregion
+
         #endregion
 
     }
