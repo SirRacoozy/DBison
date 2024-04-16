@@ -98,6 +98,7 @@ namespace DBison.WPF.Controls
         private void __ExecuteHighlight(string searchText, TextRange textRange)
         {
             Brush highlightBrush = Settings.UseDarkMode ? (Brush)new BrushConverter().ConvertFrom("#00BBC9") : Brushes.Blue;
+            Brush commentHighlightBrush = Brushes.Green;
             var rich = this;
             string textBoxText = textRange.Text;
 
@@ -116,6 +117,24 @@ namespace DBison.WPF.Controls
                 }
 
                 string parsedString = startPointer.GetTextInRun(LogicalDirection.Forward);
+
+                //Check first index of "--" (SQL comment)
+                int dashDashIndex = parsedString.IndexOf("--");
+                if (dashDashIndex >= 0)
+                {
+                    //Highlight from "--" begin until the end of the line
+                    TextPointer dashDashPointer = startPointer.GetPositionAtOffset(dashDashIndex);
+                    TextPointer endOfLinePointer = startPointer.GetPositionAtOffset(parsedString.Length);
+                    if (dashDashPointer != null && endOfLinePointer != null)
+                    {
+                        TextRange specialTextRange = new TextRange(dashDashPointer, endOfLinePointer);
+                        m_SkipHighliting = true;
+                        specialTextRange.ApplyPropertyValue(TextElement.ForegroundProperty, commentHighlightBrush);
+                        m_SkipHighliting = false;
+                    }
+                    continue;
+                }
+
                 var allIndexesOf = parsedString.AllIndexesOf(searchText, StringComparison.InvariantCultureIgnoreCase);
 
                 foreach (var indexOf in allIndexesOf)
