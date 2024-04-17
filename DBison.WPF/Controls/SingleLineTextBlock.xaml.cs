@@ -1,6 +1,5 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Media;
 
 namespace DBison.WPF.Controls;
 /// <summary>
@@ -38,8 +37,6 @@ public partial class SingleLineTextBlock : UserControl
     {
         if (e.NewValue == "null")
         {
-            if (MainWindowViewModel.NullValueHighlight)
-                txtTextBlock.Background = Brushes.Gray;
             txtTextBlock.HorizontalAlignment = HorizontalAlignment.Center;
             txtTextBlock.Opacity = 0.5;
         }

@@ -191,13 +191,6 @@ public static class Settings
         set => SettingsHandler.SetSetting("DSNArchitecture", value.ToString());
     }
 
-    [Setting("QueryResult", "Null Value Highlight", "Should DBNull values in the result be highlighted", typeof(bool))]
-    public static bool NullValueHighlight
-    {
-        get => SettingsHandler.GetSetting("NullValueHighlight", true);
-        set => SettingsHandler.SetSetting("NullValueHighlight", value.ToString());
-    }
-
     public static string GetAllSettingsString()
     {
         var props = typeof(Settings).GetProperties();

@@ -69,7 +69,7 @@ public partial class MultiplePanelControl : UserControl
 
     private void __UpdateItemsSource()
     {
-        Content = new TextBlock { Text = "EMPTY", FontSize = 40, Foreground = Brushes.Red, HorizontalAlignment = HorizontalAlignment.Center, VerticalAlignment = VerticalAlignment.Center };
+        Content = null;
         if (ItemsSource.IsEmpty())
         {
             return;

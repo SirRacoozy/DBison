@@ -37,15 +37,10 @@ public class MainWindowViewModel : ClientViewModelBase
         __InitServers();
         __ConnectToDefaultServer();
         __HandleSettingsChanged();
-        NullValueHighlight = Settings.NullValueHighlight;
     }
     #endregion
 
     #region - public properties -
-
-    #region [NullValueHighlight]
-    public static bool NullValueHighlight { get; set; }
-    #endregion
 
     #region [ServerItems]
     public ObservableCollection<ServerViewModel> ServerItems
@@ -546,9 +541,6 @@ public class MainWindowViewModel : ClientViewModelBase
                 break;
             case nameof(Settings.UIScaling):
                 Application.Current.Resources["GlobalScaleFactor"] = Settings.UIScaling;
-                break;
-            case nameof(Settings.NullValueHighlight):
-                NullValueHighlight = Settings.NullValueHighlight;
                 break;
         }
         var settingsTab = TabItems.LastOrDefault(s => s is SettingsTabViewModel);
