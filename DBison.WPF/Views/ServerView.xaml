@@ -137,7 +137,8 @@
           <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <controls:MultiplePanelControl ItemsSource="{Binding ResultSets}" />
+        <controls:MultiplePanelControl ItemsSource="{Binding ResultSets}"
+                                       Margin="10"/>
 
         <TextBlock Text="{Binding QueryStatisticText, Mode=TwoWay}"
                    Grid.Row="1"

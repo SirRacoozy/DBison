@@ -58,7 +58,13 @@ public partial class MultiplePanelControl : UserControl
 
     private void __ItemsSourceCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
     {
-        __UpdateItemsSource();
+        try
+        {
+            __UpdateItemsSource();
+        }
+        catch (Exception ex)
+        {
+        }
     }
 
     private void __UpdateItemsSource()
@@ -80,21 +86,26 @@ public partial class MultiplePanelControl : UserControl
     private void __GenerateControlContent()
     {
         var mainGrid = new Grid();
+        mainGrid.Loaded += __MainGrid_Loaded;
+        Content = mainGrid;
+    }
+    #endregion
+    private void __MainGrid_Loaded(object sender, RoutedEventArgs e)
+    {
+        var mainGrid = sender as Grid;
         var itemsSourceCount = ItemsSource.Count(); //This is the count of the "Panels" or resultGrids (Without the GridSplitter)
-        int neededRows = itemsSourceCount + itemsSourceCount - 1;
+        var neededGridSplitter = itemsSourceCount > 1 ? itemsSourceCount + 1 : 0;
+        int neededRows = itemsSourceCount + neededGridSplitter;
         int currentContentItem = 0;
+        var gridSplitterHeight = 5;
 
         for (int i = 0; i < neededRows; i++)
         {
             var rowDefinition = new RowDefinition();
             if (i % 2 == 0)
-            {
-                rowDefinition.Height = GridLength.Auto;
-            }
+                rowDefinition.Height = new GridLength(200);
             else
-            {
-                rowDefinition.Height = new GridLength(5);
-            }
+                rowDefinition.Height = new GridLength(gridSplitterHeight);
             mainGrid.RowDefinitions.Add(rowDefinition);
         }
 
@@ -111,10 +122,16 @@ public partial class MultiplePanelControl : UserControl
                     currentContentItem++;
                     if (itemsSourceItem != null && itemsSourceItem is FrameworkElement elem)
                     {
-                        if (itemsSourceCount != 1)
-                            elem.MaxHeight = 200;
-                        mainGrid.Children.Add(elem);
-                        Grid.SetRow(elem, i);
+                        try
+                        {
+                            mainGrid.Children.Add(elem);
+                            Grid.SetRow(elem, i);
+                        }
+                        catch (Exception ex)
+                        {
+                            //TODO Add new Tab, execute query, open settings, close settings tab, we reach this catch block, whyyy??????
+                        }
+
                     }
                 }
             }
@@ -122,15 +139,20 @@ public partial class MultiplePanelControl : UserControl
             {
                 var gridSplitter = new GridSplitter()
                 {
-                    Height = 5,
+                    Height = gridSplitterHeight,
                     ResizeDirection = GridResizeDirection.Rows,
                 };
-                mainGrid.Children.Add(gridSplitter);
-                Grid.SetRow(gridSplitter, i);
+                try
+                {
+                    mainGrid.Children.Add(gridSplitter);
+                    Grid.SetRow(gridSplitter, i);
+                }
+                catch (Exception ex)
+                {
+                    //TODO Add new Tab, execute query, open settings, close settings tab, we reach this catch block, whyyy??????
+                }
             }
         }
-        Content = mainGrid;
     }
-    #endregion
 
 }

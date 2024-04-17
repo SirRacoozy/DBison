@@ -7,7 +7,8 @@
                Text="One line"
                Visibility="Hidden"
                VerticalAlignment="Top" />
-    <TextBlock TextWrapping="NoWrap"
+    <TextBlock x:Name="txtTextBlock"
+               TextWrapping="NoWrap"
                Text="{Binding Text, ElementName=This}"
                Height="{Binding ElementName=txtOneLineDummy,Path=ActualHeight}" />
   </Grid>

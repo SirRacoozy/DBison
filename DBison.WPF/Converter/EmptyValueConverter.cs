@@ -9,7 +9,7 @@ public class EmptyValueConverter : IValueConverter
     {
         if (value == DBNull.Value)
         {
-            return "NULL";
+            return "null";
         }
         else
         {

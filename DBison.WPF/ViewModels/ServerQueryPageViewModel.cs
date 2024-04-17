@@ -255,8 +255,6 @@ public class ServerQueryPageViewModel : TabItemViewModelBase
         {
             var dataTables = m_ServerQueryHelper.FillDataTable(databaseInfo, singleSql.ToStringValue(), __Error);
 
-            ExecuteOnDispatcher(() => IsLoading = false);
-
             var resultList = new ObservableCollection<DataGrid>();
 
             foreach (var dataTable in dataTables)
@@ -271,6 +269,7 @@ public class ServerQueryPageViewModel : TabItemViewModelBase
                     var dataGrid = new DataGrid
                     {
                         IsReadOnly = true,
+                        Margin = new System.Windows.Thickness(0, 10, 0, 10),
                         ItemsSource = dataTable.DefaultView
                     };
                     dataGrid.AutoGeneratingColumn += __AutoGeneratingColumn;
@@ -278,7 +277,10 @@ public class ServerQueryPageViewModel : TabItemViewModelBase
                     OnPropertyChanged(nameof(MaxHeight));
                     OnPropertyChanged(nameof(ResultSets));
                     if (resultList.Count == dataTables.Count)
+                    {
                         ResultSets = resultList;
+                        IsLoading = false;
+                    }
                 });
             }
 
