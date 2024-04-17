@@ -9,8 +9,8 @@ using Microsoft.Win32;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
-using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Threading;
 
 namespace DBison.WPF.ViewModels;
@@ -270,6 +270,7 @@ public class ServerQueryPageViewModel : TabItemViewModelBase
                 {
                     var dataGrid = new DataGrid
                     {
+                        IsReadOnly = true,
                         ItemsSource = dataTable.DefaultView
                     };
                     dataGrid.AutoGeneratingColumn += __AutoGeneratingColumn;
@@ -341,22 +342,11 @@ public class ServerQueryPageViewModel : TabItemViewModelBase
     #region [__AutoGeneratingColumn]
     private void __AutoGeneratingColumn(object sender, DataGridAutoGeneratingColumnEventArgs e)
     {
-        if (e.PropertyType == typeof(string))
-        {
-            var templateColumn = new DataGridTemplateColumn();
-            templateColumn.Header = e.Column.Header;
+        var column = (e.Column as DataGridBoundColumn);
 
-            var cellTemplate = new DataTemplate();
-            var textBlockFactory = new FrameworkElementFactory(typeof(TextBlock));
-            var textBinding = new System.Windows.Data.Binding(e.PropertyName);
-            textBinding.Converter = new SingleLineTextConverter();
-            textBlockFactory.SetBinding(TextBlock.TextProperty, textBinding);
-            cellTemplate.VisualTree = textBlockFactory;
-
-            templateColumn.CellTemplate = cellTemplate;
-
-            e.Column = templateColumn;
-        }
+        var binding = new Binding(e.PropertyName);
+        binding.Converter = new EmptyValueConverter();
+        column.Binding = binding;
     }
     #endregion
 
