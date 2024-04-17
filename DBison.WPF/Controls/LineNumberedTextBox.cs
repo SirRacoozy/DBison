@@ -89,7 +89,13 @@ namespace DBison.WPF.Controls
 
             foreach (var keyWord in sqlKeywords)
             {
-                __ExecuteHighlight(keyWord, textRange);
+                try
+                {
+                    __ExecuteHighlight(keyWord, textRange);
+                }
+                catch (Exception)
+                {
+                }
             }
         }
         #endregion
@@ -107,7 +113,7 @@ namespace DBison.WPF.Controls
                 return;
             }
 
-            for (TextPointer startPointer = rich.Document.ContentStart; startPointer.CompareTo(rich.Document.ContentEnd) <= 0; startPointer = startPointer?.GetNextContextPosition(LogicalDirection.Forward))
+            for (TextPointer startPointer = rich.Document.ContentStart; startPointer?.CompareTo(rich.Document.ContentEnd) <= 0; startPointer = startPointer?.GetNextContextPosition(LogicalDirection.Forward))
             {
                 if (startPointer == null)
                     break;
@@ -153,7 +159,7 @@ namespace DBison.WPF.Controls
                         if (charAfterIndex < parsedString.Length)
                             charAfter = parsedString.Substring(charAfterIndex, 1);
 
-                        startPointer = startPointer.GetPositionAtOffset(indexOf);
+                        startPointer = startPointer?.GetPositionAtOffset(indexOf);
 
                         if (charBefore.IsNotNullOrEmpty() && charBefore.IsNotEquals(" "))
                             continue;
