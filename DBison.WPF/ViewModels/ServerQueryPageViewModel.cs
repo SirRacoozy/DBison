@@ -2,12 +2,16 @@
 using DBison.Core.Entities;
 using DBison.Core.Extender;
 using DBison.Core.Helper;
+using DBison.Core.Utils.SettingsSystem;
 using DBison.WPF.ClientBaseClasses;
+using DBison.WPF.Converter;
 using DBison.WPF.HelperObjects;
 using Microsoft.Win32;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
+using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Threading;
 
 namespace DBison.WPF.ViewModels;
@@ -27,7 +31,7 @@ public class ServerQueryPageViewModel : TabItemViewModelBase
         DatabaseObject = req.DataBaseObject;
         m_ServerViewModel = req.ServerViewModel;
         Header = req.Name;
-        ResultSets = new ObservableCollection<ResultSetViewModel>();
+        ResultSets = new ObservableCollection<DataGrid>();
         m_ServerQueryHelper = req.ServerQueryHelper;
         if (req.QueryText.IsNotNullOrEmpty())
         {
@@ -73,9 +77,9 @@ public class ServerQueryPageViewModel : TabItemViewModelBase
     #endregion
 
     #region [ResultSets]
-    public ObservableCollection<ResultSetViewModel> ResultSets
+    public ObservableCollection<DataGrid> ResultSets
     {
-        get => Get<ObservableCollection<ResultSetViewModel>>();
+        get => Get<ObservableCollection<DataGrid>>();
         set => Set(value);
     }
     #endregion
@@ -86,6 +90,11 @@ public class ServerQueryPageViewModel : TabItemViewModelBase
         get => Get<string>();
         set => Set(value);
     }
+    #endregion
+
+    #region [MaxHeight]
+    [DependsUpon(nameof(ResultSets))]
+    public double MaxHeight => ResultSets.Count > 1 ? 100 : double.MaxValue;
     #endregion
 
     #endregion
@@ -153,7 +162,7 @@ public class ServerQueryPageViewModel : TabItemViewModelBase
     [DependsUpon(nameof(ResultSets))]
     public bool CanExecute_ClearResult()
     {
-        return !IsLoading && ResultSets.Any(r => r.ResultLines.Count != 0);
+        return !IsLoading && ResultSets.IsNotEmpty();
     }
     #endregion
 
@@ -245,23 +254,47 @@ public class ServerQueryPageViewModel : TabItemViewModelBase
     {
         __PrepareTimer(() =>
         {
-            var dataTable = m_ServerQueryHelper.FillDataTable(databaseInfo, singleSql.ToStringValue(), __Error);
+            var dataTables = m_ServerQueryHelper.FillDataTable(databaseInfo, singleSql.ToStringValue(), __Error);
 
-            ExecuteOnDispatcher(() => IsLoading = false);
+            var resultList = new ObservableCollection<DataGrid>();
 
-            if (dataTable == null)
+            foreach (var dataTable in dataTables)
             {
-                __CleanTimer();
-                return;
+                if (dataTable == null)
+                {
+                    __CleanTimer();
+                    return;
+                }
+                ExecuteOnDispatcher(() =>
+                {
+                    var dataGrid = new DataGrid
+                    {
+                        GridLinesVisibility = (DataGridGridLinesVisibility)Settings.DataGridGridLinesVisibility, //Todo as setting CBO
+                        IsReadOnly = true,
+                        Margin = new System.Windows.Thickness(0, 10, 0, 10),
+                        ItemsSource = dataTable.DefaultView
+                    };
+                    dataGrid.AutoGeneratingColumn += __AutoGeneratingColumn;
+                    resultList.Add(dataGrid);
+                    OnPropertyChanged(nameof(MaxHeight));
+                    OnPropertyChanged(nameof(ResultSets));
+                    if (resultList.Count == dataTables.Count)
+                    {
+                        ResultSets = resultList;
+                        IsLoading = false;
+                    }
+                });
             }
-            ExecuteOnDispatcher(() =>
-             ResultSets.Add(new ResultSetViewModel()
-             {
-                 ResultLines = dataTable.DefaultView
-             }));
+
+            if(dataTables.Count == 0)
+            {
+                ResultSets = resultList;
+                IsLoading = false;
+            }
+
             OnPropertyChanged(nameof(ResultSets));
             __CleanTimer();
-            QueryStatisticText = $"Query executed in {m_Stopwatch.Elapsed.ToString(@"m\:ss\.ffff")} minutes - {dataTable.Rows.Count.ToString("N0")} Rows";
+            QueryStatisticText = $"Query executed in {m_Stopwatch.Elapsed:m\\:ss\\.ffff} minutes - {dataTables.Sum(dt => dt.Rows.Count):N0} Rows on {dataTables.Count()} ResultSets";
         });
     }
 
@@ -315,6 +348,18 @@ public class ServerQueryPageViewModel : TabItemViewModelBase
         m_ServerViewModel.ExecuteError(ex);
     }
     #endregion
+
+    #region [__AutoGeneratingColumn]
+    private void __AutoGeneratingColumn(object sender, DataGridAutoGeneratingColumnEventArgs e)
+    {
+        var column = (e.Column as DataGridBoundColumn);
+
+        var binding = new Binding(e.PropertyName);
+        binding.Converter = new EmptyValueConverter();
+        column.Binding = binding;
+    }
+    #endregion
+
     #endregion
 
     protected override void Dispose(bool disposing)

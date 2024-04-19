@@ -137,10 +137,8 @@
           <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <DataGrid Grid.Row="0"
-                  ItemsSource="{Binding ResultSets[0].ResultLines, Mode=TwoWay}"
-                  AutoGeneratingColumn="__AutoGeneratingColumn"
-                  VerticalAlignment="Stretch" />
+        <controls:MultiplePanelControl ItemsSource="{Binding ResultSets}"
+                                       Margin="10"/>
 
         <TextBlock Text="{Binding QueryStatisticText, Mode=TwoWay}"
                    Grid.Row="1"

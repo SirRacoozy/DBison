@@ -87,6 +87,42 @@ public static class StringExtender
     }
     #endregion
 
+    #region [ExtractStatements]
+    public static List<string> ExtractStatements(this string str)
+    {
+        var regex = new Regex(@"\bCREATE\b|\bALTER\b|\bDROP\b|\bTRUNCATE\b|\bINSERT\b|\bUPDATE\b|\bDELETE\b|\bSELECT\b", RegexOptions.IgnoreCase);
+        var matches = regex.Matches(str);
+
+        var statements = new List<string>();
+        int startIndex = 0;
+
+        foreach (Match match in matches)
+        {
+            int statementStartIndex = match.Index;
+
+            string statement = str.Substring(startIndex, statementStartIndex - startIndex).Trim();
+
+            if (!string.IsNullOrWhiteSpace(statement))
+            {
+                statements.Add(statement);
+            }
+
+            startIndex = statementStartIndex;
+        }
+
+        if (startIndex < str.Length)
+        {
+            string lastStatement = str.Substring(startIndex).Trim();
+            if (!string.IsNullOrWhiteSpace(lastStatement))
+            {
+                statements.Add(lastStatement);
+            }
+        }
+
+        return statements;
+    }
+    #endregion
+
     #region [ConvertToSelectStatement]
     public static (string, eDMLOperator) ConvertToSelectStatement(this string value)
     {

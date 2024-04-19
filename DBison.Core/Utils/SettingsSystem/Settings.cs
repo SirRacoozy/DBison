@@ -170,25 +170,39 @@ public static class Settings
     }
 
 
-    [Setting("ODBC", "DSN naming pattern", "The pattern for the DSN entry name\n{{ServerName}}\tthe placeholder for the servername\n{{DataBase}}\tthe placeholder for the database\n{{DateTimeNow}}\tthe placeholder for the current date and time", typeof(string))]
+    [Setting("DSN", "DSN naming pattern", "The pattern for the DSN entry name\n{{ServerName}}\tthe placeholder for the servername\n{{DataBase}}\tthe placeholder for the database\n{{DateTimeNow}}\tthe placeholder for the current date and time", typeof(string))]
     public static string DSNPattern
     {
         get => SettingsHandler.GetSetting("DSNPattern", "{{ServerName}}_{{DataBase}}");
         set => SettingsHandler.SetSetting("DSNPattern", value.ToString());
     }
 
-    [Setting("ODBC", "Use system DSN", "When enabled, new dsn entries are created in the system registry key", typeof(bool))]
+    [Setting("DSN", "Use system DSN", "When enabled, new dsn entries are created in the system registry key", typeof(bool))]
     public static bool UseSystemDSN
     {
         get => SettingsHandler.GetSetting("UseSystemDSN", true);
         set => SettingsHandler.SetSetting("UseSystemDSN", value.ToString());
     }
 
-    [Setting("ODBC", "DSN Architecture", "Determines for which architecture the entry should be created", typeof(Enum))]
+    [Setting("DSN", "DSN Architecture", "Determines for which architecture the entry should be created", typeof(Enum))]
     public static eDSNArchitecture DSNArchitecture
     {
         get => SettingsHandler.GetSetting("DSNArchitecture", eDSNArchitecture.x86x64);
         set => SettingsHandler.SetSetting("DSNArchitecture", value.ToString());
+    }
+
+    [Setting("Query results", "GridLines", "Specifies the mode of the grid lines in the result", typeof(Enum))]
+    public static eDataGridGridLinesVisibility DataGridGridLinesVisibility
+    {
+        get => SettingsHandler.GetSetting("DataGridGridLinesVisibility", eDataGridGridLinesVisibility.Vertical);
+        set => SettingsHandler.SetSetting("DataGridGridLinesVisibility", value.ToString());
+    }
+
+    [Setting("Query results", "Cellcontent margin", "Specifies the distance between the cell values and the cell", typeof(double))]
+    public static double ResultCellMargin
+    {
+        get => SettingsHandler.GetSetting("ResultCellMargin", 5);
+        set => SettingsHandler.SetSetting("ResultCellMargin", value.ToString());
     }
 
     public static string GetAllSettingsString()
