@@ -1,6 +1,5 @@
 ﻿using DBison.Core.Attributes;
 using DBison.Core.Entities;
-using DBison.Core.Entities.Enums;
 using DBison.Core.Extender;
 using DBison.Core.Helper;
 using DBison.Core.Utils;
@@ -8,7 +7,6 @@ using DBison.Core.Utils.Commands;
 using DBison.Core.Utils.SettingsSystem;
 using DBison.WPF.ClientBaseClasses;
 using MahApps.Metro.IconPacks;
-using Microsoft.Win32;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.IO;
