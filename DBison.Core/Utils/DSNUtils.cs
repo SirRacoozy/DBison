@@ -42,6 +42,52 @@ public static class DSNUtils
         }
     }
 
+    public static void DeleteDSNEntry(DSNEntry entry)
+    {
+        ArgumentNullException.ThrowIfNull(entry);
+
+        var keyName = entry.DSNPattern;
+
+        __DeleteUserDSN(keyName);
+        __DeleteDSNx86(keyName);
+        __DeleteDSNx64(keyName);
+    }
+
+    private static void __DeleteDSNx64(string keyName)
+    {
+        try
+        {
+            Registry.LocalMachine.DeleteSubKey(Path.Combine(SYSTEM_X64_KEY, keyName));
+        }
+        catch
+        {
+            // Do nothing
+        }
+    }
+
+    private static void __DeleteDSNx86(string keyName)
+    {
+        try
+        {
+            Registry.LocalMachine.DeleteSubKey(Path.Combine(SYSTEM_X86_KEY, keyName));
+        }
+        catch
+        {
+            // Do nothing
+        }
+    }
+
+    private static void __DeleteUserDSN(string keyName)
+    {
+        try
+        {
+            Registry.CurrentUser.DeleteSubKey(Path.Combine(USER_SUB_KEY, keyName));
+        } catch
+        {
+            // Do nothing
+        }
+    }
+
     private static void __WriteSingleDSNEntry(RegistryKey key, DSNEntry entry)
     {
         var dsnName = entry.DSNPattern.Replace("{{ServerName}}", entry.ServerName).Replace("{{DataBase}}", entry.DatabaseName).Replace("{{DateTimeNow}}", DateTime.Now.ToString("ddMMyyyy_HHmmss"));
