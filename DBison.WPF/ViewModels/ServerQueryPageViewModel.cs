@@ -268,6 +268,7 @@ public class ServerQueryPageViewModel : TabItemViewModelBase
                 {
                     var dataGrid = new DataGrid
                     {
+                        GridLinesVisibility = DataGridGridLinesVisibility.Vertical, //Todo as setting CBO
                         IsReadOnly = true,
                         Margin = new System.Windows.Thickness(0, 10, 0, 10),
                         ItemsSource = dataTable.DefaultView

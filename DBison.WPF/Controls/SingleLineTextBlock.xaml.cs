@@ -35,10 +35,16 @@ public partial class SingleLineTextBlock : UserControl
     #region [__TextChanged]
     private void __TextChanged(DependencyPropertyChangedEventArgs e)
     {
+        txtTextBlock.Margin = new Thickness(5); //TODO: As setting
         if (e.NewValue == "null")
         {
             txtTextBlock.HorizontalAlignment = HorizontalAlignment.Center;
             txtTextBlock.Opacity = 0.5;
+        }
+        else
+        {
+            txtTextBlock.HorizontalAlignment = HorizontalAlignment.Left;
+            txtTextBlock.Opacity = 1;
         }
     }
     #endregion
