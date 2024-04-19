@@ -3,6 +3,7 @@ using DBison.Core.Entities;
 using DBison.Core.Entities.Enums;
 using DBison.Core.Extender;
 using DBison.Core.Helper;
+using DBison.Core.Utils;
 using DBison.Core.Utils.Commands;
 using DBison.Core.Utils.SettingsSystem;
 using DBison.WPF.ClientBaseClasses;
@@ -24,7 +25,6 @@ public class ServerObjectTreeItemViewModel : ClientViewModelBase
     readonly ServerQueryHelper m_ServerQueryHelper;
     readonly ServerViewModel m_ServerVm;
     readonly MainWindowViewModel m_MainWindowViewModel;
-    private readonly string m_MSSQLDriver = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\WOW6432Node\ODBC\ODBCINST.INI\SQL Server").GetValue("Driver").ToStringValue();
     #endregion
 
     #region - Icons -
@@ -407,11 +407,7 @@ public class ServerObjectTreeItemViewModel : ClientViewModelBase
     {
         try
         {
-            var mode = Settings.DSNArchitecture;
-            if (mode == eDSNArchitecture.x86 || mode == eDSNArchitecture.x86x64)
-                __SetDSNEntry(true);
-            if (mode == eDSNArchitecture.x64 || mode == eDSNArchitecture.x86x64)
-                __SetDSNEntry(false);
+            __SetDSNEntry();
         }
         catch (Exception ex)
         {
@@ -682,44 +678,17 @@ public class ServerObjectTreeItemViewModel : ClientViewModelBase
     #endregion
 
     #region [__SetDSNEntry]
-    private void __SetDSNEntry(bool for32Bit)
+    private void __SetDSNEntry()
     {
-        var key = __OpenRegistryKey(for32Bit);
         var dataBase = DatabaseObject.DataBase;
         var server = DatabaseObject.Server;
+
         var pattern = Settings.DSNPattern;
-        string DSNName = pattern.Replace("{{ServerName}}", dataBase.Server.Name).Replace("{{DataBase}}", dataBase.Name).Replace("{{DateTimeNow}}", DateTime.Now.ToString("ddMMyyyy_HHmmss"));
-        if (DSNName.Length > 32)
-            DSNName = DSNName.Substring(0, 32);
-        //if (key.OpenSubKey(DNSName, true) != null && !Overwrite) //At the moment we want override
-        //    continue;
-        var SubKey = key.CreateSubKey(DSNName);
-        SubKey.SetValue("Database", dataBase.Name);
-        SubKey.SetValue("Driver", m_MSSQLDriver);
-        SubKey.SetValue("LastUser", server.Username);
-        SubKey.SetValue("Server", server.Name);
-        if (server.UseIntegratedSecurity)
-            SubKey.SetValue("Trusted_Connection", "Yes");
-        __SetODBCSystemEntry(key, DSNName);
-    }
-    #endregion
+        string dsnName = pattern.Replace("{{ServerName}}", dataBase.Server.Name).Replace("{{DataBase}}", dataBase.Name).Replace("{{DateTimeNow}}", DateTime.Now.ToString("ddMMyyyy_HHmmss"));
 
-    #region [__SetODBCSystemEntry]
-    private void __SetODBCSystemEntry(RegistryKey key, string dsnName)
-    {
-        var SubKey = key.OpenSubKey("ODBC Data Sources", true);
-        if (SubKey == null)
-            SubKey = key.CreateSubKey("ODBC Data Sources", true);
-        SubKey.SetValue(dsnName, "SQL Server");
-    }
-    #endregion
+        DSNEntry entry = new(dsnName, dataBase.Name, server.Username, server.Name, server.UseIntegratedSecurity, Settings.DSNArchitecture);
 
-    #region [__OpenRegistryKey]
-    private RegistryKey __OpenRegistryKey(bool for32Bit)
-    {
-        var UserSubKey = @"SOFTWARE\ODBC\ODBC.INI";
-        var SystemSubKey = for32Bit ? @"SOFTWARE\WOW6432Node\ODBC\ODBC.INI" : @"SOFTWARE\ODBC\ODBC.INI";
-        return Settings.UseSystemDSN ? Registry.LocalMachine.OpenSubKey(SystemSubKey, true) : Registry.CurrentUser.OpenSubKey(UserSubKey, true);
+        DSNUtils.SetDSNEntry(entry);
     }
     #endregion
 
