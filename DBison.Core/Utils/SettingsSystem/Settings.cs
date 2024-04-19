@@ -191,6 +191,20 @@ public static class Settings
         set => SettingsHandler.SetSetting("DSNArchitecture", value.ToString());
     }
 
+    [Setting("Query results", "GridLines", "Specifies the mode of the grid lines in the result", typeof(Enum))]
+    public static eDataGridGridLinesVisibility DataGridGridLinesVisibility
+    {
+        get => SettingsHandler.GetSetting("DataGridGridLinesVisibility", eDataGridGridLinesVisibility.Vertical);
+        set => SettingsHandler.SetSetting("DataGridGridLinesVisibility", value.ToString());
+    }
+
+    [Setting("Query results", "Cellcontent margin", "Specifies the distance between the cell values and the cell", typeof(double))]
+    public static double ResultCellMargin
+    {
+        get => SettingsHandler.GetSetting("ResultCellMargin", 5);
+        set => SettingsHandler.SetSetting("ResultCellMargin", value.ToString());
+    }
+
     public static string GetAllSettingsString()
     {
         var props = typeof(Settings).GetProperties();

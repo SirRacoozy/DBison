@@ -42,6 +42,10 @@ public class MainWindowViewModel : ClientViewModelBase
 
     #region - public properties -
 
+    #region [ResultCellMargin ]
+    public static double ResultCellMargin { get; set; }
+    #endregion
+
     #region [ServerItems]
     public ObservableCollection<ServerViewModel> ServerItems
     {
@@ -514,6 +518,7 @@ public class MainWindowViewModel : ClientViewModelBase
     #region [__HandleSettingsChanged]
     private void __HandleSettingsChanged()
     {
+        ResultCellMargin = Settings.ResultCellMargin;
         Application.Current.Resources["GlobalFontSize"] = Convert.ToDouble(Settings.FontSize);
         Application.Current.Resources["GlobalScaleFactor"] = Settings.UIScaling;
         SettingsHandler.SettingChanged += __SettingsHandler_SettingChanged;
@@ -541,6 +546,9 @@ public class MainWindowViewModel : ClientViewModelBase
                 break;
             case nameof(Settings.UIScaling):
                 Application.Current.Resources["GlobalScaleFactor"] = Settings.UIScaling;
+                break;
+            case nameof(Settings.ResultCellMargin):
+                ResultCellMargin = Settings.ResultCellMargin;
                 break;
         }
         var settingsTab = TabItems.LastOrDefault(s => s is SettingsTabViewModel);

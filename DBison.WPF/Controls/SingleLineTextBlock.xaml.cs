@@ -35,7 +35,7 @@ public partial class SingleLineTextBlock : UserControl
     #region [__TextChanged]
     private void __TextChanged(DependencyPropertyChangedEventArgs e)
     {
-        txtTextBlock.Margin = new Thickness(5); //TODO: As setting
+        txtTextBlock.Margin = new Thickness(MainWindowViewModel.ResultCellMargin); //TODO: As setting
         if (e.NewValue == "null")
         {
             txtTextBlock.HorizontalAlignment = HorizontalAlignment.Center;

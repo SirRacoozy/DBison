@@ -2,6 +2,7 @@
 using DBison.Core.Entities;
 using DBison.Core.Extender;
 using DBison.Core.Helper;
+using DBison.Core.Utils.SettingsSystem;
 using DBison.WPF.ClientBaseClasses;
 using DBison.WPF.Converter;
 using DBison.WPF.HelperObjects;
@@ -268,7 +269,7 @@ public class ServerQueryPageViewModel : TabItemViewModelBase
                 {
                     var dataGrid = new DataGrid
                     {
-                        GridLinesVisibility = DataGridGridLinesVisibility.Vertical, //Todo as setting CBO
+                        GridLinesVisibility = (DataGridGridLinesVisibility)Settings.DataGridGridLinesVisibility, //Todo as setting CBO
                         IsReadOnly = true,
                         Margin = new System.Windows.Thickness(0, 10, 0, 10),
                         ItemsSource = dataTable.DefaultView
