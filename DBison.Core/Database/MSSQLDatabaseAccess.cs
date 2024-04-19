@@ -1,4 +1,5 @@
-﻿using DBison.Core.Entities;
+﻿using DBison.Core.Database.Exceptions;
+using DBison.Core.Entities;
 using DBison.Core.Extender;
 using Microsoft.Data.SqlClient;
 using System.Data;
@@ -6,9 +7,11 @@ using System.Data;
 namespace DBison.Core.Database;
 public class MSSQLDatabaseAccess : IDatabaseAccess
 {
+    #region - needs -
     private bool m_Disposed = false;
     private SqlConnection m_Connection;
-    private SqlCommand? m_Command = null;
+    private SqlCommand? m_Command = null; 
+    #endregion
 
     #region - ctor -
     public MSSQLDatabaseAccess(ServerInfo serverInfo)
@@ -16,6 +19,8 @@ public class MSSQLDatabaseAccess : IDatabaseAccess
         ArgumentNullException.ThrowIfNull(nameof(serverInfo));
 
         var result = __CreateConnection(serverInfo);
+
+        __OpenDatabaseConnection();
 
         if (result != null && !result.Succeeded)
             throw new ArgumentException(result.Message + "\n" + (result.Exception?.Message ?? string.Empty), nameof(serverInfo));
@@ -43,19 +48,93 @@ public class MSSQLDatabaseAccess : IDatabaseAccess
     #endregion
 
     #region [ExecuteCommand]
-    public OperationResult ExecuteCommand(string sql, Dictionary<string, object> parameters) => throw new NotImplementedException();
+    public OperationResult<int> ExecuteCommand(string sql, Dictionary<string, object> parameters)
+    {
+        try
+        {
+            ArgumentNullException.ThrowIfNullOrEmpty(nameof(sql));
+
+            m_Command = new(sql, m_Connection);
+            if (parameters.IsNotEmpty())
+                parameters.ConvertToSqlParameter(m_Command);
+
+            var num = m_Command.ExecuteNonQuery();
+            return OperationResult<int>.Ok(num);
+        }
+        catch (Exception ex)
+        {
+            return OperationResult<int>.Fail(TextConsts.OPERATION_FAILED_1.Format(nameof(ExecuteCommand)), ex);
+        }
+
+    }
     #endregion
 
     #region [ExecuteDataReader]
-    public OperationResult ExecuteDataReader(string sql, Dictionary<string, object> parameters) => throw new NotImplementedException();
+    public OperationResult<SqlDataReader> ExecuteDataReader(string sql, Dictionary<string, object> parameters)
+    {
+        try
+        {
+            ArgumentNullException.ThrowIfNullOrEmpty(nameof(sql));
+
+            m_Command = new(sql, m_Connection);
+            if (parameters.IsNotEmpty())
+                parameters.ConvertToSqlParameter(m_Command);
+
+            var reader = m_Command.ExecuteReader();
+            return OperationResult<SqlDataReader>.Ok(reader);
+        }
+        catch (Exception ex)
+        {
+            return OperationResult<SqlDataReader>.Fail(TextConsts.OPERATION_FAILED_1.Format(nameof(ExecuteDataReader)), ex);
+        }
+    }
     #endregion
 
     #region [ExecuteScalar]
-    public OperationResult ExecuteScalar(string sql, Dictionary<string, object> parameters) => throw new NotImplementedException();
+    public OperationResult ExecuteScalar(string sql, Dictionary<string, object> parameters)
+    {
+        try
+        {
+            ArgumentNullException.ThrowIfNullOrEmpty(nameof(sql));
+
+            m_Command = new(sql, m_Connection);
+            if (parameters.IsNotEmpty())
+                parameters.ConvertToSqlParameter(m_Command);
+
+            var res = m_Command.ExecuteScalar();
+            return OperationResult<object?>.Ok(res);
+        }
+        catch (Exception ex)
+        {
+            return OperationResult<object?>.Fail(TextConsts.OPERATION_FAILED_1.Format(nameof(ExecuteScalar)), ex);
+        }
+    }
     #endregion
 
     #region [GetDatabaseState]
-    public OperationResult<eDataBaseState> GetDatabaseState(string name) => throw new NotImplementedException();
+    public OperationResult<eDataBaseState> GetDatabaseState(string name)
+    {
+        try
+        {
+            ArgumentNullException.ThrowIfNullOrEmpty(name);
+
+            m_Command = new(SqlStatementConstants.GET_DATABASE_STATE_STATEMENT, m_Connection);
+            m_Command.Parameters.Add(new("NAME", name));
+
+            using var reader = m_Command.ExecuteReader() ?? throw new DataReaderFailedException($"{nameof(m_Command)}.{nameof(m_Command.ExecuteReader)} failed.");
+
+            if(reader.HasRows)
+            {
+                reader.Read();
+                return OperationResult<eDataBaseState>.Ok((eDataBaseState)Convert.ToInt32(reader["isOnline"]));
+            }
+            return OperationResult<eDataBaseState>.Fail("Database doesn't exist.");
+        }
+        catch (Exception ex)
+        {
+            return OperationResult<eDataBaseState>.Fail(TextConsts.OPERATION_FAILED_1.Format(nameof(ExecuteScalar)), ex);
+        }
+    }
     #endregion
 
     #region [GetDataTable]
@@ -75,7 +154,13 @@ public class MSSQLDatabaseAccess : IDatabaseAccess
     #endregion
 
     #region [SwitchDatabaseState]
-    public OperationResult SwitchDatabaseState(string name) => throw new NotImplementedException();
+    public OperationResult SwitchDatabaseState(string name)
+    {
+        try
+        {
+
+        } catch(Exception)
+    }
     #endregion
 
     #endregion
@@ -106,8 +191,8 @@ public class MSSQLDatabaseAccess : IDatabaseAccess
                 m_Connection.Close();
 
             return OperationResult.Ok();
-        } 
-        catch(Exception _)
+        }
+        catch (Exception _)
         {
             return OperationResult.Fail(TextConsts.OPERATION_FAILED_1.Format(nameof(__OpenDatabaseConnection)), _);
         }
@@ -119,7 +204,6 @@ public class MSSQLDatabaseAccess : IDatabaseAccess
     {
         try
         {
-
             SqlConnectionStringBuilder builder = new();
             builder.DataSource = serverInfo.Name;
             builder.InitialCatalog = serverInfo.DatabaseInfos?.FirstOrDefault()?.Name ?? string.Empty;
