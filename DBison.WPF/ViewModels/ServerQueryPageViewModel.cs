@@ -285,6 +285,12 @@ public class ServerQueryPageViewModel : TabItemViewModelBase
                 });
             }
 
+            if(dataTables.Count == 0)
+            {
+                ResultSets = resultList;
+                IsLoading = false;
+            }
+
             OnPropertyChanged(nameof(ResultSets));
             __CleanTimer();
             QueryStatisticText = $"Query executed in {m_Stopwatch.Elapsed:m\\:ss\\.ffff} minutes - {dataTables.Sum(dt => dt.Rows.Count):N0} Rows on {dataTables.Count()} ResultSets";
