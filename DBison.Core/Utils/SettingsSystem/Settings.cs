@@ -91,6 +91,13 @@ public static class Settings
         set => SettingsHandler.SetSetting("ShowExtendedDatabaseInformation", value.ToString());
     }
 
+    [Setting("Database", "Show system databases", "Enables/Disables a context menu to show the databases of the system", typeof(bool))]
+    public static bool ShowSystemDatabases
+    {
+        get => SettingsHandler.GetSetting("ShowSystemDatabases", false);
+        set => SettingsHandler.SetSetting("ShowSystemDatabases", value.ToString());
+    }
+
     [Setting("Database", "Open Query On Server Added", "Enables/Disables the opening of a new query tab when a server is added", typeof(bool))]
     public static bool OpenQueryOnServerAdded
     {

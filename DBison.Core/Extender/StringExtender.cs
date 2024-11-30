@@ -90,36 +90,49 @@ public static class StringExtender
     #region [ExtractStatements]
     public static List<string> ExtractStatements(this string str)
     {
-        var regex = new Regex(@"\bCREATE\b|\bALTER\b|\bDROP\b|\bTRUNCATE\b|\bINSERT\b|\bUPDATE\b|\bDELETE\b|\bSELECT\b", RegexOptions.IgnoreCase);
-        var matches = regex.Matches(str);
+        if (string.IsNullOrWhiteSpace(str))
+            return new List<string>();
 
-        var statements = new List<string>();
-        int startIndex = 0;
+        // List of common SQL command keywords that can start a new statement
+        string[] sqlKeywords = new[] { "SELECT", "INSERT", "UPDATE", "DELETE", "CREATE", "ALTER", "DROP", "EXEC", "WITH" };
+
+        // Pattern to detect command start (a keyword at the start of a line or after a semicolon)
+        string pattern = $@"(^|\s|;)\b({string.Join("|", sqlKeywords)})\b";
+
+        // Matches SQL commands considering keywords only at valid positions
+        var matches = Regex.Matches(str, pattern, RegexOptions.IgnoreCase | RegexOptions.Multiline);
+
+        List<string> commands = new List<string>();
+        int lastIndex = 0;
 
         foreach (Match match in matches)
         {
-            int statementStartIndex = match.Index;
+            int startIndex = match.Index;
 
-            string statement = str.Substring(startIndex, statementStartIndex - startIndex).Trim();
-
-            if (!string.IsNullOrWhiteSpace(statement))
+            // Extract the command before the current keyword
+            if (lastIndex < startIndex)
             {
-                statements.Add(statement);
+                string command = str.Substring(lastIndex, startIndex - lastIndex).Trim();
+                if (!string.IsNullOrWhiteSpace(command))
+                {
+                    commands.Add(command);
+                }
             }
 
-            startIndex = statementStartIndex;
+            lastIndex = startIndex;
         }
 
-        if (startIndex < str.Length)
+        // Add the final command
+        if (lastIndex < str.Length)
         {
-            string lastStatement = str.Substring(startIndex).Trim();
-            if (!string.IsNullOrWhiteSpace(lastStatement))
+            string lastCommand = str.Substring(lastIndex).Trim();
+            if (!string.IsNullOrWhiteSpace(lastCommand))
             {
-                statements.Add(lastStatement);
+                commands.Add(lastCommand);
             }
         }
 
-        return statements;
+        return commands;
     }
     #endregion
 

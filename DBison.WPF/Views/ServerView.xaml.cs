@@ -1,9 +1,7 @@
 ﻿using DBison.WPF.Controls;
-using DBison.WPF.Converter;
 using DBison.WPF.ViewModels;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Documents;
 using System.Windows.Input;
 
 namespace DBison.WPF.Views;
@@ -33,7 +31,7 @@ public partial class ServerView : UserControl
     {
         if (sender is LineNumberedTextBox tb && DataContext is ServerQueryPageViewModel vm)
         {
-            vm.SelectedQueryText = tb.Selection.Text;
+            vm.SelectedQueryText = !string.IsNullOrWhiteSpace(tb.Selection.Text) ? tb.Selection.Text : tb.Text;
             vm.QueryText = tb.Text;
         }
     }
