@@ -88,34 +88,60 @@ public static class StringExtender
     #endregion
 
     #region [ExtractStatements]
-    public static List<string> ExtractStatements(this string str)
+    public static List<string> ExtractStatements(this string input)
     {
-        if (string.IsNullOrWhiteSpace(str))
+        if (string.IsNullOrWhiteSpace(input))
             return new List<string>();
 
+        input = input.RemoveComments();
+
         // List of common SQL command keywords that can start a new statement
-        string[] sqlKeywords = new[] { "SELECT", "INSERT", "UPDATE", "DELETE", "CREATE", "ALTER", "DROP", "EXEC", "WITH" };
+        string[] sqlKeywords = new[] { "USE", "SELECT", "INSERT", "UPDATE", "DELETE", "CREATE", "ALTER", "DROP", "EXEC", "WITH" };
 
         // Pattern to detect command start (a keyword at the start of a line or after a semicolon)
         string pattern = $@"(^|\s|;)\b({string.Join("|", sqlKeywords)})\b";
 
         // Matches SQL commands considering keywords only at valid positions
-        var matches = Regex.Matches(str, pattern, RegexOptions.IgnoreCase | RegexOptions.Multiline);
+        var matches = Regex.Matches(input, pattern, RegexOptions.IgnoreCase | RegexOptions.Multiline);
 
         List<string> commands = new List<string>();
         int lastIndex = 0;
+        string currentDatabase = null;
 
         foreach (Match match in matches)
         {
             int startIndex = match.Index;
 
-            // Extract the command before the current keyword
+            //Extract the command before the current keyword
             if (lastIndex < startIndex)
             {
-                string command = str.Substring(lastIndex, startIndex - lastIndex).Trim();
+                string command = input.Substring(lastIndex, startIndex - lastIndex).Trim();
+                if (command.StartsWith("use", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    lastIndex = startIndex;
+                    continue;
+                }
                 if (!string.IsNullOrWhiteSpace(command))
                 {
+                    // If a USE statement is active, prepend it
+                    if (!string.IsNullOrEmpty(currentDatabase) && !command.StartsWith("use", StringComparison.OrdinalIgnoreCase))
+                    {
+                        command = $"USE {currentDatabase};\n{command}";
+                    }
+
                     commands.Add(command);
+                }
+            }
+
+            // Check if this is a USE command
+            string keyword = match.Groups[2].Value.ToUpper();
+            if (keyword == "USE")
+            {
+                // Extract the database name
+                var useMatch = Regex.Match(input.Substring(startIndex), @"USE\s+\[?([^\]\s;]+)\]?", RegexOptions.IgnoreCase);
+                if (useMatch.Success)
+                {
+                    currentDatabase = useMatch.Groups[1].Value;
                 }
             }
 
@@ -123,11 +149,16 @@ public static class StringExtender
         }
 
         // Add the final command
-        if (lastIndex < str.Length)
+        if (lastIndex < input.Length)
         {
-            string lastCommand = str.Substring(lastIndex).Trim();
+            string lastCommand = input.Substring(lastIndex).Trim();
             if (!string.IsNullOrWhiteSpace(lastCommand))
             {
+                if (!string.IsNullOrEmpty(currentDatabase) && !lastCommand.StartsWith("use", StringComparison.OrdinalIgnoreCase))
+                {
+                    lastCommand = $"USE {currentDatabase};\n{lastCommand}";
+                }
+
                 commands.Add(lastCommand);
             }
         }
@@ -135,6 +166,17 @@ public static class StringExtender
         return commands;
     }
     #endregion
+
+    public static string RemoveComments(this string input)
+    {
+        // Entferne mehrzeilige Kommentare (/* ... */)
+        string noMultiLineComments = Regex.Replace(input, @"/\*.*?\*/", string.Empty, RegexOptions.Singleline);
+
+        // Entferne einzeilige Kommentare (-- ...)
+        string noSingleLineComments = Regex.Replace(noMultiLineComments, @"--.*?$", string.Empty, RegexOptions.Multiline);
+
+        return noSingleLineComments;
+    }
 
     #region [ConvertToSelectStatement]
     public static (string, eDMLOperator) ConvertToSelectStatement(this string value)

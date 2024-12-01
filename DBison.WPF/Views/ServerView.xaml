@@ -138,7 +138,8 @@
         </Grid.RowDefinitions>
 
         <controls:MultiplePanelControl ItemsSource="{Binding ResultSets}"
-                                       Margin="10"/>
+                                       Margin="10"
+                                       CanClose="True"/>
 
         <TextBlock Text="{Binding QueryStatisticText, Mode=TwoWay}"
                    Grid.Row="1"

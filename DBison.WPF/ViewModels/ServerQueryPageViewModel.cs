@@ -26,6 +26,9 @@ public class ServerQueryPageViewModel : TabItemViewModelBase
 
     private int m_ExecutingSQLCount;
     private int m_ExecutingResultCount;
+    private List<TimeSpan> m_ExecutingResultTimesSpans = new();
+    private static object m_Locker = new object();
+
     #endregion
 
     #region Ctor
@@ -202,24 +205,34 @@ public class ServerQueryPageViewModel : TabItemViewModelBase
             return;
         bool clearResultBeforeExecuteNewQuery = true;
 
+        var sqls = sql.ExtractStatements().Where(s => s.IsNotNullOrEmpty());
+
+        if (sqls.IsEmpty())
+        {
+            QueryStatisticText = "Ready";
+            return;
+        }
+
         if (clearResultBeforeExecuteNewQuery)
         {
             ResultSets.Clear();
             QueryStatisticText = "Executing...";
         }
-        var sqls = sql.ExtractStatements().Where(s => s.IsNotNullOrEmpty());
 
-        if (sqls.IsNotEmpty())
-            IsLoading = true;
+        IsLoading = true;
 
         m_ExecutingSQLCount = sqls.Count();
         m_ExecutingResultCount = 0;
+        m_ExecutingResultTimesSpans.Clear();
 
         foreach (var singleSql in sqls)
         {
             new Task(() =>
             {
-                __ExecuteQuery(singleSql, databaseInfo);
+                lock (m_Locker)
+                {
+                    __ExecuteQuery(singleSql, databaseInfo);
+                }
             }).Start();
         }
     }
@@ -234,9 +247,6 @@ public class ServerQueryPageViewModel : TabItemViewModelBase
         __PrepareTimer(() =>
         {
             var dataTable = m_ServerQueryHelper.FillDataTable(databaseInfo, singleSql.ToStringValue(), __Error);
-
-            var resultList = new ObservableCollection<DataGrid>();
-
             if (dataTable == null)
             {
                 __CleanTimer();
@@ -253,13 +263,11 @@ public class ServerQueryPageViewModel : TabItemViewModelBase
                     ItemsSource = dataTable.DefaultView
                 };
                 dataGrid.AutoGeneratingColumn += __AutoGeneratingColumn;
-                resultList.Add(dataGrid);
                 OnPropertyChanged(nameof(MaxHeight));
                 ResultSets.Add(dataGrid);
                 __HandleSQLExecutionDone();
                 OnPropertyChanged(nameof(ResultSets));
                 __CleanTimer();
-                //QueryStatisticText = $"Query executed in {m_Stopwatch.Elapsed:m\\:ss\\.ffff} minutes - {dataTables.Sum(dt => dt.Rows.Count):N0} Rows on {dataTables.Count()} ResultSets";
             });
         });
     }
@@ -273,6 +281,7 @@ public class ServerQueryPageViewModel : TabItemViewModelBase
             {
                 IsLoading = false;
             }
+            QueryStatisticText = $"Query Exection {m_ExecutingResultCount}/{m_ExecutingSQLCount} done. Elapsed time {m_ExecutingResultTimesSpans.Sum():m\\:ss\\.ffff} minutes";
         });
     }
 
@@ -305,6 +314,8 @@ public class ServerQueryPageViewModel : TabItemViewModelBase
         {
             m_ExecutionTimer?.Stop();
             m_Stopwatch?.Stop();
+            if (m_Stopwatch != null)
+                m_ExecutingResultTimesSpans.Add(m_Stopwatch.Elapsed);
         });
     }
     #endregion

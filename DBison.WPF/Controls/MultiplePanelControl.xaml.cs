@@ -1,4 +1,6 @@
 ﻿using DBison.Core.Extender;
+using DBison.Core.Utils.SettingsSystem;
+using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Windows;
 using System.Windows.Controls;
@@ -10,10 +12,22 @@ namespace DBison.WPF.Controls;
 /// </summary>
 public partial class MultiplePanelControl : UserControl
 {
+    private Dictionary<CrossButton, object> m_RemoveRefs = new Dictionary<CrossButton, object>();
     public MultiplePanelControl()
     {
         InitializeComponent();
     }
+
+    #region [CanClose]
+    public bool CanClose
+    {
+        get { return (bool)GetValue(CanCloseProperty); }
+        set { SetValue(CanCloseProperty, value); }
+    }
+
+    public static readonly DependencyProperty CanCloseProperty =
+        DependencyProperty.Register("CanClose", typeof(bool), typeof(MultiplePanelControl), new PropertyMetadata(false));
+    #endregion
 
     #region [Content]
     public object Content
@@ -90,9 +104,15 @@ public partial class MultiplePanelControl : UserControl
         Content = mainGrid;
     }
     #endregion
+
     private void __MainGrid_Loaded(object sender, RoutedEventArgs e)
     {
-        var mainGrid = sender as Grid;
+        if (sender is Grid mainGrid)
+            __Rebuild(mainGrid);
+    }
+
+    private void __Rebuild(Grid mainGrid)
+    {
         var itemsSourceCount = ItemsSource.Count(); //This is the count of the "Panels" or resultGrids (Without the GridSplitter)
         var neededGridSplitter = itemsSourceCount > 1 ? itemsSourceCount + 1 : 0;
         int neededRows = itemsSourceCount + neededGridSplitter;
@@ -124,8 +144,41 @@ public partial class MultiplePanelControl : UserControl
                     {
                         try
                         {
-                            mainGrid.Children.Add(elem);
-                            Grid.SetRow(elem, i);
+                            var border = new Border()
+                            {
+                                BorderThickness = new Thickness(1),
+                                BorderBrush = Settings.UseDarkMode ? Brushes.White : Brushes.Black,
+                                Margin = new Thickness(0, 5, 0, 5),
+                            };
+                            if (CanClose)
+                            {
+                                var stackPanelWithCloseButton = new StackPanel()
+                                {
+                                    Orientation = Orientation.Horizontal
+                                };
+
+                                var crossButton = new CrossButton()
+                                {
+                                    Width = 20,
+                                    Height = 20,
+                                    VerticalAlignment = VerticalAlignment.Top,
+                                    Margin = new Thickness(5, 5, 5, 5),
+                                };
+
+                                m_RemoveRefs[crossButton] = itemsSourceItem;
+
+                                crossButton.Click += __CrossButton_Click;
+
+                                stackPanelWithCloseButton.Children.Add(crossButton);
+                                stackPanelWithCloseButton.Children.Add(elem);
+                                border.Child = stackPanelWithCloseButton;
+                            }
+                            else
+                            {
+                                border.Child = elem;
+                            }
+                            mainGrid.Children.Add(border);
+                            Grid.SetRow(border, i);
                         }
                         catch (Exception ex)
                         {
@@ -140,6 +193,7 @@ public partial class MultiplePanelControl : UserControl
                 var gridSplitter = new GridSplitter()
                 {
                     Height = gridSplitterHeight,
+                    Background = Settings.UseDarkMode ? Brushes.White : Brushes.Black,
                     ResizeDirection = GridResizeDirection.Rows,
                 };
                 try
@@ -155,4 +209,18 @@ public partial class MultiplePanelControl : UserControl
         }
     }
 
+    private void __CrossButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is CrossButton cb && Content is Grid grd)
+        {
+            if (m_RemoveRefs.TryGetValue(cb, out object itemToRemove) && ItemsSource.Contains(itemToRemove))
+            {
+                if (itemToRemove != null)
+                {
+                    ItemsSource = ItemsSource.Where(i => i != itemToRemove);
+                    __Rebuild(grd);
+                }
+            }
+        }
+    }
 }
