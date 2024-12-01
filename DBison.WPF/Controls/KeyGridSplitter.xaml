@@ -93,29 +93,33 @@
               Value="Arial" />
       <Setter Property="FontSize"
               Value="{DynamicResource GlobalFontSize}" />
-      <Style.Triggers>
-        <DataTrigger Binding="{Binding Setting}"
-                     Value="False">
-          <DataTrigger.Setters>
-            <Setter Property="Content">
-              <Setter.Value>
-                <views:ServerView Grid.Row="1" />
-              </Setter.Value>
-            </Setter>
-          </DataTrigger.Setters>
-        </DataTrigger>
-        <DataTrigger Binding="{Binding Setting}"
-                     Value="True">
-          <DataTrigger.Setters>
-            <Setter Property="Content">
-              <Setter.Value>
-                <views:SettingsTabView />
-              </Setter.Value>
-            </Setter>
-          </DataTrigger.Setters>
-        </DataTrigger>
-      </Style.Triggers>
-    </Style>
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding Setting}"
+               Value="False">
+                    <DataTrigger.Setters>
+                        <Setter Property="ContentTemplate">
+                            <Setter.Value>
+                                <DataTemplate>
+                                    <views:ServerView Grid.Row="1" />
+                                </DataTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </DataTrigger.Setters>
+                </DataTrigger>
+                <DataTrigger Binding="{Binding Setting}"
+               Value="True">
+                    <DataTrigger.Setters>
+                        <Setter Property="ContentTemplate">
+                            <Setter.Value>
+                                <DataTemplate>
+                                    <views:SettingsTabView />
+                                </DataTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </DataTrigger.Setters>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
 
     <Style  TargetType="{x:Type controls:TabControlBase}">
       <Setter Property="OverridesDefaultStyle"
