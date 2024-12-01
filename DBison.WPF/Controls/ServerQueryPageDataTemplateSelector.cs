@@ -1,4 +1,5 @@
-﻿using DBison.WPF.ViewModels;
+﻿using DBison.WPF.ClientBaseClasses;
+using DBison.WPF.ViewModels;
 using DBison.WPF.Views;
 using System.Windows;
 using System.Windows.Controls;
@@ -9,7 +10,7 @@ namespace DBison.WPF.Controls
     {
         public override DataTemplate SelectTemplate(object item, DependencyObject container)
         {
-            if (container is FrameworkElement elem && item is ServerQueryPageViewModel vieModel)
+            if (container is FrameworkElement elem && item is TabItemViewModelBase vieModel)
             {
                 var template = new DataTemplate();
                 FrameworkElementFactory factory = null;
