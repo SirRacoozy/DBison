@@ -8,31 +8,31 @@
              xmlns:helperobjects="clr-namespace:DBison.WPF.HelperObjects"
              Margin="5">
 
-    <controls:KeyGridSplitter ResizeDirection="Horizontal"
+  <controls:KeyGridSplitter ResizeDirection="Horizontal"
                             ContentPanel1Size="1*"
                             ContentPanel2Size="5*">
-        <controls:KeyGridSplitter.ContentPanel1>
-            <Border Grid.Row="0"
+    <controls:KeyGridSplitter.ContentPanel1>
+      <Border Grid.Row="0"
               CornerRadius="{StaticResource ControlCornerRadius}"
               BorderBrush="#878787"
               BorderThickness="2"
               Padding="5"
               Margin="0 0 5 0">
 
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="*" />
-                    </Grid.RowDefinitions>
+        <Grid>
+          <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+          </Grid.RowDefinitions>
 
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
+          <Grid>
+            <Grid.ColumnDefinitions>
+              <ColumnDefinition Width="*" />
+              <ColumnDefinition Width="Auto" />
+              <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
 
-                        <TextBox Text="{Binding FilterText, Mode=TwoWay}"
+            <TextBox Text="{Binding FilterText, Mode=TwoWay}"
                      Grid.Column="0"
                      Margin="0 0 2.5 0"
                      VerticalAlignment="Center"
@@ -42,20 +42,20 @@
                      helperobjects:TextBoxHelperExtension.AutoClearTextButton="True"
                      FontSize="{DynamicResource GlobalFontSize}" />
 
-                        <Button Grid.Column="1"
+            <Button Grid.Column="1"
                     Margin="2.5 0 2.5 0"
                     Background="Transparent"
                     Height="25"
                     Width="25"
                     Command="{Binding [AddServer]}">
-                            <Button.Content>
-                                <iconPacks:PackIconMaterial Kind="ServerNetwork"
+              <Button.Content>
+                <iconPacks:PackIconMaterial Kind="ServerNetwork"
                                             Width="15"
                                             Height="15" />
-                            </Button.Content>
-                        </Button>
+              </Button.Content>
+            </Button>
 
-                        <Button Grid.Column="2"
+            <Button Grid.Column="2"
                     Margin="2.5 0 2.5 0"
                     Background="Transparent"
                     Height="25"
@@ -63,27 +63,31 @@
                     HorizontalContentAlignment="Center"
                     VerticalContentAlignment="Center"
                     Command="{Binding [ToggleSettings]}">
-                            <Button.Content>
-                                <iconPacks:PackIconMaterial Kind="TuneVerticalVariant"
+              <Button.Content>
+                <iconPacks:PackIconMaterial Kind="TuneVerticalVariant"
                                             Width="15"
                                             Height="15" />
-                            </Button.Content>
-                        </Button>
-                    </Grid>
+              </Button.Content>
+            </Button>
+          </Grid>
 
-                    <controls:ServerInfoTreeView Grid.Row="1"
+          <controls:ServerInfoTreeView Grid.Row="1"
                                        TreeView.SelectedItemChanged="__SelectedItemChanged" />
 
-                </Grid>
+        </Grid>
 
-            </Border>
-        </controls:KeyGridSplitter.ContentPanel1>
-        <controls:KeyGridSplitter.ContentPanel2>
-            <controls:TabControlBase ItemsSource="{Binding TabItems, Mode=OneWay}"
+      </Border>
+    </controls:KeyGridSplitter.ContentPanel1>
+    <controls:KeyGridSplitter.ContentPanel2>
+      <controls:TabControlBase ItemsSource="{Binding TabItems, Mode=OneWay}"
                                SelectedIndex="0"
                                SelectedItem="{Binding SelectedTabItem, Mode=TwoWay}"
                                BorderBrush="Transparent"
-                               BorderThickness="0" />
-        </controls:KeyGridSplitter.ContentPanel2>
-    </controls:KeyGridSplitter>
+                               BorderThickness="0">
+        <controls:TabControlBase.ContentTemplateSelector>
+          <controls:ServerQueryPageDataTemplateSelector/>
+        </controls:TabControlBase.ContentTemplateSelector>
+      </controls:TabControlBase>
+    </controls:KeyGridSplitter.ContentPanel2>
+  </controls:KeyGridSplitter>
 </UserControl>

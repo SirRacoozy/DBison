@@ -6,12 +6,12 @@ using System.Windows.Input;
 
 namespace DBison.WPF.Views;
 /// <summary>
-/// Interaction logic for ServerView.xaml
+/// Interaction logic for QueryPageView.xaml
 /// </summary>
-public partial class ServerView : UserControl
+public partial class QueryPageView : UserControl
 {
     #region - ctor -
-    public ServerView()
+    public QueryPageView()
     {
         InitializeComponent();
         Loaded += __Loaded;
