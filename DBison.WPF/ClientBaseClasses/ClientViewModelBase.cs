@@ -72,9 +72,7 @@ namespace DBison.WPF.ClientBaseClasses
         public void ShowExceptionMessage(Exception e)
         {
             if (Application.Current.MainWindow is MetroWindow metroWnd)
-            {
                 metroWnd.ShowMessageAsync("Exception occured", e.Message);
-            }
         }
         #endregion
 

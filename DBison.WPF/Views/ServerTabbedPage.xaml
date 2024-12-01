@@ -83,7 +83,11 @@
                                SelectedIndex="0"
                                SelectedItem="{Binding SelectedTabItem, Mode=TwoWay}"
                                BorderBrush="Transparent"
-                               BorderThickness="0" />
+                               BorderThickness="0">
+        <controls:TabControlBase.ContentTemplateSelector>
+          <controls:ServerQueryPageDataTemplateSelector/>
+        </controls:TabControlBase.ContentTemplateSelector>
+      </controls:TabControlBase>
     </controls:KeyGridSplitter.ContentPanel2>
   </controls:KeyGridSplitter>
 </UserControl>

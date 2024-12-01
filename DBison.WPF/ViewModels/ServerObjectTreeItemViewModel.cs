@@ -407,11 +407,19 @@ public class ServerObjectTreeItemViewModel : ClientViewModelBase
     {
         try
         {
+            var pattern = Settings.DSNPattern;
+            var dataBase = DatabaseObject.DataBase;
+            string DSNName = pattern.Replace("{{ServerName}}", dataBase.Server.Name).Replace("{{DataBase}}", dataBase.Name).Replace("{{DateTimeNow}}", DateTime.Now.ToString("ddMMyyyy_HHmmss"));
+            DSNName = GetInput("DSN Name", "Choose a name for the DSN, standard is defined in the schema", DSNName);
+
+            if (DSNName.IsNullOrEmpty())
+                return;
+
             var mode = Settings.DSNArchitecture;
             if (mode == eDSNArchitecture.x86 || mode == eDSNArchitecture.x86x64)
-                __SetDSNEntry(true);
+                __SetDSNEntry(true, DSNName);
             if (mode == eDSNArchitecture.x64 || mode == eDSNArchitecture.x86x64)
-                __SetDSNEntry(false);
+                __SetDSNEntry(false, DSNName);
         }
         catch (Exception ex)
         {
@@ -682,25 +690,24 @@ public class ServerObjectTreeItemViewModel : ClientViewModelBase
     #endregion
 
     #region [__SetDSNEntry]
-    private void __SetDSNEntry(bool for32Bit)
+    private void __SetDSNEntry(bool for32Bit, string dsnName)
     {
         var key = __OpenRegistryKey(for32Bit);
         var dataBase = DatabaseObject.DataBase;
         var server = DatabaseObject.Server;
-        var pattern = Settings.DSNPattern;
-        string DSNName = pattern.Replace("{{ServerName}}", dataBase.Server.Name).Replace("{{DataBase}}", dataBase.Name).Replace("{{DateTimeNow}}", DateTime.Now.ToString("ddMMyyyy_HHmmss"));
-        if (DSNName.Length > 32)
-            DSNName = DSNName.Substring(0, 32);
+
+        if (dsnName.Length > 32)
+            dsnName = dsnName.Substring(0, 32);
         //if (key.OpenSubKey(DNSName, true) != null && !Overwrite) //At the moment we want override
         //    continue;
-        var SubKey = key.CreateSubKey(DSNName);
+        var SubKey = key.CreateSubKey(dsnName);
         SubKey.SetValue("Database", dataBase.Name);
         SubKey.SetValue("Driver", m_MSSQLDriver);
         SubKey.SetValue("LastUser", server.Username);
         SubKey.SetValue("Server", server.Name);
         if (server.UseIntegratedSecurity)
             SubKey.SetValue("Trusted_Connection", "Yes");
-        __SetODBCSystemEntry(key, DSNName);
+        __SetODBCSystemEntry(key, dsnName);
     }
     #endregion
 

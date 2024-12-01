@@ -121,7 +121,7 @@
                 Background="#DBB042"
                 Width="{StaticResource EllipseSize}"
                 Height="{StaticResource EllipseSize}">
-          
+
           <Viewbox Width="10"
                    HorizontalAlignment="Center"
                    VerticalAlignment="Center">
@@ -139,7 +139,7 @@
                     VerticalAlignment="Center" />
             </Grid>
           </Viewbox>
-          
+
         </Border>
       </Grid>
 
@@ -156,6 +156,27 @@
                 HorizontalAlignment="Center" />
         </Border>
       </Grid>
+
+      <Style TargetType="DataGridCell">
+        <Setter Property="Template">
+          <Setter.Value>
+            <ControlTemplate TargetType="DataGridCell">
+              <Border Background="{TemplateBinding Background}"
+                      BorderBrush="{TemplateBinding BorderBrush}"
+                      BorderThickness="{TemplateBinding BorderThickness}"
+                      SnapsToDevicePixels="True">
+                <ContentPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}">
+                  <ContentPresenter.ContentTemplate>
+                    <DataTemplate>
+                      <controls:SingleLineTextBlock Text="{Binding Text}" />
+                    </DataTemplate>
+                  </ContentPresenter.ContentTemplate>
+                </ContentPresenter>
+              </Border>
+            </ControlTemplate>
+          </Setter.Value>
+        </Setter>
+      </Style>
 
     </ResourceDictionary>
 
