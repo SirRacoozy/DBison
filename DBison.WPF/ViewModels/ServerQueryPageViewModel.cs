@@ -38,7 +38,7 @@ public class ServerQueryPageViewModel : TabItemViewModelBase
         DatabaseObject = req.DataBaseObject;
         m_ServerViewModel = req.ServerViewModel;
         Header = req.Name;
-        ResultSets = new ObservableCollection<DataGrid>();
+        ResultSets = new ObservableCollection<object>();
         m_ServerQueryHelper = req.ServerQueryHelper;
         if (req.QueryText.IsNotNullOrEmpty())
         {
@@ -84,9 +84,9 @@ public class ServerQueryPageViewModel : TabItemViewModelBase
     #endregion
 
     #region [ResultSets]
-    public ObservableCollection<DataGrid> ResultSets
+    public ObservableCollection<object> ResultSets
     {
-        get => Get<ObservableCollection<DataGrid>>();
+        get => Get<ObservableCollection<object>>();
         set => Set(value);
     }
     #endregion
@@ -203,6 +203,10 @@ public class ServerQueryPageViewModel : TabItemViewModelBase
     {
         if (sql.IsNullOrEmpty())
             return;
+
+        if (ResultSets == null)
+            ResultSets = new ObservableCollection<object>();
+
         bool clearResultBeforeExecuteNewQuery = true;
 
         var sqls = sql.ExtractStatements().Where(s => s.IsNotNullOrEmpty());

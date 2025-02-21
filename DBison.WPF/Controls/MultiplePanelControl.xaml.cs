@@ -44,12 +44,12 @@ public partial class MultiplePanelControl : UserControl
 
     public static readonly DependencyProperty ItemsSourceProperty =
     DependencyProperty.Register(
-        "ItemsSource", typeof(IEnumerable<object>), typeof(MultiplePanelControl),
+        "ItemsSource", typeof(ObservableCollection<object>), typeof(MultiplePanelControl),
         new PropertyMetadata(null, __ItemsSourcePropertyChanged));
 
-    public IEnumerable<object> ItemsSource
+    public ObservableCollection<object> ItemsSource
     {
-        get { return (IEnumerable<object>)GetValue(ItemsSourceProperty); }
+        get { return (ObservableCollection<object>)GetValue(ItemsSourceProperty); }
         set { SetValue(ItemsSourceProperty, value); }
     }
 
@@ -83,14 +83,13 @@ public partial class MultiplePanelControl : UserControl
 
     private void __UpdateItemsSource()
     {
-        Content = null;
         if (ItemsSource.IsEmpty())
         {
             return;
         }
         else
         {
-            Content = new TextBlock { Text = $"Itemssource of {ItemsSource.Count()}", FontSize = 40, Foreground = Brushes.Green, HorizontalAlignment = HorizontalAlignment.Center, VerticalAlignment = VerticalAlignment.Center };
+            //Content = new TextBlock { Text = $"Itemssource of {ItemsSource.Count()}", FontSize = 40, Foreground = Brushes.Green, HorizontalAlignment = HorizontalAlignment.Center, VerticalAlignment = VerticalAlignment.Center };
             __GenerateControlContent();
         }
     }
@@ -99,6 +98,12 @@ public partial class MultiplePanelControl : UserControl
     #region [__GenerateControlContent]
     private void __GenerateControlContent()
     {
+        m_RemoveRefs?.Clear();
+        if (Content is Grid grd)
+        {
+            grd.Loaded -= __MainGrid_Loaded;
+            grd.Children.Clear();
+        }
         var mainGrid = new Grid();
         mainGrid.Loaded += __MainGrid_Loaded;
         Content = mainGrid;
@@ -108,106 +113,108 @@ public partial class MultiplePanelControl : UserControl
     private void __MainGrid_Loaded(object sender, RoutedEventArgs e)
     {
         if (sender is Grid mainGrid)
-            __Rebuild(mainGrid);
-    }
-
-    private void __Rebuild(Grid mainGrid)
-    {
-        var itemsSourceCount = ItemsSource.Count(); //This is the count of the "Panels" or resultGrids (Without the GridSplitter)
-        var neededGridSplitter = itemsSourceCount > 1 ? itemsSourceCount + 1 : 0;
-        int neededRows = itemsSourceCount + neededGridSplitter;
-        int currentContentItem = 0;
-        var gridSplitterHeight = 5;
-
-        for (int i = 0; i < neededRows; i++)
         {
-            var rowDefinition = new RowDefinition();
-            if (i % 2 == 0)
-                rowDefinition.Height = new GridLength(200);
-            else
-                rowDefinition.Height = new GridLength(gridSplitterHeight);
-            mainGrid.RowDefinitions.Add(rowDefinition);
-        }
+            mainGrid.Loaded -= __MainGrid_Loaded;
+            if (ItemsSource == null)
+                return;
 
+            var itemsSourceCount = ItemsSource.Count(); //This is the count of the "Panels" or resultGrids (Without the GridSplitter)
+            var neededGridSplitter = itemsSourceCount > 1 ? itemsSourceCount + 1 : 0;
+            int neededRows = itemsSourceCount + neededGridSplitter;
+            int currentContentItem = 0;
+            var gridSplitterHeight = 5;
 
-        for (int i = 0; i < neededRows; i++)
-        {
-            //We start from 0 
-            //Panel, GridSplitter, Panel, GridSplitter and so on
-            if (i % 2 == 0)
+            for (int i = 0; i < neededRows; i++)
             {
-                if (ItemsSource.Count() >= currentContentItem + 1)
+                var rowDefinition = new RowDefinition();
+                if (i % 2 == 0)
+                    rowDefinition.Height = new GridLength(200);
+                else
+                    rowDefinition.Height = new GridLength(gridSplitterHeight);
+                mainGrid.RowDefinitions.Add(rowDefinition);
+            }
+
+
+            for (int i = 0; i < neededRows; i++)
+            {
+                //We start from 0 
+                //Panel, GridSplitter, Panel, GridSplitter and so on
+                if (i % 2 == 0)
                 {
-                    var itemsSourceItem = ItemsSource.ElementAt(currentContentItem);
-                    currentContentItem++;
-                    if (itemsSourceItem != null && itemsSourceItem is FrameworkElement elem)
+                    if (ItemsSource.Count() >= currentContentItem + 1)
                     {
-                        try
+                        var itemsSourceItem = ItemsSource.ElementAt(currentContentItem);
+                        currentContentItem++;
+                        if (itemsSourceItem != null && itemsSourceItem is FrameworkElement elem)
                         {
-                            var border = new Border()
+                            try
                             {
-                                BorderThickness = new Thickness(1),
-                                BorderBrush = Settings.UseDarkMode ? Brushes.White : Brushes.Black,
-                                Margin = new Thickness(0, 5, 0, 5),
-                            };
-                            if (CanClose)
-                            {
-                                var stackPanelWithCloseButton = new StackPanel()
+                                var border = new Border()
                                 {
-                                    Orientation = Orientation.Horizontal
+                                    BorderThickness = new Thickness(1),
+                                    BorderBrush = Settings.UseDarkMode ? Brushes.White : Brushes.Black,
+                                    Margin = new Thickness(0, 5, 0, 5),
                                 };
-
-                                var crossButton = new CrossButton()
+                                if (CanClose)
                                 {
-                                    Width = 20,
-                                    Height = 20,
-                                    VerticalAlignment = VerticalAlignment.Top,
-                                    Margin = new Thickness(5, 5, 5, 5),
-                                };
+                                    var stackPanelWithCloseButton = new StackPanel()
+                                    {
+                                        Orientation = Orientation.Horizontal
+                                    };
 
-                                m_RemoveRefs[crossButton] = itemsSourceItem;
+                                    var crossButton = new CrossButton()
+                                    {
+                                        Width = 20,
+                                        Height = 20,
+                                        VerticalAlignment = VerticalAlignment.Top,
+                                        Margin = new Thickness(5, 5, 5, 5),
+                                    };
 
-                                crossButton.Click += __CrossButton_Click;
+                                    m_RemoveRefs[crossButton] = itemsSourceItem;
 
-                                stackPanelWithCloseButton.Children.Add(crossButton);
-                                stackPanelWithCloseButton.Children.Add(elem);
-                                border.Child = stackPanelWithCloseButton;
+                                    crossButton.Click += __CrossButton_Click;
+
+                                    stackPanelWithCloseButton.Children.Add(crossButton);
+                                    stackPanelWithCloseButton.Children.Add(elem);
+                                    border.Child = stackPanelWithCloseButton;
+                                }
+                                else
+                                {
+                                    border.Child = elem;
+                                }
+                                mainGrid.Children.Add(border);
+                                Grid.SetRow(border, i);
                             }
-                            else
+                            catch (Exception ex)
                             {
-                                border.Child = elem;
+                                //TODO Add new Tab, execute query, open settings, close settings tab, we reach this catch block, whyyy??????
                             }
-                            mainGrid.Children.Add(border);
-                            Grid.SetRow(border, i);
-                        }
-                        catch (Exception ex)
-                        {
-                            //TODO Add new Tab, execute query, open settings, close settings tab, we reach this catch block, whyyy??????
-                        }
 
+                        }
+                    }
+                }
+                else
+                {
+                    var gridSplitter = new GridSplitter()
+                    {
+                        Height = gridSplitterHeight,
+                        Background = Settings.UseDarkMode ? Brushes.White : Brushes.Black,
+                        ResizeDirection = GridResizeDirection.Rows,
+                    };
+                    try
+                    {
+                        mainGrid.Children.Add(gridSplitter);
+                        Grid.SetRow(gridSplitter, i);
+                    }
+                    catch (Exception ex)
+                    {
+                        //TODO Add new Tab, execute query, open settings, close settings tab, we reach this catch block, whyyy??????
                     }
                 }
             }
-            else
-            {
-                var gridSplitter = new GridSplitter()
-                {
-                    Height = gridSplitterHeight,
-                    Background = Settings.UseDarkMode ? Brushes.White : Brushes.Black,
-                    ResizeDirection = GridResizeDirection.Rows,
-                };
-                try
-                {
-                    mainGrid.Children.Add(gridSplitter);
-                    Grid.SetRow(gridSplitter, i);
-                }
-                catch (Exception ex)
-                {
-                    //TODO Add new Tab, execute query, open settings, close settings tab, we reach this catch block, whyyy??????
-                }
-            }
         }
     }
+
 
     private void __CrossButton_Click(object sender, RoutedEventArgs e)
     {
@@ -217,8 +224,8 @@ public partial class MultiplePanelControl : UserControl
             {
                 if (itemToRemove != null)
                 {
-                    ItemsSource = ItemsSource.Where(i => i != itemToRemove);
-                    __Rebuild(grd);
+                    ItemsSource.Remove(itemToRemove);
+                    __GenerateControlContent();
                 }
             }
         }

@@ -95,37 +95,47 @@
               Value="{DynamicResource GlobalFontSize}" />
     </Style>
 
-    <Style  TargetType="{x:Type controls:TabControlBase}">
-      <Setter Property="OverridesDefaultStyle"
-              Value="True" />
-      <Setter Property="SnapsToDevicePixels"
-              Value="True" />
+    <Style TargetType="{x:Type controls:TabControlBase}">
       <Setter Property="Template">
         <Setter.Value>
-          <ControlTemplate TargetType="{x:Type controls:TabControlBase}">
-            <Grid KeyboardNavigation.TabNavigation="Local">
+          <ControlTemplate TargetType="{x:Type TabControl}">
+            <Grid Background="Transparent"
+                  ClipToBounds="True"
+                  KeyboardNavigation.TabNavigation="Local"
+                  SnapsToDevicePixels="True">
+              <Grid.ColumnDefinitions>
+                <ColumnDefinition x:Name="ColumnDefinition0" />
+                <ColumnDefinition x:Name="ColumnDefinition1"
+                                  Width="0" />
+              </Grid.ColumnDefinitions>
               <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="*" />
+                <RowDefinition x:Name="RowDefinition0"
+                               Height="Auto" />
+                <RowDefinition x:Name="RowDefinition1"
+                               Height="*" />
               </Grid.RowDefinitions>
-              <TabPanel Name="HeaderPanel"
-                        Grid.Row="0"
-                        Panel.ZIndex="1"
-                        Margin="25,0,4,-1"
-                        IsItemsHost="True"
-                        KeyboardNavigation.TabIndex="1"
-                        Background="Transparent" />
-              <Border Name="Border"
+              <DockPanel Margin="25,0,4,-1"
+                         LastChildFill="False">
+                <TabPanel x:Name="HeaderPanel"
+                          Margin="0,0,0,-1"
+                          VerticalAlignment="Bottom"
+                          Panel.ZIndex="1"
+                          DockPanel.Dock="Left"
+                          IsItemsHost="True"
+                          KeyboardNavigation.TabIndex="1" />
+              </DockPanel>
+              <Border x:Name="ContentPanel"
                       Grid.Row="1"
+                      Grid.Column="0"
                       Background="Transparent"
                       BorderBrush="Transparent"
-                      BorderThickness="1"
-                      KeyboardNavigation.TabNavigation="Local"
+                      BorderThickness="{TemplateBinding BorderThickness}"
                       KeyboardNavigation.DirectionalNavigation="Contained"
-                      KeyboardNavigation.TabIndex="2">
-                <ContentPresenter Name="PART_SelectedContentHost"
-                                  Margin="0"
-                                  ContentSource="SelectedContent" />
+                      KeyboardNavigation.TabIndex="2"
+                      KeyboardNavigation.TabNavigation="Local">
+                <Grid x:Name="PART_ItemsHolder"
+                      Margin="{TemplateBinding Padding}"
+                      SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
               </Border>
             </Grid>
           </ControlTemplate>
