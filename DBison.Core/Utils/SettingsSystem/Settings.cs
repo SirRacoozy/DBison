@@ -212,6 +212,13 @@ public static class Settings
         set => SettingsHandler.SetSetting("ResultCellMargin", value.ToString());
     }
 
+    [Setting("Query results", "Resultgrid Max Height", "Specifies the max height of the result grid. More height means less performance due to the virtualization", typeof(double))]
+    public static double ResultGridMaxHeight
+    {
+        get => SettingsHandler.GetSetting("ResultGridMaxHeight", 300);
+        set => SettingsHandler.SetSetting("ResultGridMaxHeight", value.ToString());
+    }
+
     public static string GetAllSettingsString()
     {
         var props = typeof(Settings).GetProperties();

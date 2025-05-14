@@ -27,7 +27,6 @@ public class ServerQueryPageViewModel : TabItemViewModelBase
     private int m_ExecutingSQLCount;
     private int m_ExecutingResultCount;
     private List<TimeSpan> m_ExecutingResultTimesSpans = new();
-    private static object m_Locker = new object();
 
     #endregion
 
@@ -75,6 +74,19 @@ public class ServerQueryPageViewModel : TabItemViewModelBase
     }
     #endregion
 
+    #region [RebuildNeeded]
+    public bool RebuildNeeded
+    {
+        get => Get<bool>();
+        set => Set(value);
+    }
+    #endregion
+
+    #region [ReadyForBuildControls]
+    [DependsUpon(nameof(IsLoading))]
+    public bool ReadyForBuildControls => !IsLoading;
+    #endregion
+
     #region [DatabaseObject]
     public DatabaseObjectBase DatabaseObject
     {
@@ -86,7 +98,7 @@ public class ServerQueryPageViewModel : TabItemViewModelBase
     #region [ResultSets]
     public ObservableCollection<DataGrid> ResultSets
     {
-        get => Get<ObservableCollection<DataGrid>>();
+        get => Get<ObservableCollection<DataGrid>>() ?? new ObservableCollection<DataGrid>();
         set => Set(value);
     }
     #endregion
@@ -97,11 +109,6 @@ public class ServerQueryPageViewModel : TabItemViewModelBase
         get => Get<string>();
         set => Set(value);
     }
-    #endregion
-
-    #region [MaxHeight]
-    [DependsUpon(nameof(ResultSets))]
-    public double MaxHeight => ResultSets.Count > 1 ? 100 : double.MaxValue;
     #endregion
 
     #endregion
@@ -205,7 +212,7 @@ public class ServerQueryPageViewModel : TabItemViewModelBase
             return;
         bool clearResultBeforeExecuteNewQuery = true;
 
-        var sqls = sql.ExtractStatements().Where(s => s.IsNotNullOrEmpty());
+        var sqls = sql.ExtractStatements().Where(s => s.IsNotNullOrEmpty()).ToList();
 
         if (sqls.IsEmpty())
         {
@@ -225,14 +232,12 @@ public class ServerQueryPageViewModel : TabItemViewModelBase
         m_ExecutingResultCount = 0;
         m_ExecutingResultTimesSpans.Clear();
 
+        m_UnorderedResultSets = new Dictionary<int, DataGrid>();
         foreach (var singleSql in sqls)
         {
             new Task(() =>
             {
-                lock (m_Locker)
-                {
-                    __ExecuteQuery(singleSql, databaseInfo);
-                }
+                    __ExecuteQuery(singleSql, databaseInfo, sqls.IndexOf(singleSql));
             }).Start();
         }
     }
@@ -241,8 +246,10 @@ public class ServerQueryPageViewModel : TabItemViewModelBase
 
     #region - private methods -
 
+    private Dictionary<int, DataGrid> m_UnorderedResultSets;
+
     #region [__ExecuteQuery]
-    private void __ExecuteQuery(string singleSql, DatabaseInfo databaseInfo)
+    private void __ExecuteQuery(string singleSql, DatabaseInfo databaseInfo, int i)
     {
         __PrepareTimer(() =>
         {
@@ -260,13 +267,12 @@ public class ServerQueryPageViewModel : TabItemViewModelBase
                     GridLinesVisibility = (DataGridGridLinesVisibility)Settings.DataGridGridLinesVisibility, //Todo as setting CBO
                     IsReadOnly = true,
                     Margin = new System.Windows.Thickness(0, 10, 0, 10),
+                    MaxHeight = Settings.ResultGridMaxHeight,
                     ItemsSource = dataTable.DefaultView
                 };
                 dataGrid.AutoGeneratingColumn += __AutoGeneratingColumn;
-                OnPropertyChanged(nameof(MaxHeight));
-                ResultSets.Add(dataGrid);
+                m_UnorderedResultSets[i] = dataGrid;
                 __HandleSQLExecutionDone();
-                OnPropertyChanged(nameof(ResultSets));
                 __CleanTimer();
             });
         });
@@ -279,7 +285,14 @@ public class ServerQueryPageViewModel : TabItemViewModelBase
             m_ExecutingResultCount++;
             if (m_ExecutingResultCount >= m_ExecutingSQLCount)
             {
+                foreach (var resultSet in m_UnorderedResultSets.OrderBy(u => u.Key).Select(s => s.Value))
+                {
+                    ResultSets.Add(resultSet);
+                }
+                OnPropertyChanged(nameof(ResultSets));
                 IsLoading = false;
+                RebuildNeeded = true;
+                RebuildNeeded = false;
             }
             QueryStatisticText = $"Query Exection {m_ExecutingResultCount}/{m_ExecutingSQLCount} done. Elapsed time {m_ExecutingResultTimesSpans.Sum():m\\:ss\\.ffff} minutes";
         });

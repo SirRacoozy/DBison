@@ -4,7 +4,10 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008">
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:viewmodels="clr-namespace:DBison.WPF.ViewModels"
+             d:DataContext="{d:DesignInstance viewmodels:ServerQueryPageViewModel}"
+             mc:Ignorable="d">
 
   <UserControl.InputBindings>
     <KeyBinding Key="F5"
@@ -138,8 +141,10 @@
         </Grid.RowDefinitions>
 
         <controls:MultiplePanelControl ItemsSource="{Binding ResultSets, Mode=TwoWay}"
+                                       ReadyForBuildControls="{Binding ReadyForBuildControls, Mode=OneWay}"
                                        Margin="10"
-                                       CanClose="True"/>
+                                       CanClose="True"
+                                       RebuildNeeded="{Binding RebuildNeeded, Mode=TwoWay}"/>
 
         <TextBlock Text="{Binding QueryStatisticText, Mode=TwoWay}"
                    Grid.Row="1"
