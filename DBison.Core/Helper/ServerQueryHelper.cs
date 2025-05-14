@@ -1,5 +1,6 @@
 ﻿using DBison.Core.Entities;
 using DBison.Core.Extender;
+using DBison.Core.Utils.SettingsSystem;
 using Microsoft.Data.SqlClient;
 using System.Data;
 
@@ -169,6 +170,11 @@ public class ServerQueryHelper
         if (sql.IsNullOrEmpty() || databaseInfo.DataBaseState != eDataBaseState.ONLINE)
             return null;
 
+        return __GetDataTableForSingleSQLStatement(databaseInfo, sql, errorCallback);
+    }
+
+    private DataTable __GetDataTableForSingleSQLStatement(DatabaseInfo databaseInfo, string sql, Action<Exception> errorCallback)
+    {
         try
         {
             using var access = new DataConnection(databaseInfo);
@@ -234,6 +240,7 @@ public class ServerQueryHelper
     {
         IgnoreNextException = true;
         m_Command?.Cancel();
+        IgnoreNextException = false;
     }
     #endregion
 
@@ -340,20 +347,22 @@ REMOVE FILE [{fileName}];";
         if (m_Server == null)
             return;
 
-        var sql = @"SELECT 
-sysDb.name AS dataBaseName, 
-sysDb.state isOnline,
-dataF.physical_name AS dataFileLocation,
-dataF.size AS dataFileSize,
-logF.physical_name AS logLocation,
-logF.size AS logFileSize
+        var sql = $@"SELECT 
+    sysDb.name AS dataBaseName, 
+    sysDb.state AS isOnline,
+    STRING_AGG(dataF.physical_name, ', ') AS dataFileLocations,
+    SUM(dataF.size) AS totalDataFileSize,
+    STRING_AGG(logF.physical_name, ', ') AS logFileLocations,
+    SUM(logF.size) AS totalLogFileSize
 FROM sys.databases sysDb
 LEFT JOIN sys.master_files dataF
-ON sysDb.database_id = dataF.database_id AND dataF.type_desc = 'ROWS'
+    ON sysDb.database_id = dataF.database_id AND dataF.type_desc = 'ROWS'
 LEFT JOIN sys.master_files logF
-ON sysDb.database_id = logF.database_id AND logF.type_desc = 'LOG'
-WHERE sysDb.name NOT IN ('master','tempdb','model','msdb')
-ORDER BY sysDb.name ASC";
+    ON sysDb.database_id = logF.database_id AND logF.type_desc = 'LOG'
+{(Settings.ShowSystemDatabases ? "" : "WHERE sysDb.name NOT IN ('master','tempdb','model','msdb')")}
+GROUP BY sysDb.name, sysDb.state
+ORDER BY sysDb.name ASC;
+";
 
         m_Server.DatabaseInfos.Clear();
         using var access = new DataConnection(new DatabaseInfo("master", m_Server, null));

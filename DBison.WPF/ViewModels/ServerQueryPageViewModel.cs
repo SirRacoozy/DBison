@@ -2,12 +2,17 @@
 using DBison.Core.Entities;
 using DBison.Core.Extender;
 using DBison.Core.Helper;
+using DBison.Core.Utils.SettingsSystem;
 using DBison.WPF.ClientBaseClasses;
+using DBison.WPF.Converter;
 using DBison.WPF.HelperObjects;
 using Microsoft.Win32;
 using System.Collections.ObjectModel;
+using System.Data;
 using System.Diagnostics;
 using System.IO;
+using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Threading;
 
 namespace DBison.WPF.ViewModels;
@@ -18,6 +23,11 @@ public class ServerQueryPageViewModel : TabItemViewModelBase
     ServerQueryHelper m_ServerQueryHelper;
     DispatcherTimer m_ExecutionTimer;
     Stopwatch m_Stopwatch = new Stopwatch();
+
+    private int m_ExecutingSQLCount;
+    private int m_ExecutingResultCount;
+    private List<TimeSpan> m_ExecutingResultTimesSpans = new();
+
     #endregion
 
     #region Ctor
@@ -27,7 +37,7 @@ public class ServerQueryPageViewModel : TabItemViewModelBase
         DatabaseObject = req.DataBaseObject;
         m_ServerViewModel = req.ServerViewModel;
         Header = req.Name;
-        ResultSets = new ObservableCollection<ResultSetViewModel>();
+        ResultSets = new ObservableCollection<DataGrid>();
         m_ServerQueryHelper = req.ServerQueryHelper;
         if (req.QueryText.IsNotNullOrEmpty())
         {
@@ -64,6 +74,19 @@ public class ServerQueryPageViewModel : TabItemViewModelBase
     }
     #endregion
 
+    #region [RebuildNeeded]
+    public bool RebuildNeeded
+    {
+        get => Get<bool>();
+        set => Set(value);
+    }
+    #endregion
+
+    #region [ReadyForBuildControls]
+    [DependsUpon(nameof(IsLoading))]
+    public bool ReadyForBuildControls => !IsLoading;
+    #endregion
+
     #region [DatabaseObject]
     public DatabaseObjectBase DatabaseObject
     {
@@ -73,9 +96,9 @@ public class ServerQueryPageViewModel : TabItemViewModelBase
     #endregion
 
     #region [ResultSets]
-    public ObservableCollection<ResultSetViewModel> ResultSets
+    public ObservableCollection<DataGrid> ResultSets
     {
-        get => Get<ObservableCollection<ResultSetViewModel>>();
+        get => Get<ObservableCollection<DataGrid>>() ?? new ObservableCollection<DataGrid>();
         set => Set(value);
     }
     #endregion
@@ -117,34 +140,6 @@ public class ServerQueryPageViewModel : TabItemViewModelBase
     {
         if (DatabaseObject is DatabaseInfo dbInfo)
             FillDataTable(SelectedQueryText.IsNotNullOrEmpty() ? SelectedQueryText : QueryText, dbInfo);
-
-        //if (DatabaseObject.DataBase is DatabaseInfo dbInfo)
-        //{
-        //    var sql = SelectedQueryText.IsNotNullEmptyOrWhitespace() ? SelectedQueryText : QueryText;
-        //    var result = sql.ConvertToSelectStatement();
-
-        //    switch (result.Item2)
-        //    {
-        //        case eDMLOperator.Update:
-        //            using (var Access = new DatabaseAccess(dbInfo.Server, dbInfo))
-        //                Access.ExecuteCommand(sql);
-        //            FillDataTable(result.Item1, dbInfo);
-        //            break;
-        //        case eDMLOperator.Delete:
-        //            FillDataTable(result.Item1, dbInfo);
-        //            using (var Access = new DatabaseAccess(dbInfo.Server, dbInfo))
-        //                Access.ExecuteCommand(sql);
-        //            break;
-        //        case eDMLOperator.Insert:
-        //            using (var Access = new DatabaseAccess(dbInfo.Server, dbInfo))
-        //                Access.ExecuteCommand(sql);
-        //            FillDataTable(result.Item1, dbInfo);
-        //            break;
-        //        default:
-        //            FillDataTable(result.Item1, dbInfo);
-        //            break;
-        //    }
-        //}
     }
     #endregion
 
@@ -153,7 +148,7 @@ public class ServerQueryPageViewModel : TabItemViewModelBase
     [DependsUpon(nameof(ResultSets))]
     public bool CanExecute_ClearResult()
     {
-        return !IsLoading && ResultSets.Any(r => r.ResultLines.Count != 0);
+        return !IsLoading && ResultSets.IsNotEmpty();
     }
     #endregion
 
@@ -215,23 +210,34 @@ public class ServerQueryPageViewModel : TabItemViewModelBase
     {
         if (sql.IsNullOrEmpty())
             return;
-        bool clearResultBeforeExecuteNewQuery = true; //Display only one, because we have virtualisation problems
+        bool clearResultBeforeExecuteNewQuery = true;
 
-        if (clearResultBeforeExecuteNewQuery) //TODO: Setting
+        var sqls = sql.ExtractStatements().Where(s => s.IsNotNullOrEmpty()).ToList();
+
+        if (sqls.IsEmpty())
+        {
+            QueryStatisticText = "Ready";
+            return;
+        }
+
+        if (clearResultBeforeExecuteNewQuery)
         {
             ResultSets.Clear();
             QueryStatisticText = "Executing...";
         }
-        var sqls = sql.Split(";").Where(s => s.IsNotNullOrEmpty()).Take(1); //First simple way to separate sqls. search another way with regex
 
-        if (sqls.IsNotEmpty())
-            IsLoading = true;
+        IsLoading = true;
 
+        m_ExecutingSQLCount = sqls.Count();
+        m_ExecutingResultCount = 0;
+        m_ExecutingResultTimesSpans.Clear();
+
+        m_UnorderedResultSets = new Dictionary<int, DataGrid>();
         foreach (var singleSql in sqls)
         {
             new Task(() =>
             {
-                __ExecuteQuery(singleSql, databaseInfo);
+                    __ExecuteQuery(singleSql, databaseInfo, sqls.IndexOf(singleSql));
             }).Start();
         }
     }
@@ -240,28 +246,55 @@ public class ServerQueryPageViewModel : TabItemViewModelBase
 
     #region - private methods -
 
+    private Dictionary<int, DataGrid> m_UnorderedResultSets;
+
     #region [__ExecuteQuery]
-    private void __ExecuteQuery(string singleSql, DatabaseInfo databaseInfo)
+    private void __ExecuteQuery(string singleSql, DatabaseInfo databaseInfo, int i)
     {
         __PrepareTimer(() =>
         {
             var dataTable = m_ServerQueryHelper.FillDataTable(databaseInfo, singleSql.ToStringValue(), __Error);
-
-            ExecuteOnDispatcher(() => IsLoading = false);
-
             if (dataTable == null)
             {
                 __CleanTimer();
+                __HandleSQLExecutionDone();
                 return;
             }
             ExecuteOnDispatcher(() =>
-             ResultSets.Add(new ResultSetViewModel()
-             {
-                 ResultLines = dataTable.DefaultView
-             }));
-            OnPropertyChanged(nameof(ResultSets));
-            __CleanTimer();
-            QueryStatisticText = $"Query executed in {m_Stopwatch.Elapsed.ToString(@"m\:ss\.ffff")} minutes - {dataTable.Rows.Count.ToString("N0")} Rows";
+            {
+                var dataGrid = new DataGrid
+                {
+                    GridLinesVisibility = (DataGridGridLinesVisibility)Settings.DataGridGridLinesVisibility, //Todo as setting CBO
+                    IsReadOnly = true,
+                    Margin = new System.Windows.Thickness(0, 10, 0, 10),
+                    MaxHeight = Settings.ResultGridMaxHeight,
+                    ItemsSource = dataTable.DefaultView
+                };
+                dataGrid.AutoGeneratingColumn += __AutoGeneratingColumn;
+                m_UnorderedResultSets[i] = dataGrid;
+                __HandleSQLExecutionDone();
+                __CleanTimer();
+            });
+        });
+    }
+
+    private void __HandleSQLExecutionDone()
+    {
+        ExecuteOnDispatcher(() =>
+        {
+            m_ExecutingResultCount++;
+            if (m_ExecutingResultCount >= m_ExecutingSQLCount)
+            {
+                foreach (var resultSet in m_UnorderedResultSets.OrderBy(u => u.Key).Select(s => s.Value))
+                {
+                    ResultSets.Add(resultSet);
+                }
+                OnPropertyChanged(nameof(ResultSets));
+                IsLoading = false;
+                RebuildNeeded = true;
+                RebuildNeeded = false;
+            }
+            QueryStatisticText = $"Query Exection {m_ExecutingResultCount}/{m_ExecutingSQLCount} done. Elapsed time {m_ExecutingResultTimesSpans.Sum():m\\:ss\\.ffff} minutes";
         });
     }
 
@@ -294,6 +327,8 @@ public class ServerQueryPageViewModel : TabItemViewModelBase
         {
             m_ExecutionTimer?.Stop();
             m_Stopwatch?.Stop();
+            if (m_Stopwatch != null)
+                m_ExecutingResultTimesSpans.Add(m_Stopwatch.Elapsed);
         });
     }
     #endregion
@@ -315,6 +350,18 @@ public class ServerQueryPageViewModel : TabItemViewModelBase
         m_ServerViewModel.ExecuteError(ex);
     }
     #endregion
+
+    #region [__AutoGeneratingColumn]
+    private void __AutoGeneratingColumn(object sender, DataGridAutoGeneratingColumnEventArgs e)
+    {
+        var column = (e.Column as DataGridBoundColumn);
+
+        var binding = new Binding(e.PropertyName);
+        binding.Converter = new EmptyValueConverter();
+        column.Binding = binding;
+    }
+    #endregion
+
     #endregion
 
     protected override void Dispose(bool disposing)

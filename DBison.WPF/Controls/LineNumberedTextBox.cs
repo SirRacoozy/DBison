@@ -20,6 +20,17 @@ namespace DBison.WPF.Controls
         public LineNumberedTextBox()
         {
             TextFormatter = new PlainTextFormatter();
+            DataObject.AddPastingHandler(this, __Pasting);
+            DataObject.AddCopyingHandler(this, __Copy);
+            SettingsHandler.SettingChanged += (sender, e) =>
+            {
+                if (e.ChangedSettingName == nameof(Settings.FontSize))
+                {
+                    if (GetTemplateChild("PART_LineNumberTextBlock") is TextBlock lineNumberTextBlock)
+                        lineNumberTextBlock.FontSize = Settings.FontSize;
+                    FontSize = Settings.FontSize;
+                }
+            };
         }
         #endregion
 
@@ -42,6 +53,8 @@ namespace DBison.WPF.Controls
             }
         }
         #endregion
+
+        #region - private methods -
 
         #region [__UpdateLineNumber]
         private void __UpdateLineNumber()
@@ -76,7 +89,13 @@ namespace DBison.WPF.Controls
 
             foreach (var keyWord in sqlKeywords)
             {
-                __ExecuteHighlight(keyWord, textRange);
+                try
+                {
+                    __ExecuteHighlight(keyWord, textRange);
+                }
+                catch (Exception)
+                {
+                }
             }
         }
         #endregion
@@ -85,6 +104,7 @@ namespace DBison.WPF.Controls
         private void __ExecuteHighlight(string searchText, TextRange textRange)
         {
             Brush highlightBrush = Settings.UseDarkMode ? (Brush)new BrushConverter().ConvertFrom("#00BBC9") : Brushes.Blue;
+            Brush commentHighlightBrush = Brushes.Green;
             var rich = this;
             string textBoxText = textRange.Text;
 
@@ -93,7 +113,7 @@ namespace DBison.WPF.Controls
                 return;
             }
 
-            for (TextPointer startPointer = rich.Document.ContentStart; startPointer.CompareTo(rich.Document.ContentEnd) <= 0; startPointer = startPointer?.GetNextContextPosition(LogicalDirection.Forward))
+            for (TextPointer startPointer = rich.Document.ContentStart; startPointer?.CompareTo(rich.Document.ContentEnd) <= 0; startPointer = startPointer?.GetNextContextPosition(LogicalDirection.Forward))
             {
                 if (startPointer == null)
                     break;
@@ -103,6 +123,24 @@ namespace DBison.WPF.Controls
                 }
 
                 string parsedString = startPointer.GetTextInRun(LogicalDirection.Forward);
+
+                //Check first index of "--" (SQL comment)
+                int dashDashIndex = parsedString.IndexOf("--");
+                if (dashDashIndex >= 0)
+                {
+                    //Highlight from "--" begin until the end of the line
+                    TextPointer dashDashPointer = startPointer.GetPositionAtOffset(dashDashIndex);
+                    TextPointer endOfLinePointer = startPointer.GetPositionAtOffset(parsedString.Length);
+                    if (dashDashPointer != null && endOfLinePointer != null)
+                    {
+                        TextRange specialTextRange = new TextRange(dashDashPointer, endOfLinePointer);
+                        m_SkipHighliting = true;
+                        specialTextRange.ApplyPropertyValue(TextElement.ForegroundProperty, commentHighlightBrush);
+                        m_SkipHighliting = false;
+                    }
+                    continue;
+                }
+
                 var allIndexesOf = parsedString.AllIndexesOf(searchText, StringComparison.InvariantCultureIgnoreCase);
 
                 foreach (var indexOf in allIndexesOf)
@@ -121,7 +159,7 @@ namespace DBison.WPF.Controls
                         if (charAfterIndex < parsedString.Length)
                             charAfter = parsedString.Substring(charAfterIndex, 1);
 
-                        startPointer = startPointer.GetPositionAtOffset(indexOf);
+                        startPointer = startPointer?.GetPositionAtOffset(indexOf);
 
                         if (charBefore.IsNotNullOrEmpty() && charBefore.IsNotEquals(" "))
                             continue;
@@ -142,6 +180,35 @@ namespace DBison.WPF.Controls
                 }
             }
         }
+        #endregion
+
+        #region [__Pasting]
+        private void __Pasting(object sender, DataObjectPastingEventArgs e)
+        {
+            try
+            {
+                if (e.FormatToApply != "UnicodeText")
+                {
+                    Clipboard.SetText(e.DataObject.GetData("UnicodeText").ToStringValue(), TextDataFormat.UnicodeText);
+                    e.CancelCommand();
+                    Paste();
+                }
+            }
+            catch (Exception)
+            {
+                //
+            }
+        }
+        #endregion
+
+        #region [__Copy]
+        private void __Copy(object sender, DataObjectEventArgs e)
+        {
+            //do stuff if needed
+            //Default is still called
+        }
+        #endregion
+
         #endregion
 
     }

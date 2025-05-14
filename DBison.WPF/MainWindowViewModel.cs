@@ -14,7 +14,9 @@ using System.Diagnostics;
 using System.IO;
 using System.Net.NetworkInformation;
 using System.Reflection;
+using System.Security.Principal;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Threading;
 
 namespace DBison.WPF;
@@ -40,6 +42,14 @@ public class MainWindowViewModel : ClientViewModelBase
     #endregion
 
     #region - public properties -
+
+    #region [ResultCellMargin ]
+    public static double ResultCellMargin { get; set; }
+
+    public Visibility IsWarningVisible => !IsAdminMode ? Visibility.Visible : Visibility.Collapsed;
+
+    public bool IsAdminMode => new WindowsPrincipal(WindowsIdentity.GetCurrent()).IsInRole(WindowsBuiltInRole.Administrator);
+    #endregion
 
     #region [ServerItems]
     public ObservableCollection<ServerViewModel> ServerItems
@@ -109,6 +119,14 @@ public class MainWindowViewModel : ClientViewModelBase
     }
     #endregion
 
+    #region [ServerItemsTreeView]
+    public TreeView ServerItemsTreeView
+    {
+        get => Get<TreeView>();
+        set => Set(value);
+    }
+    #endregion
+
     #endregion
 
     #region - commands -
@@ -129,10 +147,29 @@ public class MainWindowViewModel : ClientViewModelBase
     }
     #endregion
 
+    #region [Execute_RestartApplicationAsAdmin]
+    public void Execute_RestartApplicationAsAdmin()
+    {
+        string assemblyPath = Path.ChangeExtension(Assembly.GetEntryAssembly().Location, "exe");
+
+        var startInfo = new ProcessStartInfo
+        {
+            FileName = assemblyPath,
+            Arguments = string.Empty,
+            UseShellExecute = true,
+            Verb = "runas"
+        };
+        Process.Start(startInfo);
+        Application.Current.Shutdown();
+    }
+    #endregion
+
+
     #region [Execute_ConnectParseConnect]
     public void Execute_ConnectParseConnect()
     {
         var addServerVm = new AddServerDialogViewModel(null);
+        addServerVm.ServerName = Clipboard.GetText();
         addServerVm.OkClicked += (x, connectInfo) => __AddServer(connectInfo);
         addServerVm.Execute_Ok();
     }
@@ -236,15 +273,11 @@ public class MainWindowViewModel : ClientViewModelBase
         if (SelectedServer == null)
             return;
         var settingPage = TabItems.FirstOrDefault(q => q is SettingsTabViewModel);
-        TabItems = new(SelectedServer?.ServerQueryPages);
+        TabItems = new(SelectedServer.ServerQueryPages);
         if (settingPage != null)
             TabItems.Add(settingPage);
         OnPropertyChanged(nameof(TabItems));
-        var lastQueryPage = TabItems.LastOrDefault(x => x is ServerQueryPageViewModel);
-        if (lastQueryPage != null)
-            SelectedTabItem = (ServerQueryPageViewModel)lastQueryPage;
-        else
-            SelectedTabItem = settingPage;
+        SelectedTabItem = TabItems.LastOrDefault(x => x is ServerQueryPageViewModel) ?? settingPage;
     }
     #endregion
 
@@ -373,6 +406,15 @@ public class MainWindowViewModel : ClientViewModelBase
         if (ServerItems == null)
             ServerItems = new ObservableCollection<ServerViewModel>();
 
+        var alreadyExistingServer = ServerItems.FirstOrDefault(s => s.DatabaseObject is ServerInfo serverInfo && serverInfo.Name.IsEquals(server.ServerName));
+        if (alreadyExistingServer != null)
+        {
+            if (ServerItemsTreeView.ItemContainerGenerator.ContainerFromItem(alreadyExistingServer.ServerNode) is TreeViewItem tvi)
+                tvi.IsSelected = true;
+            SelectedServer = alreadyExistingServer;
+            return;
+        }
+
         if (!__PingServer(server.ServerName))
         {
             ShowMessageAsync($"{server.ServerName} not available", $"Server {server.ServerName} is not available or has no MSSQL Instance");
@@ -499,6 +541,7 @@ public class MainWindowViewModel : ClientViewModelBase
     #region [__HandleSettingsChanged]
     private void __HandleSettingsChanged()
     {
+        ResultCellMargin = Settings.ResultCellMargin;
         Application.Current.Resources["GlobalFontSize"] = Convert.ToDouble(Settings.FontSize);
         Application.Current.Resources["GlobalScaleFactor"] = Settings.UIScaling;
         SettingsHandler.SettingChanged += __SettingsHandler_SettingChanged;
@@ -526,6 +569,9 @@ public class MainWindowViewModel : ClientViewModelBase
                 break;
             case nameof(Settings.UIScaling):
                 Application.Current.Resources["GlobalScaleFactor"] = Settings.UIScaling;
+                break;
+            case nameof(Settings.ResultCellMargin):
+                ResultCellMargin = Settings.ResultCellMargin;
                 break;
         }
         var settingsTab = TabItems.LastOrDefault(s => s is SettingsTabViewModel);
