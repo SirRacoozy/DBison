@@ -14,6 +14,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Net.NetworkInformation;
 using System.Reflection;
+using System.Security.Principal;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Threading;
@@ -44,6 +45,10 @@ public class MainWindowViewModel : ClientViewModelBase
 
     #region [ResultCellMargin ]
     public static double ResultCellMargin { get; set; }
+
+    public Visibility IsWarningVisible => !IsAdminMode ? Visibility.Visible : Visibility.Collapsed;
+
+    public bool IsAdminMode => new WindowsPrincipal(WindowsIdentity.GetCurrent()).IsInRole(WindowsBuiltInRole.Administrator);
     #endregion
 
     #region [ServerItems]
@@ -141,6 +146,24 @@ public class MainWindowViewModel : ClientViewModelBase
         Application.Current.Shutdown();
     }
     #endregion
+
+    #region [Execute_RestartApplicationAsAdmin]
+    public void Execute_RestartApplicationAsAdmin()
+    {
+        string assemblyPath = Path.ChangeExtension(Assembly.GetEntryAssembly().Location, "exe");
+
+        var startInfo = new ProcessStartInfo
+        {
+            FileName = assemblyPath,
+            Arguments = string.Empty,
+            UseShellExecute = true,
+            Verb = "runas"
+        };
+        Process.Start(startInfo);
+        Application.Current.Shutdown();
+    }
+    #endregion
+
 
     #region [Execute_ConnectParseConnect]
     public void Execute_ConnectParseConnect()
