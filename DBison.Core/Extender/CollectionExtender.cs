@@ -15,14 +15,14 @@ public static class CollectionExtender
     #region [Sum]
     public static TimeSpan Sum(this IEnumerable<TimeSpan> timeSpans)
     {
-        TimeSpan sumTillNowTimeSpan = TimeSpan.Zero;
+        TimeSpan sum = TimeSpan.Zero;
 
         foreach (TimeSpan timeSpan in timeSpans)
         {
-            sumTillNowTimeSpan += timeSpan;
+            sum += timeSpan;
         }
 
-        return sumTillNowTimeSpan;
+        return sum;
     }
     #endregion
 
